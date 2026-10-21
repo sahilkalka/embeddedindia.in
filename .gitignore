@@ -13,6 +13,8 @@ node_modules/
 *.sqlite3
 prisma/*.db
 prisma/*.db-journal
+*.bak
+*.bak*
 
 # Logs
 logs

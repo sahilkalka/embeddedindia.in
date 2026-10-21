@@ -1,12 +1,12 @@
 <%- include('layout_top') %>
 
-<div class="max-w-4xl space-y-8">
+<div class="max-w-4xl space-y-6">
   
   <div>
     <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2">
       <span>⚙️ Global System, SMTP &amp; Account Settings</span>
     </h1>
-    <p class="text-xs text-slate-500 mt-1">Configure company metadata, outgoing SMTP mailer, AdSense monetization, and administrative accounts</p>
+    <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-1">Configure company metadata, outgoing SMTP mailer, AdSense monetization, and administrative accounts</p>
   </div>
 
   <% if (success) { %>
@@ -16,131 +16,131 @@
   <% } %>
 
   <!-- Main Settings Form -->
-  <form action="/admin/settings" method="POST" class="space-y-8">
+  <form action="/admin/settings" method="POST" class="space-y-6">
     
     <!-- 1. General Company Information -->
-    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-4">
-      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white border-b border-slate-100 dark:border-brand-border pb-2">
+    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
+      <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
         1. Company &amp; Contact Metadata
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Company / Brand Name</label>
-          <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Company / Brand Name</label>
+          <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Primary Inquiries Email</label>
-          <input type="email" name="contact_email" value="<%= settings.contact_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Primary Inquiries Email</label>
+          <input type="email" name="contact_email" value="<%= settings.contact_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Phone / WhatsApp</label>
-          <input type="text" name="contact_phone" value="<%= settings.contact_phone || '+91 98765 43210' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Phone / WhatsApp</label>
+          <input type="text" name="contact_phone" value="<%= settings.contact_phone || '+91 98765 43210' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Offices &amp; Locations</label>
-          <input type="text" name="contact_address" value="<%= settings.contact_address || 'Bangalore / Hyderabad / Pune, India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Offices &amp; Locations</label>
+          <input type="text" name="contact_address" value="<%= settings.contact_address || 'Bangalore / Hyderabad / Pune, India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
       </div>
 
       <!-- Homepage Hero Content -->
-      <div class="pt-3 border-t border-slate-100 dark:border-brand-border/60 space-y-3">
+      <div class="pt-4 border-t border-slate-100 dark:border-[rgba(255,255,255,0.08)] space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hero Main Heading</label>
-            <input type="text" name="hero_title" value="<%= settings.hero_title || 'Think Big.' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+            <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Hero Main Heading</label>
+            <input type="text" name="hero_title" value="<%= settings.hero_title || 'Think Big.' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hero Subheading Prefix</label>
-            <input type="text" name="hero_subtitle" value="<%= settings.hero_subtitle || 'We Engineer:' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+            <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Hero Subheading Prefix</label>
+            <input type="text" name="hero_subtitle" value="<%= settings.hero_subtitle || 'We Engineer:' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hero Description Paragraph</label>
-          <textarea name="hero_description" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs"><%= settings.hero_description || 'From early napkin architecture and high-speed PCB layouts to deterministic RTOS firmware, HIL automated testing, and volume SMT manufacturing.' %></textarea>
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Hero Description Paragraph</label>
+          <textarea name="hero_description" rows="2" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs transition"><%= settings.hero_description || 'From early napkin architecture and high-speed PCB layouts to deterministic RTOS firmware, HIL automated testing, and volume SMT manufacturing.' %></textarea>
         </div>
       </div>
     </div>
 
     <!-- 2. Outgoing Mail Server (SMTP) Configuration & Test -->
-    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
+    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
         <div>
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+          <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white">
             2. Outgoing Mail Server (SMTP) Configuration
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Used for consultation inquiries, newsletter double opt-in, and automated engineering digests</p>
+          <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">Used for consultation inquiries, newsletter double opt-in, and automated engineering digests</p>
         </div>
-        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+        <span class="text-[10px] bg-emerald-50 dark:bg-[rgba(16,185,129,0.15)] text-emerald-700 dark:text-[#34D399] border border-emerald-200 dark:border-[rgba(16,185,129,0.3)] font-bold px-2.5 py-1 rounded-full uppercase">
           SMTP Service
         </span>
       </div>
 
       <!-- Quick Preset Helper Buttons -->
       <div class="flex flex-wrap items-center gap-2 text-xs">
-        <span class="text-[11px] font-bold text-slate-500 mr-1">Quick Presets:</span>
-        <button type="button" onclick="setSmtpPreset('gmail')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-brand-border">
+        <span class="text-[11px] font-bold text-slate-500 dark:text-[#94A3B8] mr-1">Quick Presets:</span>
+        <button type="button" onclick="setSmtpPreset('gmail')" class="px-2.5 py-1 bg-slate-100 dark:bg-[#16211D] hover:bg-slate-200 dark:hover:bg-[#1f2e29] rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-[rgba(255,255,255,0.08)]">
           Gmail (smtp.gmail.com:587)
         </button>
-        <button type="button" onclick="setSmtpPreset('sendgrid')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-brand-border">
+        <button type="button" onclick="setSmtpPreset('sendgrid')" class="px-2.5 py-1 bg-slate-100 dark:bg-[#16211D] hover:bg-slate-200 dark:hover:bg-[#1f2e29] rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-[rgba(255,255,255,0.08)]">
           SendGrid (smtp.sendgrid.net:587)
         </button>
-        <button type="button" onclick="setSmtpPreset('mock')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-brand-border">
+        <button type="button" onclick="setSmtpPreset('mock')" class="px-2.5 py-1 bg-slate-100 dark:bg-[#16211D] hover:bg-slate-200 dark:hover:bg-[#1f2e29] rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-[rgba(255,255,255,0.08)]">
           Dev / Local Mock
         </button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="sm:col-span-2">
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">SMTP Host Server</label>
-          <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com or smtp.sendgrid.net" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">SMTP Host Server</label>
+          <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com or smtp.sendgrid.net" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Port</label>
-          <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" placeholder="587 or 465" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Port</label>
+          <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" placeholder="587 or 465" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Encryption Protocol</label>
-          <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Encryption Protocol</label>
+          <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
             <option value="false" <%= settings.smtp_secure !== 'true' ? 'selected' : '' %>>STARTTLS (Port 587 / 25)</option>
             <option value="true" <%= settings.smtp_secure === 'true' ? 'selected' : '' %>>SSL / TLS Direct (Port 465)</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">SMTP Username / Email</label>
-          <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="mailer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">SMTP Username / Email</label>
+          <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="mailer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">SMTP Password / App Key</label>
-          <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••••••" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">SMTP Password / App Key</label>
+          <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sender Display Name</label>
-          <input type="text" name="smtp_from_name" value="<%= settings.smtp_from_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Sender Display Name</label>
+          <input type="text" name="smtp_from_name" value="<%= settings.smtp_from_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sender Email Address</label>
-          <input type="email" name="smtp_from_email" value="<%= settings.smtp_from_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Sender Email Address</label>
+          <input type="email" name="smtp_from_email" value="<%= settings.smtp_from_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
       </div>
 
       <!-- Live Test SMTP Connection Box -->
-      <div class="pt-4 border-t border-slate-100 dark:border-brand-border/60 space-y-3">
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+      <div class="pt-4 border-t border-slate-100 dark:border-[rgba(255,255,255,0.06)] space-y-3">
+        <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">
           🧪 Test SMTP Configuration &amp; Dispatch Verification Email
         </label>
         <div class="flex flex-col sm:flex-row items-center gap-3">
-          <input type="email" id="smtpTestRecipient" value="<%= settings.contact_email || 'admin@embeddedindia.in' %>" placeholder="Recipient email for test delivery" class="flex-1 w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs">
-          <button type="button" id="btnTestSmtp" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-2 whitespace-nowrap active:scale-95 shadow">
+          <input type="email" id="smtpTestRecipient" value="<%= settings.contact_email || 'admin@embeddedindia.in' %>" placeholder="Recipient email for test delivery" class="flex-1 w-full h-[42px] px-3 py-2 rounded-[8px] bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs transition">
+          <button type="button" id="btnTestSmtp" class="w-full sm:w-auto h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center justify-center space-x-2 whitespace-nowrap">
             <span>✉ Test SMTP Connection</span>
           </button>
         </div>
@@ -149,45 +149,45 @@
     </div>
 
     <!-- 3. Monetization & Ad Account Validation -->
-    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
+    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
         <div>
-          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+          <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white">
             3. Monetization &amp; Ad Account Validation (Google AdSense)
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Validate your publisher account, enforce ad slot injection, and generate compliant ads.txt</p>
+          <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">Validate your publisher account, enforce ad slot injection, and generate compliant ads.txt</p>
         </div>
-        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold px-2.5 py-1 rounded-full uppercase">
+        <span class="text-[10px] bg-emerald-50 dark:bg-[rgba(16,185,129,0.15)] text-emerald-700 dark:text-[#34D399] border border-emerald-200 dark:border-[rgba(16,185,129,0.3)] font-bold px-2.5 py-1 rounded-full uppercase">
           Monetization
         </span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Enable Google AdSense Slots</label>
-          <select id="enable_adsense" name="enable_adsense" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Enable Google AdSense Slots</label>
+          <select id="enable_adsense" name="enable_adsense" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
             <option value="false" <%= settings.enable_adsense === 'false' ? 'selected' : '' %>>Disabled</option>
             <option value="true" <%= settings.enable_adsense === 'true' ? 'selected' : '' %>>Enabled</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Google AdSense Publisher ID</label>
-          <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || 'ca-pub-2644536267352236' %>" placeholder="ca-pub-2644536267352236" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Google AdSense Publisher ID</label>
+          <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || 'ca-pub-2644536267352236' %>" placeholder="ca-pub-2644536267352236" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono font-semibold transition">
         </div>
       </div>
 
-      <!-- Ad Account Validation Feature -->
-      <div class="p-4 bg-slate-50 dark:bg-brand-dark/50 rounded-xl border border-slate-200 dark:border-brand-border/60 space-y-3">
+      <!-- Ad Account Validation Feature Sub-Card -->
+      <div class="p-5 rounded-[12px] bg-slate-50 dark:bg-[#16211D] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span class="text-xs font-bold text-slate-900 dark:text-white block">Ad Account &amp; ads.txt Verification</span>
-            <span class="text-[11px] text-slate-500">Validates your publisher account syntax and creates the required root <code class="text-brand-500">/ads.txt</code> record</span>
+            <span class="text-[0.95rem] font-semibold text-[#0F172A] dark:text-[#F8FAFC] block">Ad Account &amp; ads.txt Verification</span>
+            <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8]">Validates your publisher account syntax and creates the required root <code class="text-brand-500 font-mono">/ads.txt</code> record</span>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" id="btnValidateAd" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl transition shadow active:scale-95 flex items-center space-x-1.5">
+            <button type="button" id="btnValidateAd" class="h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center space-x-1.5">
               <span>⚡ Validate Ad Account &amp; Sync ads.txt</span>
             </button>
-            <a href="/ads.txt" target="_blank" class="px-3 py-2 bg-slate-100 dark:bg-brand-surface hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-brand-border transition">
+            <a href="/ads.txt" target="_blank" class="h-[42px] px-4 flex items-center justify-center bg-white dark:bg-[#0C1310] hover:bg-slate-100 dark:hover:bg-[#16211D] text-[#334155] dark:text-slate-200 text-xs font-bold rounded-[8px] border border-slate-300 dark:border-[rgba(255,255,255,0.14)] transition shadow-sm">
               View /ads.txt &nearr;
             </a>
           </div>
@@ -197,96 +197,102 @@
     </div>
 
     <!-- 4. Native Internal Promo Banners -->
-    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-4">
-      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white border-b border-slate-100 dark:border-brand-border pb-2">
+    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
+      <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
         4. Native Internal Promotion Banner
       </h2>
 
       <div>
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Status</label>
-        <select name="promo_banner_active" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Banner Status</label>
+        <select name="promo_banner_active" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
           <option value="true" <%= settings.promo_banner_active === 'true' ? 'selected' : '' %>>Active (Show on header announcement)</option>
           <option value="false" <%= settings.promo_banner_active === 'false' ? 'selected' : '' %>>Hidden</option>
         </select>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Title / Pitch</label>
-        <input type="text" name="promo_banner_title" value="<%= settings.promo_banner_title || '' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Banner Title / Pitch</label>
+        <input type="text" name="promo_banner_title" value="<%= settings.promo_banner_title || '' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Call-to-Action Text</label>
-          <input type="text" name="promo_banner_cta" value="<%= settings.promo_banner_cta || 'Book an Engineering Feasibility Call' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Call-to-Action Text</label>
+          <input type="text" name="promo_banner_cta" value="<%= settings.promo_banner_cta || 'Book an Engineering Feasibility Call' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Destination URL (with UTM)</label>
-          <input type="text" name="promo_banner_url" value="<%= settings.promo_banner_url || '/contact?service=Hardware%20Design' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Destination URL (with UTM)</label>
+          <input type="text" name="promo_banner_url" value="<%= settings.promo_banner_url || '/contact?service=Hardware%20Design' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
       </div>
-    </div>
 
-    <!-- Save Button for Main Form -->
-    <div class="pt-2">
-      <button type="submit" class="px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm transition shadow-lg active:scale-95">
-        Save Global Configuration
-      </button>
+      <!-- Contained Save Global Configuration Button inside Section 4 Footer Bar -->
+      <div class="pt-4 border-t border-slate-200 dark:border-[rgba(255,255,255,0.06)] flex items-center justify-end">
+        <button type="submit" class="h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white font-bold rounded-[8px] text-xs sm:text-sm transition shadow-sm active:scale-95 flex items-center justify-center space-x-2">
+          <span>💾 Save Global Configuration</span>
+        </button>
+      </div>
     </div>
 
   </form>
 
   <!-- 5. Administrator & Staff Accounts Management Panel (Validate & Add Account) -->
-  <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
-    <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
+  <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-6 mb-6">
+    <div class="flex items-center justify-between border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
       <div>
-        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+        <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white">
           5. Team &amp; Administrator Account Management
         </h2>
-        <p class="text-xs text-slate-500 mt-0.5">Validate account credentials, assign roles, and grant admin access to engineering staff</p>
+        <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">Validate account credentials, assign roles, and grant admin access to engineering staff</p>
       </div>
-      <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+      <span class="text-[10px] bg-emerald-50 dark:bg-[rgba(16,185,129,0.15)] text-emerald-700 dark:text-[#34D399] border border-emerald-200 dark:border-[rgba(16,185,129,0.3)] font-bold px-2.5 py-1 rounded-full uppercase">
         Access Control
       </span>
     </div>
 
     <!-- Existing Accounts Table -->
-    <div class="overflow-x-auto rounded-xl border admin-table-container">
-      <table class="w-full text-left text-xs">
-        <thead class="admin-table-head uppercase font-bold text-[10px] tracking-wider">
-          <tr>
-            <th class="py-2.5 px-3">Account Email</th>
-            <th class="py-2.5 px-3">Username</th>
-            <th class="py-2.5 px-3">Role</th>
-            <th class="py-2.5 px-3">Created</th>
-            <th class="py-2.5 px-3 text-right">Actions</th>
+    <div class="overflow-x-auto rounded-[12px] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] bg-white dark:bg-[#111916]">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-[rgba(255,255,255,0.03)] border-b border-slate-200 dark:border-[rgba(255,255,255,0.06)]">
+            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Account Email</th>
+            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Username</th>
+            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Role</th>
+            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Created</th>
+            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8] text-right">Actions</th>
           </tr>
         </thead>
-        <tbody id="usersTableBody" class="admin-table-body divide-y text-slate-700 dark:text-slate-300">
+        <tbody id="usersTableBody" class="divide-y divide-slate-100 dark:divide-[rgba(255,255,255,0.06)] text-slate-700 dark:text-slate-300">
           <% (users || []).forEach(u => { %>
-            <tr id="user-row-<%= u.id %>">
-              <td class="py-3 px-3 font-semibold text-slate-900 dark:text-white">
+            <tr id="user-row-<%= u.id %>" class="hover:bg-slate-50 dark:hover:bg-[rgba(255,255,255,0.02)] transition">
+              <td class="py-3.5 px-4 align-middle font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
                 <%= u.email %>
                 <% if (currentUser && currentUser.userId === u.id) { %>
-                  <span class="ml-1.5 px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded text-[9px] font-bold">You</span>
+                  <span class="ml-1.5 px-2 py-0.5 bg-[rgba(16,185,129,0.15)] text-[#059669] dark:text-[#34D399] border border-[rgba(16,185,129,0.3)] rounded-full text-[10px] font-bold">You</span>
                 <% } %>
               </td>
-              <td class="py-3 px-3 font-mono text-[11px]"><%= u.username %></td>
-              <td class="py-3 px-3">
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <%= u.role === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300' %>">
-                  <%= u.role %>
-                </span>
+              <td class="py-3.5 px-4 align-middle font-mono text-[11px] text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]"><%= u.username %></td>
+              <td class="py-3.5 px-4 align-middle border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
+                <% if (u.role === 'admin') { %>
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.75rem] font-semibold uppercase bg-[rgba(16,185,129,0.15)] text-[#059669] dark:text-[#34D399] border border-[rgba(16,185,129,0.3)]">
+                    Admin
+                  </span>
+                <% } else { %>
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.75rem] font-semibold uppercase bg-blue-50 dark:bg-[rgba(59,130,246,0.15)] text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-[rgba(59,130,246,0.3)]">
+                    <%= u.role %>
+                  </span>
+                <% } %>
               </td>
-              <td class="py-3 px-3 text-slate-500 text-[11px]">
+              <td class="py-3.5 px-4 align-middle text-slate-500 dark:text-[#94A3B8] text-[11px] border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
                 <%= new Date(u.createdAt).toLocaleDateString() %>
               </td>
-              <td class="py-3 px-3 text-right">
+              <td class="py-3.5 px-4 align-middle text-right border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
                 <% if (!currentUser || currentUser.userId !== u.id) { %>
-                  <button type="button" onclick="deleteAccount('<%= u.id %>')" class="text-red-500 hover:text-red-700 font-bold text-[11px]">
+                  <button type="button" onclick="deleteAccount('<%= u.id %>')" class="text-[#DC2626] dark:text-[#F87171] hover:bg-[rgba(239,68,68,0.12)] px-2.5 py-1 rounded-[6px] font-semibold text-[11px] transition">
                     Remove
                   </button>
                 <% } else { %>
-                  <span class="text-slate-400 text-[10px]">Active</span>
+                  <span class="text-slate-400 dark:text-slate-500 text-[11px]">Active</span>
                 <% } %>
               </td>
             </tr>
@@ -295,61 +301,63 @@
       </table>
     </div>
 
-    <!-- Validate & Add New Account Card -->
-    <div class="p-5 bg-slate-50 dark:bg-brand-dark/40 rounded-xl border border-slate-200 dark:border-brand-border/60 space-y-4">
-      <div class="flex items-center space-x-2">
-        <span class="text-xs font-bold text-slate-900 dark:text-white">➕ Add &amp; Validate New Account</span>
-        <span class="text-[10px] text-slate-500">(Enforces email format, uniqueness, and strong password checks)</span>
+    <!-- Validate & Add New Account Sub-Card -->
+    <div class="p-5 rounded-[12px] bg-slate-50 dark:bg-[#16211D] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] space-y-4">
+      <div class="flex items-center space-x-2 flex-wrap gap-1">
+        <span class="text-[0.95rem] font-semibold text-[#0F172A] dark:text-[#F8FAFC]">➕ Add &amp; Validate New Account</span>
+        <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8] font-normal">(Enforces email format, uniqueness, and strong password checks)</span>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-        <div class="sm:col-span-2">
-          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Staff Email</label>
-          <input type="email" id="newAccountEmail" placeholder="engineer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs">
+      <!-- Responsive 3-column CSS Grid -->
+      <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))] items-end">
+        <div>
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Staff Email</label>
+          <input type="email" id="newAccountEmail" placeholder="engineer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs transition">
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Role</label>
-          <select id="newAccountRole" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Role</label>
+          <select id="newAccountRole" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
             <option value="admin">Administrator (Full Access)</option>
             <option value="editor">Content Editor (Blogs only)</option>
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Password (Min 8 chars)</label>
-          <input type="password" id="newAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Password (Min 8 chars)</label>
+          <input type="password" id="newAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-        <button type="button" id="btnAddAccount" class="w-full sm:w-auto px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl transition shadow active:scale-95 flex items-center justify-center space-x-1.5">
+      <div class="pt-4 border-t border-slate-200 dark:border-[rgba(255,255,255,0.06)] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button type="button" id="btnAddAccount" class="w-full sm:w-auto h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center justify-center space-x-1.5">
           <span>⚡ Validate &amp; Create Account</span>
         </button>
-        <span class="text-[10px] text-slate-500">Account password is encrypted with salt rounds via bcrypt</span>
+        <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8]">Account password is encrypted with salt rounds via bcrypt</span>
       </div>
 
       <div id="addAccountResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
     </div>
 
-    <!-- Change Password Card for Currently Logged-in Staff -->
-    <div class="p-5 bg-slate-50 dark:bg-brand-dark/40 rounded-xl border border-slate-200 dark:border-brand-border/60 space-y-4">
-      <div class="flex items-center space-x-2">
-        <span class="text-xs font-bold text-slate-900 dark:text-white">🔑 Change Your Active Account Password</span>
-        <span class="text-[10px] text-slate-500">(Updates credentials for <%= currentUser ? currentUser.email : 'your active session' %>)</span>
+    <!-- Change Password Sub-Card for Currently Logged-in Staff -->
+    <div class="p-5 rounded-[12px] bg-slate-50 dark:bg-[#16211D] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] space-y-4">
+      <div class="flex items-center space-x-2 flex-wrap gap-1">
+        <span class="text-[0.95rem] font-semibold text-[#0F172A] dark:text-[#F8FAFC]">🔑 Change Your Active Account Password</span>
+        <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8] font-normal">(Updates credentials for <%= currentUser ? currentUser.email : 'your active session' %>)</span>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Responsive 2-column CSS Grid -->
+      <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
         <div>
-          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Current Password</label>
-          <input type="password" id="currentAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Current Password</label>
+          <input type="password" id="currentAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">New Password (Min 8 characters)</label>
-          <input type="password" id="updatedAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-mono">
+          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">New Password (Min 8 characters)</label>
+          <input type="password" id="updatedAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
         </div>
       </div>
 
-      <div class="flex items-center justify-between pt-1">
-        <button type="button" id="btnChangePassword" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition shadow active:scale-95 flex items-center space-x-1.5">
+      <div class="pt-4 border-t border-slate-200 dark:border-[rgba(255,255,255,0.06)] flex items-center justify-start">
+        <button type="button" id="btnChangePassword" class="h-[42px] px-5 bg-[rgba(16,185,129,0.12)] border border-[#10B981] text-[#059669] dark:text-[#34D399] hover:bg-[#10B981] hover:text-[#052E16] text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center space-x-1.5">
           <span>Update Password</span>
         </button>
       </div>
@@ -512,17 +520,18 @@
           const tbody = document.getElementById('usersTableBody');
           const row = document.createElement('tr');
           row.id = `user-row-${data.user.id}`;
+          row.className = 'hover:bg-slate-50 dark:hover:bg-[rgba(255,255,255,0.02)] transition';
           row.innerHTML = `
-            <td class="py-3 px-3 font-semibold text-slate-900 dark:text-white">${data.user.email}</td>
-            <td class="py-3 px-3 font-mono text-[11px]">${data.user.username}</td>
-            <td class="py-3 px-3">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${data.user.role === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'}">
+            <td class="py-3.5 px-4 align-middle font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">${data.user.email}</td>
+            <td class="py-3.5 px-4 align-middle font-mono text-[11px] text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">${data.user.username}</td>
+            <td class="py-3.5 px-4 align-middle border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.75rem] font-semibold uppercase ${data.user.role === 'admin' ? 'bg-[rgba(16,185,129,0.15)] text-[#059669] dark:text-[#34D399] border border-[rgba(16,185,129,0.3)]' : 'bg-blue-50 dark:bg-[rgba(59,130,246,0.15)] text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-[rgba(59,130,246,0.3)]'}">
                 ${data.user.role}
               </span>
             </td>
-            <td class="py-3 px-3 text-slate-500 text-[11px]">${new Date().toLocaleDateString()}</td>
-            <td class="py-3 px-3 text-right">
-              <button type="button" onclick="deleteAccount('${data.user.id}')" class="text-red-500 hover:text-red-700 font-bold text-[11px]">Remove</button>
+            <td class="py-3.5 px-4 align-middle text-slate-500 dark:text-[#94A3B8] text-[11px] border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">${new Date().toLocaleDateString()}</td>
+            <td class="py-3.5 px-4 align-middle text-right border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
+              <button type="button" onclick="deleteAccount('${data.user.id}')" class="text-[#DC2626] dark:text-[#F87171] hover:bg-[rgba(239,68,68,0.12)] px-2.5 py-1 rounded-[6px] font-semibold text-[11px] transition">Remove</button>
             </td>
           `;
           tbody.prepend(row);
