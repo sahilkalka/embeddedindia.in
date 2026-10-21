@@ -19,9 +19,13 @@ const apiRoutes = require('./routes/api');
 const toolsRoutes = require('./routes/tools');
 const blogsRoutes = require('./routes/blogs');
 const adminRoutes = require('./routes/admin');
+const servicesData = require('./data/servicesData');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Security: Disable x-powered-by
+app.disable('x-powered-by');
 
 // View engine setup
 app.set('views', path.join(__dirname, '../views'));
@@ -29,7 +33,26 @@ app.set('view engine', 'ejs');
 
 // Security & Optimization Middleware
 app.use(helmet({
-  contentSecurityPolicy: false, // Disabled for inline SVGs, calculators, and dynamic themes
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "data:"],
+      connectSrc: ["'self'"],
+      frameAncestors: ["'none'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"]
+    }
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  },
+  xContentTypeOptions: true,
+  frameguard: { action: 'deny' },
   crossOriginEmbedderPolicy: false
 }));
 app.use(compression());
@@ -43,7 +66,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
+    httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000
   }
 }));
@@ -93,6 +118,23 @@ app.get('/services', (req, res) => {
   res.render('pages/services');
 });
 
+// 2b. Service Detail Pages
+app.get('/services/:slug', (req, res, next) => {
+  const service = servicesData[req.params.slug];
+  if (!service) {
+    return next();
+  }
+  res.locals.seo.title = service.seoTitle;
+  res.locals.seo.description = service.seoDescription;
+  res.locals.seo.canonical = `${res.locals.appUrl}/services/${service.slug}`;
+  res.render('pages/service-detail', { service });
+});
+
+// Public /login redirect -> 301 /admin
+app.get('/login', (req, res) => {
+  res.redirect(301, '/admin');
+});
+
 // 3. About Page
 app.get('/about', (req, res) => {
   res.locals.seo.title = 'About - Embedded India';
@@ -111,7 +153,7 @@ app.get('/projects', (req, res) => {
 app.get('/contact', (req, res) => {
   res.locals.seo.title = 'Contact - Embedded India';
   res.locals.seo.description = 'Get in touch with Embedded India for turnkey electronic hardware and firmware development.';
-  res.render('pages/contact');
+  res.render('pages/contact', { selectedService: req.query.service || '' });
 });
 
 // 6. Privacy Policy
@@ -140,10 +182,15 @@ app.use((req, res) => {
 // 500 Handler
 app.use((err, req, res, next) => {
   console.error('[UNCAUGHT ERROR]', err);
+  const isProd = process.env.NODE_ENV === 'production';
+  const errorMessage = isProd
+    ? 'Something went wrong on our end. Our engineering team has been alerted.'
+    : (err.message || 'Internal Server Error');
+
   res.status(500).render('pages/message', {
     title: 'Server Error',
     heading: '500 - Server Error',
-    message: 'Something went wrong on our end. Our engineering team has been alerted.',
+    message: errorMessage,
     buttonText: 'Return to Home',
     buttonLink: '/'
   });

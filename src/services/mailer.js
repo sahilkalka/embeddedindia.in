@@ -151,115 +151,145 @@ async function getMailerConfig() {
 const mailer = {
   // Send notification to admin when inquiry is submitted
   async sendInquiryNotification(inquiry) {
-    const config = await getMailerConfig();
-    const mailOptions = {
-      from: config.from,
-      to: config.adminEmail,
-      subject: `[New Inquiry] ${inquiry.subject} (${inquiry.serviceCategory})`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-          <div style="background-color: #007f5f; padding: 20px; color: white;">
-            <h2 style="margin: 0;">New Engineering Consultation Inquiry</h2>
-            <p style="margin: 5px 0 0; opacity: 0.9;">Embedded India Customer Portal</p>
-          </div>
-          <div style="padding: 24px; color: #192c27;">
-            <p><strong>Name:</strong> ${inquiry.name}</p>
-            <p><strong>Email:</strong> <a href="mailto:${inquiry.email}">${inquiry.email}</a></p>
-            <p><strong>Phone:</strong> ${inquiry.phone || 'Not provided'}</p>
-            <p><strong>Service Category:</strong> ${inquiry.serviceCategory}</p>
-            <p><strong>Subject:</strong> ${inquiry.subject}</p>
-            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-            <p><strong>Message:</strong></p>
-            <p style="background: #f8fafc; padding: 15px; border-radius: 6px; white-space: pre-wrap;">${inquiry.message}</p>
-            <div style="margin-top: 25px;">
-              <a href="${process.env.APP_URL || 'http://localhost:3000'}/admin/inquiries" style="background: #007f5f; color: white; padding: 10px 18px; text-decoration: none; border-radius: 4px; font-weight: bold;">View in Admin Dashboard</a>
+    try {
+      const config = await getMailerConfig();
+      const mailOptions = {
+        from: config.from,
+        to: config.adminEmail,
+        subject: `[New Inquiry] ${inquiry.subject} (${inquiry.serviceCategory})`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #007f5f; padding: 20px; color: white;">
+              <h2 style="margin: 0;">New Engineering Consultation Inquiry</h2>
+              <p style="margin: 5px 0 0; opacity: 0.9;">Embedded India Customer Portal</p>
+            </div>
+            <div style="padding: 24px; color: #192c27;">
+              <p><strong>Name:</strong> ${inquiry.name}</p>
+              <p><strong>Email:</strong> <a href="mailto:${inquiry.email}">${inquiry.email}</a></p>
+              <p><strong>Phone:</strong> ${inquiry.phone || 'Not provided'}</p>
+              <p><strong>Service Category:</strong> ${inquiry.serviceCategory}</p>
+              <p><strong>Subject:</strong> ${inquiry.subject}</p>
+              <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+              <p><strong>Message:</strong></p>
+              <p style="background: #f8fafc; padding: 15px; border-radius: 6px; white-space: pre-wrap;">${inquiry.message}</p>
+              <div style="margin-top: 25px;">
+                <a href="${process.env.APP_URL || 'http://localhost:3000'}/admin/inquiries" style="background: #007f5f; color: white; padding: 10px 18px; text-decoration: none; border-radius: 4px; font-weight: bold;">View in Admin Dashboard</a>
+              </div>
             </div>
           </div>
-        </div>
-      `,
-      text: `New Inquiry from ${inquiry.name} (${inquiry.email}): ${inquiry.message}`
-    };
+        `,
+        text: `New Inquiry from ${inquiry.name} (${inquiry.email}): ${inquiry.message}`
+      };
 
-    const t = await getTransporter();
-    return t.sendMail(mailOptions);
+      const t = await getTransporter();
+      if (!t) {
+        console.warn('[MAILER] No transporter configured for inquiry notification');
+        return { success: false, error: 'No transporter configured' };
+      }
+      const res = await t.sendMail(mailOptions);
+      return { success: true, messageId: res.messageId };
+    } catch (err) {
+      console.error('[MAILER ERROR] Failed to send admin inquiry notification:', err.message);
+      return { success: false, error: err.message };
+    }
   },
 
   // Send double-opt-in verification link
   async sendVerificationEmail(email, token) {
-    const config = await getMailerConfig();
-    const appUrl = process.env.APP_URL || 'http://localhost:3000';
-    const verifyUrl = `${appUrl}/api/newsletter/verify?token=${token}`;
+    try {
+      const config = await getMailerConfig();
+      const appUrl = process.env.APP_URL || 'http://localhost:3000';
+      const verifyUrl = `${appUrl}/api/newsletter/verify?token=${token}`;
 
-    const mailOptions = {
-      from: config.from,
-      to: email,
-      subject: 'Please Confirm Your Subscription - Embedded India',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-          <div style="background-color: #007f5f; padding: 20px; color: white;">
-            <h2 style="margin: 0;">Embedded India Newsletter</h2>
-            <p style="margin: 5px 0 0; opacity: 0.9;">One step away from your free PCB Design Checklist</p>
-          </div>
-          <div style="padding: 24px; color: #192c27;">
-            <p>Hello,</p>
-            <p>Thank you for subscribing to Embedded India's weekly technical digest. Please confirm your email address to unlock your free copy of <strong>The 2026 Embedded Hardware & Firmware Design Checklist</strong>.</p>
-            <div style="margin: 30px 0; text-align: center;">
-              <a href="${verifyUrl}" style="background: #007f5f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Confirm My Subscription & Download PDF</a>
+      const mailOptions = {
+        from: config.from,
+        to: email,
+        subject: 'Please Confirm Your Subscription - Embedded India',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #007f5f; padding: 20px; color: white;">
+              <h2 style="margin: 0;">Embedded India Newsletter</h2>
+              <p style="margin: 5px 0 0; opacity: 0.9;">One step away from your free PCB Design Checklist</p>
             </div>
-            <p style="font-size: 13px; color: #64748b;">Or copy and paste this link into your browser: <br><a href="${verifyUrl}">${verifyUrl}</a></p>
-            <p style="font-size: 12px; color: #94a3b8; margin-top: 30px;">If you did not request this subscription, you can safely ignore this email.</p>
+            <div style="padding: 24px; color: #192c27;">
+              <p>Hello,</p>
+              <p>Thank you for subscribing to Embedded India's weekly technical digest. Please confirm your email address to unlock your free copy of <strong>The 2026 Embedded Hardware & Firmware Design Checklist</strong>.</p>
+              <div style="margin: 30px 0; text-align: center;">
+                <a href="${verifyUrl}" style="background: #007f5f; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Confirm My Subscription & Download PDF</a>
+              </div>
+              <p style="font-size: 13px; color: #64748b;">Or copy and paste this link into your browser: <br><a href="${verifyUrl}">${verifyUrl}</a></p>
+              <p style="font-size: 12px; color: #94a3b8; margin-top: 30px;">If you did not request this subscription, you can safely ignore this email.</p>
+            </div>
           </div>
-        </div>
-      `,
-      text: `Please confirm your subscription to Embedded India by visiting: ${verifyUrl}`
-    };
+        `,
+        text: `Please confirm your subscription to Embedded India by visiting: ${verifyUrl}`
+      };
 
-    const t = await getTransporter();
-    return t.sendMail(mailOptions);
+      const t = await getTransporter();
+      if (!t) {
+        console.warn('[MAILER] No transporter configured for verification email');
+        return { success: false, error: 'No transporter configured' };
+      }
+      const res = await t.sendMail(mailOptions);
+      return { success: true, messageId: res.messageId };
+    } catch (err) {
+      console.error('[MAILER ERROR] Failed to send verification email:', err.message);
+      return { success: false, error: err.message };
+    }
   },
 
   // Send Lead Magnet PDF directly
   async sendLeadMagnetEmail(email) {
-    const config = await getMailerConfig();
-    const pdfPath = path.join(__dirname, '../../public/downloads/embedded-design-checklist.pdf');
-    const attachments = [];
-    if (fs.existsSync(pdfPath)) {
-      attachments.push({
-        filename: 'Embedded-Design-Checklist-2026.pdf',
-        path: pdfPath
-      });
-    }
+    try {
+      const config = await getMailerConfig();
+      const pdfPath = path.join(__dirname, '../../public/downloads/embedded-design-checklist.pdf');
+      const attachments = [];
+      if (fs.existsSync(pdfPath)) {
+        attachments.push({
+          filename: 'Embedded-Design-Checklist-2026.pdf',
+          path: pdfPath
+        });
+      }
 
-    const mailOptions = {
-      from: config.from,
-      to: email,
-      subject: 'Your Free PDF: Embedded Hardware & Firmware Design Checklist',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-          <div style="background-color: #007f5f; padding: 20px; color: white;">
-            <h2 style="margin: 0;">Welcome to Embedded India!</h2>
-          </div>
-          <div style="padding: 24px; color: #192c27;">
-            <p>Your subscription has been confirmed! As promised, your copy of <strong>The 2026 Embedded Hardware & Firmware Design Checklist</strong> is attached to this email.</p>
-            <p>You will now receive our curated weekly engineering roundups featuring:</p>
-            <ul>
-              <li>High-speed PCB layout techniques (DDR, USB 3.0, Differential Pairs)</li>
-              <li>Firmware architecture, RTOS, and TinyML on microcontrollers</li>
-              <li>Free access to interactive engineering calculators</li>
-            </ul>
-            <div style="margin: 25px 0;">
-              <a href="${process.env.APP_URL || 'http://localhost:3000'}/tools" style="background: #55a630; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Explore Engineering Tools</a>
+      const mailOptions = {
+        from: config.from,
+        to: email,
+        subject: 'Your Free PDF: Embedded Hardware & Firmware Design Checklist',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #007f5f; padding: 20px; color: white;">
+              <h2 style="margin: 0;">Welcome to Embedded India!</h2>
             </div>
-            <p style="font-size: 12px; color: #94a3b8; margin-top: 30px;">To unsubscribe at any time, click <a href="${process.env.APP_URL || 'http://localhost:3000'}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}">here</a>.</p>
+            <div style="padding: 24px; color: #192c27;">
+              <p>Your subscription has been confirmed! As promised, your copy of <strong>The 2026 Embedded Hardware & Firmware Design Checklist</strong> is attached to this email.</p>
+              <p>You will now receive our curated weekly engineering roundups featuring:</p>
+              <ul>
+                <li>High-speed PCB layout techniques (DDR, USB 3.0, Differential Pairs)</li>
+                <li>Firmware architecture, RTOS, and TinyML on microcontrollers</li>
+                <li>Free access to interactive engineering calculators</li>
+              </ul>
+              <div style="margin: 25px 0;">
+                <a href="${process.env.APP_URL || 'http://localhost:3000'}/tools" style="background: #55a630; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Explore Engineering Tools</a>
+              </div>
+              <p style="font-size: 12px; color: #94a3b8; margin-top: 30px;">To unsubscribe at any time, click <a href="${process.env.APP_URL || 'http://localhost:3000'}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}">here</a>.</p>
+            </div>
           </div>
-        </div>
-      `,
-      text: `Your checklist is ready. Download it from the attachment or visit ${process.env.APP_URL || 'http://localhost:3000'}`,
-      attachments
-    };
+        `,
+        text: `Your checklist is ready. Download it from the attachment or visit ${process.env.APP_URL || 'http://localhost:3000'}`,
+        attachments
+      };
 
-    const t = await getTransporter();
-    return t.sendMail(mailOptions);
+      const t = await getTransporter();
+      if (!t) {
+        console.warn('[MAILER] No transporter configured for lead magnet');
+        return { success: false, error: 'No transporter configured' };
+      }
+      const res = await t.sendMail(mailOptions);
+      return { success: true, messageId: res.messageId };
+    } catch (err) {
+      console.error('[MAILER ERROR] Failed to send lead magnet email:', err.message);
+      return { success: false, error: err.message };
+    }
   },
 
   testSmtpConnection

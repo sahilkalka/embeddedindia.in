@@ -87,7 +87,7 @@
         <!-- CTA Buttons (Left Aligned) -->
         <div class="flex flex-col sm:flex-row items-center justify-start gap-4 pt-2">
           <a href="/contact" class="btn-shimmer w-full sm:w-auto px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-black rounded-xl shadow-lg shadow-brand-500/25 border border-white/20 transition transform hover:-translate-y-0.5 text-center text-sm active:scale-95">
-            Start Your Project &rarr;
+            Start your new design experience with us &rarr;
           </a>
           <a href="/tools" class="w-full sm:w-auto px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-extrabold rounded-xl border border-slate-300 dark:border-slate-600 transition shadow-sm text-center flex items-center justify-center space-x-2 text-sm active:scale-95">
             <span>Explore Engineering Tools</span>
@@ -253,6 +253,82 @@ void init_embedded_system(void) {
   </div>
 </section>
 
+<!-- More Than Just Service Section (Value Proposition) -->
+<section class="py-16 bg-white dark:bg-[#0f1c18] border-b border-slate-200/80 dark:border-brand-border/60 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <span class="px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+        Our Value Proposition
+      </span>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+        More than just service
+      </h2>
+      <p class="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300">
+        We engineer enduring electronic product value through proactive design-for-manufacturing, silicon lifecycle sustainment, and dedicated hardware architecture.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Value Prop 1: Performance and Cost Optimization -->
+      <div class="spotlight-card bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-5 text-brand-500 dark:text-accent font-black text-xl">
+            ⚡
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Performance and Cost Optimization</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
+            Strategic component selection, alternative second-sourcing, and architectural power profiling, protecting your profit margins over the product's entire lifecycle.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+            Explore Engineering Benchmarks &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Value Prop 2: Accelerated Time-to-Market -->
+      <div class="spotlight-card bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-5 text-brand-500 dark:text-accent font-black text-xl">
+            🚀
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Accelerated Time-to-Market</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
+            Rapid proof-of-concept prototyping, in-house pre-compliance testing, and modular firmware stacks designed to compress your engineering release cycle.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <a href="/tools" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+            View Design Automation Tools &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Value Prop 3: Full-Cycle Product Realization -->
+      <div class="spotlight-card bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-5 text-brand-500 dark:text-accent font-black text-xl">
+            🎯
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Full-Cycle Product Realization</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
+            From napkin schematic capture and high-speed PCB layout to deterministic RTOS drivers and automated factory test jigs, we deliver end-to-end excellence.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <a href="/services/full-cycle-embedded-product-engineering" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+            Review Turnkey Scope &rarr;
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- Services We Offer Section (Spaceship Style Spotlight Hover Cards) -->
 <section class="py-20 bg-slate-50 dark:bg-brand-dark transition-colors">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -272,19 +348,19 @@ void init_embedded_system(void) {
     <!-- 6 Core Service Cards with Cursor Spotlight Follow -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       
-      <!-- 1. Full-Cycle Product Engineering -->
+      <!-- 1. Full-Cycle Product Realization -->
       <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
         <div>
           <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6">
-            <img src="/assets/images/download-2.svg" alt="Product Realization" class="w-8 h-8" onerror="this.src='/favicon.svg'">
+            <img src="/assets/images/download-2.svg" alt="Full-Cycle Embedded Product Engineering Architecture" class="w-8 h-8" onerror="this.src='/favicon.svg'">
           </div>
           <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Full-Cycle Product Realization</h3>
-          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
             Complete electronic product engineering: schematic capture, BOM optimization, thermal simulation, DFM reviews, and production handover.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/full-cycle-embedded-product-engineering" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
             Learn more &rarr;
           </a>
         </div>
@@ -294,15 +370,15 @@ void init_embedded_system(void) {
       <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
         <div>
           <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6">
-            <img src="/assets/images/download-3.svg" alt="Firmware Development" class="w-8 h-8" onerror="this.src='/favicon.svg'">
+            <img src="/assets/images/download-3.svg" alt="Embedded C/C++ Firmware and RTOS Development" class="w-8 h-8" onerror="this.src='/favicon.svg'">
           </div>
           <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Embedded Software &amp; Firmware</h3>
-          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
             Deterministic bare-metal and RTOS (FreeRTOS, Zephyr) drivers, HAL layers, low-power sleep management, and secure cryptographic bootloaders.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/embedded-software-firmware-development" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
             Learn more &rarr;
           </a>
         </div>
@@ -312,51 +388,51 @@ void init_embedded_system(void) {
       <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
         <div>
           <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6">
-            <img src="/assets/images/download-4.svg" alt="Hardware Design" class="w-8 h-8" onerror="this.src='/favicon.svg'">
+            <img src="/assets/images/download-4.svg" alt="Multi-layer PCB Layout and FPGA Hardware Engineering" class="w-8 h-8" onerror="this.src='/favicon.svg'">
           </div>
           <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Hardware Design &amp; High-Speed PCB</h3>
-          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
             Multi-layer layouts (up to 16+ layers), HDI microvias, controlled impedance traces, differential skew matching, and EMC/EMI pre-compliance.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/hardware-design-engineering" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
             Learn more &rarr;
           </a>
         </div>
       </div>
 
-      <!-- 4. Board Support Package (BSP) -->
+      <!-- 4. Board Support Package (BSP) Development -->
       <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
         <div>
           <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6">
-            <img src="/assets/images/download-5.svg" alt="BSP Development" class="w-8 h-8" onerror="this.src='/favicon.svg'">
+            <img src="/assets/images/download-5.svg" alt="Board Support Package (BSP) and Linux Kernel Porting" class="w-8 h-8" onerror="this.src='/favicon.svg'">
           </div>
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Board Support Package (BSP)</h3>
-          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Board Support Package (BSP) Development</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
             Custom U-Boot bootloader porting, Embedded Linux device trees, custom peripheral drivers (I2C, SPI, CAN, PCIe), and fail-safe FOTA updates.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/bsp-development" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
             Learn more &rarr;
           </a>
         </div>
       </div>
 
-      <!-- 5. IoT & Edge Computing -->
+      <!-- 5. IoT & Edge Computing Solutions -->
       <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
         <div>
           <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6">
-            <img src="/assets/images/download-6.svg" alt="IoT Solutions" class="w-8 h-8" onerror="this.src='/favicon.svg'">
+            <img src="/assets/images/download-6.svg" alt="IoT and Edge Computing Solutions Architecture" class="w-8 h-8" onerror="this.src='/favicon.svg'">
           </div>
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">IoT &amp; Edge AI Solutions</h3>
-          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">IoT and Edge Computing Solutions</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
             Connected sensors with LoRaWAN, Cellular (4G/LTE-M), BLE 5.3, Wi-Fi 6, and on-device TinyML machine learning for predictive vibration monitoring.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/iot-edge-computing-solutions" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
             Learn more &rarr;
           </a>
         </div>
@@ -366,15 +442,15 @@ void init_embedded_system(void) {
       <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
         <div>
           <div class="w-14 h-14 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6">
-            <img src="/assets/images/download-7.svg" alt="Automotive Systems" class="w-8 h-8" onerror="this.src='/favicon.svg'">
+            <img src="/assets/images/download-7.svg" alt="Automotive Embedded Systems and HIL Verification" class="w-8 h-8" onerror="this.src='/favicon.svg'">
           </div>
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Automotive &amp; HIL Testing</h3>
-          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2.5">Automotive Embedded Systems</h3>
+          <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
             Automotive ECUs, CAN-FD / LIN buses, ISO 26262 functional safety compliance, and Hardware-in-the-Loop (HIL) automated test benches.
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/automotive-embedded-systems" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
             Learn more &rarr;
           </a>
         </div>

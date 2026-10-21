@@ -327,7 +327,120 @@
     const mobileMenu = document.getElementById('mobile-menu');
     if (mobileMenuBtn && mobileMenu) {
       mobileMenuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+        const isHidden = mobileMenu.classList.toggle('hidden');
+        mobileMenu.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
+        mobileMenuBtn.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+      });
+    }
+
+    // 5b. Header Quick Search Widget
+    const searchBtn = document.getElementById('header-search-btn');
+    const searchModal = document.getElementById('header-search-modal');
+    const searchClose = document.getElementById('header-search-close');
+    const searchInput = document.getElementById('headerSearchInput');
+    const searchResults = document.getElementById('headerSearchResults');
+
+    const SEARCH_INDEX = [
+      { type: 'Service', title: 'Full-Cycle Product Realization', url: '/services/full-cycle-embedded-product-engineering', desc: 'Turnkey electronic hardware, RTOS firmware, DFM validation' },
+      { type: 'Service', title: 'Embedded Software & Firmware Development', url: '/services/embedded-software-firmware-development', desc: 'Deterministic bare-metal, FreeRTOS, Zephyr drivers' },
+      { type: 'Service', title: 'Hardware Design & High-Speed PCB Layout', url: '/services/hardware-design-engineering', desc: 'Multi-layer PCB, HDI microvias, impedance matching' },
+      { type: 'Service', title: 'Board Support Package (BSP) Development', url: '/services/bsp-development', desc: 'Custom U-Boot, Linux kernel device trees, drivers' },
+      { type: 'Service', title: 'IoT and Edge Computing Solutions', url: '/services/iot-edge-computing-solutions', desc: 'LoRaWAN, 4G, BLE, TinyML predictive vibration' },
+      { type: 'Service', title: 'Automotive Embedded Systems & HIL', url: '/services/automotive-embedded-systems', desc: 'ECUs, CAN-FD, ISO 26262, Hardware-in-the-Loop' },
+      { type: 'Tool', title: 'IPC-2221 PCB Trace Width Calculator', url: '/tools/pcb-trace', desc: 'Copper trace ampacity and thermal cross section' },
+      { type: 'Tool', title: '555 Timer Frequency & Duty Cycle', url: '/tools/555-timer', desc: 'Astable and monostable oscillation calculations' },
+      { type: 'Tool', title: 'LED Series Current Limiting Resistor', url: '/tools/led-resistor', desc: 'Forward drop and power dissipation calculator' },
+      { type: 'Tool', title: 'UART Baud Rate Error Calculator', url: '/tools/uart-baud', desc: 'Clock divider and framing error tolerances' },
+      { type: 'Tool', title: 'SMD Resistor 3/4-Digit & EIA-96 Code Decoder', url: '/tools/smd-code', desc: 'Surface-mount component marking lookup' },
+      { type: 'Tool', title: 'IoT Battery Life & Deep-Sleep Estimator', url: '/tools/battery-life', desc: 'Duty cycle and multi-year cell lifetime' },
+      { type: 'Tool', title: 'Microstrip Controlled Trace Impedance', url: '/tools/trace-impedance', desc: 'Characteristic impedance 50-ohm calculation' },
+      { type: 'Tool', title: 'Microcontroller Pinout & Peripheral Reference', url: '/tools/mcu-pinout', desc: 'STM32, ESP32, and RP2040 pin multiplexing' },
+      { type: 'Blog', title: 'Hardware & Firmware Co-Design', url: '/blogs/bridging-the-divide', desc: 'Aligning hardware and firmware engineering workflows' },
+      { type: 'Blog', title: 'Hardware-in-the-Loop (HIL) Testing', url: '/blogs/hil-testing-mission-critical-systems', desc: 'Automated test rigs for mission-critical validation' },
+      { type: 'Page', title: 'Engineering Services Portfolio', url: '/services', desc: 'All hardware and firmware engineering disciplines' },
+      { type: 'Page', title: 'Client Projects & Case Studies', url: '/projects', desc: 'Bus AC controllers, water dispensers, IoT gateways' },
+      { type: 'Page', title: 'About Embedded India', url: '/about', desc: 'Company vision, precision standards, and engineering presence' },
+      { type: 'Page', title: 'Contact Us & Request Quote', url: '/contact', desc: 'Initiate custom embedded project inquiry' }
+    ];
+
+    function openSearch() {
+      if (!searchModal) return;
+      searchModal.classList.remove('hidden');
+      searchModal.setAttribute('aria-hidden', 'false');
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+      }
+    }
+
+    function closeSearch() {
+      if (!searchModal) return;
+      searchModal.classList.add('hidden');
+      searchModal.setAttribute('aria-hidden', 'true');
+      if (searchInput) searchInput.value = '';
+      if (searchResults) {
+        searchResults.innerHTML = '';
+        searchResults.classList.add('hidden');
+      }
+    }
+
+    if (searchBtn) searchBtn.addEventListener('click', openSearch);
+    if (searchClose) searchClose.addEventListener('click', closeSearch);
+
+    if (searchModal) {
+      searchModal.addEventListener('click', (e) => {
+        if (e.target === searchModal) closeSearch();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openSearch();
+      }
+      if (e.key === 'Escape' && searchModal && !searchModal.classList.contains('hidden')) {
+        closeSearch();
+      }
+    });
+
+    if (searchInput && searchResults) {
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim().toLowerCase();
+        // Do NOT render "No results" on initial page load or when query < 2 chars
+        if (q.length < 2) {
+          searchResults.innerHTML = '';
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        const matches = SEARCH_INDEX.filter(item => 
+          item.title.toLowerCase().includes(q) || 
+          item.desc.toLowerCase().includes(q) ||
+          item.type.toLowerCase().includes(q)
+        );
+
+        searchResults.classList.remove('hidden');
+
+        if (matches.length === 0) {
+          // ONLY show "No results" when query is typed (>= 2 chars) and has 0 matches
+          searchResults.innerHTML = `
+            <div class="p-6 text-center text-slate-500 dark:text-slate-400">
+              <p class="font-bold text-sm">No results found for "${searchInput.value.trim()}"</p>
+              <p class="text-[11px] mt-1 text-slate-400">Try searching for "PCB", "Firmware", "Automotive", "555 Timer", or "CAN".</p>
+            </div>
+          `;
+          return;
+        }
+
+        searchResults.innerHTML = matches.map(item => `
+          <a href="${item.url}" class="block p-3.5 hover:bg-slate-50 dark:hover:bg-brand-dark transition group">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 dark:text-white group-hover:text-brand-500 dark:group-hover:text-accent transition">${item.title}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${item.type}</span>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">${item.desc}</p>
+          </a>
+        `).join('');
       });
     }
 

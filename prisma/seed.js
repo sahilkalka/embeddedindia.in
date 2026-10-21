@@ -27,7 +27,7 @@ async function main() {
   // 2. Default Site Settings
   const initialSettings = [
     { key: 'site_name', value: 'Embedded India' },
-    { key: 'site_tagline', value: 'Think big. We do! - Embedded System Design & Development Services in India' },
+    { key: 'site_tagline', value: 'Think Big. We Do!' },
     { key: 'contact_email', value: 'info@embeddedindia.in' },
     { key: 'contact_phone', value: '+91 98765 43210' },
     { key: 'contact_address', value: 'Bangalore / Hyderabad / Pune, India' },

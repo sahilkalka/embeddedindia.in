@@ -143,14 +143,16 @@
                 </label>
                 <select 
                   name="serviceCategory" 
+                  id="serviceCategorySelect"
                   class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
                 >
-                  <option value="Hardware Design">Hardware Design &amp; PCB Layout</option>
-                  <option value="Firmware/BSP">Firmware &amp; BSP Development</option>
-                  <option value="IoT Solutions">IoT &amp; Edge Gateway Systems</option>
-                  <option value="Automotive">Automotive ECU &amp; HIL Testing</option>
-                  <option value="Full Turnkey">Full Turnkey Product Realization</option>
-                  <option value="Obsolescence">Component Obsolescence Redesign</option>
+                  <% const sel = (typeof selectedService !== 'undefined' ? selectedService : '').toLowerCase(); %>
+                  <option value="Hardware Design" <%= sel.includes('hardware') || sel.includes('pcb') ? 'selected' : '' %>>Hardware Design &amp; PCB Layout</option>
+                  <option value="Firmware/BSP" <%= sel.includes('firmware') || sel.includes('bsp') ? 'selected' : '' %>>Firmware &amp; BSP Development</option>
+                  <option value="IoT Solutions" <%= sel.includes('iot') || sel.includes('edge') ? 'selected' : '' %>>IoT &amp; Edge Gateway Systems</option>
+                  <option value="Automotive" <%= sel.includes('automotive') ? 'selected' : '' %>>Automotive ECU &amp; HIL Testing</option>
+                  <option value="Full Turnkey" <%= sel.includes('turnkey') || sel.includes('full-cycle') || sel.includes('product') ? 'selected' : '' %>>Full Turnkey Product Realization</option>
+                  <option value="Obsolescence" <%= sel.includes('obsolescence') ? 'selected' : '' %>>Component Obsolescence Redesign</option>
                 </select>
               </div>
             </div>
@@ -204,11 +206,29 @@
   </div>
 </section>
 
-<!-- AJAX Submission Script -->
+<!-- AJAX Submission Script & URL Parameter Auto-Select -->
 <script>
   const contactForm = document.getElementById('contact-form');
   const contactStatus = document.getElementById('contact-status-box');
   const submitBtn = document.getElementById('contact-submit-btn');
+
+  // Pre-select service category if URL param `service` is provided
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const serviceParam = urlParams.get('service');
+    if (serviceParam) {
+      const s = serviceParam.toLowerCase();
+      const select = document.getElementById('serviceCategorySelect') || document.querySelector('select[name="serviceCategory"]');
+      if (select) {
+        if (s.includes('hardware') || s.includes('pcb')) select.value = 'Hardware Design';
+        else if (s.includes('firmware') || s.includes('bsp')) select.value = 'Firmware/BSP';
+        else if (s.includes('iot') || s.includes('edge')) select.value = 'IoT Solutions';
+        else if (s.includes('automotive')) select.value = 'Automotive';
+        else if (s.includes('turnkey') || s.includes('full-cycle') || s.includes('product')) select.value = 'Full Turnkey';
+        else if (s.includes('obsolescence')) select.value = 'Obsolescence';
+      }
+    }
+  } catch (e) {}
 
   if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {

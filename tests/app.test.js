@@ -333,4 +333,89 @@ describe('Embedded India Web Application Test Suite', () => {
     });
   });
 
+  describe('QA & Security Hardening Verification', () => {
+    test('GET /login returns 301 redirecting to /admin', async () => {
+      const res = await request(app).get('/login');
+      expect(res.status).toBe(301);
+      expect(res.headers.location).toBe('/admin');
+    });
+
+    test('HTTP Security Headers: x-powered-by disabled, nosniff, frameAncestors none, HSTS present', async () => {
+      const res = await request(app).get('/');
+      expect(res.headers['x-powered-by']).toBeUndefined();
+      expect(res.headers['x-content-type-options']).toBe('nosniff');
+      expect(res.headers['content-security-policy']).toContain("frame-ancestors 'none'");
+      expect(res.headers['strict-transport-security']).toBeDefined();
+    });
+
+    test('GET / contains completed copy for "More than just service" and 6 service links', async () => {
+      const res = await request(app).get('/');
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('More than just service');
+      expect(res.text).toContain('Performance and Cost Optimization');
+      expect(res.text).toContain("protecting your profit margins over the product's entire lifecycle.");
+      expect(res.text).toContain('Accelerated Time-to-Market');
+      expect(res.text).toContain('Start your new design experience with us');
+      expect(res.text).toContain('/services/full-cycle-embedded-product-engineering');
+      expect(res.text).toContain('/services/embedded-software-firmware-development');
+      expect(res.text).toContain('/services/hardware-design-engineering');
+      expect(res.text).toContain('/services/bsp-development');
+      expect(res.text).toContain('/services/iot-edge-computing-solutions');
+      expect(res.text).toContain('/services/automotive-embedded-systems');
+    });
+
+    test('GET /services/:slug renders all 6 detailed service pages with unique SEO titles and canonical tags', async () => {
+      const slugs = [
+        'full-cycle-embedded-product-engineering',
+        'embedded-software-firmware-development',
+        'hardware-design-engineering',
+        'bsp-development',
+        'iot-edge-computing-solutions',
+        'automotive-embedded-systems'
+      ];
+
+      for (const slug of slugs) {
+        const res = await request(app).get(`/services/${slug}`);
+        expect(res.status).toBe(200);
+        expect(res.text).toContain(`/services/${slug}`);
+        expect(res.text).toContain('Request Service Quote');
+      }
+    });
+
+    test('GET /sitemap.xml includes all 6 service routes', async () => {
+      const res = await request(app).get('/sitemap.xml');
+      expect(res.status).toBe(200);
+      expect(res.text).toContain('/services/full-cycle-embedded-product-engineering');
+      expect(res.text).toContain('/services/embedded-software-firmware-development');
+      expect(res.text).toContain('/services/hardware-design-engineering');
+      expect(res.text).toContain('/services/bsp-development');
+      expect(res.text).toContain('/services/iot-edge-computing-solutions');
+      expect(res.text).toContain('/services/automotive-embedded-systems');
+    });
+
+    test('POST /api/contact sanitizes user input against XSS before database persistence', async () => {
+      const xssPayload = '<script>alert("xss")</script>Embedded XSS Test';
+      const testEmail = `xss.test.${Date.now()}@example.com`;
+      const res = await request(app)
+        .post('/api/contact')
+        .send({
+          name: xssPayload,
+          email: testEmail,
+          phone: '+91 9123456789',
+          serviceCategory: 'Hardware Design',
+          subject: '<img src=x onerror=alert(1)>Sanitized Subject',
+          message: '<b>Hello</b> <script>alert(2)</script>Clean Message'
+        });
+
+      expect(res.status).toBe(200);
+      const savedInquiry = await prisma.inquiry.findFirst({ where: { email: testEmail } });
+      expect(savedInquiry).not.toBeNull();
+      expect(savedInquiry.name).not.toContain('<script>');
+      expect(savedInquiry.name).toContain('Embedded XSS Test');
+      expect(savedInquiry.subject).not.toContain('<img');
+      expect(savedInquiry.subject).toContain('Sanitized Subject');
+      expect(savedInquiry.message).not.toContain('<script>');
+    });
+  });
+
 });

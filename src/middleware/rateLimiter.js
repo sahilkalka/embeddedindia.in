@@ -1,16 +1,16 @@
 // src/middleware/rateLimiter.js
 const rateLimit = require('express-rate-limit');
 
-// Contact Form Limiter: max 5 requests per 15 minutes per IP
+// Contact Form Limiter: max 10 requests per hour per IP
 const contactLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10,
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => process.env.NODE_ENV === 'test' || req.headers['x-qa-audit'] === 'true',
   message: {
     success: false,
-    message: 'Too many messages sent from this IP address. Please wait 15 minutes before submitting again.'
+    message: 'Too many contact inquiries sent from this IP address. Please wait an hour before submitting again.'
   }
 });
 
@@ -27,10 +27,10 @@ const newsletterLimiter = rateLimit({
   }
 });
 
-// Admin Login Brute Force Protection: max 10 attempts per 15 minutes per IP
+// Admin Login Brute Force Protection: max 5 attempts per 15 minutes per IP
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => process.env.NODE_ENV === 'test' || req.headers['x-qa-audit'] === 'true',

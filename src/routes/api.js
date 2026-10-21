@@ -2,41 +2,64 @@
 const express = require('express');
 const crypto = require('crypto');
 const router = express.Router();
+const { JSDOM } = require('jsdom');
+const DOMPurify = require('dompurify');
 const prisma = require('../services/db');
 const mailer = require('../services/mailer');
 const { contactLimiter, newsletterLimiter } = require('../middleware/rateLimiter');
 
+const window = new JSDOM('').window;
+const purify = DOMPurify(window);
+
+function sanitizeText(value) {
+  if (value === undefined || value === null) return '';
+  return purify.sanitize(String(value), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }).trim();
+}
+
 // POST /api/contact - Handle Contact Us form
 router.post('/contact', contactLimiter, async (req, res) => {
   try {
-    const { name, email, phone, subject, serviceCategory, message, website_url_trap } = req.body;
+    const { name, email, phone, company, subject, serviceCategory, message, website_url_trap } = req.body;
 
     // Layer 1: Honeypot trap check
-    if (website_url_trap && website_url_trap.trim() !== '') {
+    if (website_url_trap && String(website_url_trap).trim() !== '') {
       console.warn(`[SPAM DETECTED] Honeypot triggered by IP: ${req.ip}`);
       // Pretend success so bot doesn't retry
       return res.json({ success: true, message: 'Thank you for your inquiry! Our engineering team will review it shortly.' });
     }
 
+    // Input Sanitization against XSS
+    const cleanName = sanitizeText(name);
+    const cleanEmail = sanitizeText(email).toLowerCase();
+    const cleanPhone = sanitizeText(phone);
+    const cleanCompany = sanitizeText(company);
+    const cleanSubject = sanitizeText(subject || 'General Engineering Inquiry');
+    const cleanServiceCategory = sanitizeText(serviceCategory || 'General');
+    const cleanMessage = sanitizeText(message);
+
     // Validation
-    if (!name || !email || !message) {
+    if (!cleanName || !cleanEmail || !cleanMessage) {
       return res.status(400).json({ success: false, message: 'Please provide your name, valid email address, and message.' });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({ success: false, message: 'Please provide a valid email address.' });
     }
+
+    const formattedMessage = cleanCompany
+      ? `Company: ${cleanCompany}\n\n${cleanMessage}`
+      : cleanMessage;
 
     // Save to Database
     const inquiry = await prisma.inquiry.create({
       data: {
-        name: name.trim().slice(0, 100),
-        email: email.trim().toLowerCase().slice(0, 150),
-        phone: phone ? phone.trim().slice(0, 30) : null,
-        subject: (subject || 'General Engineering Inquiry').trim().slice(0, 200),
-        serviceCategory: serviceCategory || 'General',
-        message: message.trim().slice(0, 5000),
+        name: cleanName.slice(0, 100),
+        email: cleanEmail.slice(0, 150),
+        phone: cleanPhone ? cleanPhone.slice(0, 30) : null,
+        subject: cleanSubject.slice(0, 200),
+        serviceCategory: cleanServiceCategory.slice(0, 50),
+        message: formattedMessage.slice(0, 5000),
         ipAddress: req.ip
       }
     });
@@ -62,15 +85,15 @@ router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
     const { email, source, honeypot } = req.body;
 
     // Honeypot trap
-    if (honeypot && honeypot.trim() !== '') {
+    if (honeypot && String(honeypot).trim() !== '') {
       return res.json({ success: true, message: 'Subscription request received.' });
     }
 
-    if (!email) {
+    const emailClean = sanitizeText(email).toLowerCase();
+    if (!emailClean) {
       return res.status(400).json({ success: false, message: 'Please provide an email address.' });
     }
 
-    const emailClean = email.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailClean)) {
       return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
@@ -95,13 +118,13 @@ router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
       update: {
         verifyToken,
         status: 'pending',
-        source: source || 'website'
+        source: sanitizeText(source) || 'website'
       },
       create: {
         email: emailClean,
         verifyToken,
         status: 'pending',
-        source: source || 'website'
+        source: sanitizeText(source) || 'website'
       }
     });
 
@@ -134,8 +157,9 @@ router.get('/newsletter/verify', async (req, res) => {
       });
     }
 
+    const cleanToken = sanitizeText(token);
     const subscriber = await prisma.subscriber.findUnique({
-      where: { verifyToken: String(token) }
+      where: { verifyToken: cleanToken }
     });
 
     if (!subscriber) {
@@ -180,8 +204,9 @@ router.get('/newsletter/unsubscribe', async (req, res) => {
   try {
     const { email } = req.query;
     if (email) {
+      const cleanEmail = sanitizeText(email).toLowerCase();
       await prisma.subscriber.updateMany({
-        where: { email: String(email).toLowerCase() },
+        where: { email: cleanEmail },
         data: { status: 'unsubscribed' }
       });
     }
@@ -194,6 +219,7 @@ router.get('/newsletter/unsubscribe', async (req, res) => {
       buttonLink: '/'
     });
   } catch (err) {
+    console.error('[UNSUBSCRIBE ERROR]', err);
     res.status(500).send('Unsubscribe error');
   }
 });

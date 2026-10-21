@@ -25,6 +25,12 @@ router.get('/sitemap.xml', async (req, res) => {
     const staticPages = [
       { path: '/', priority: '1.0', changefreq: 'daily' },
       { path: '/services', priority: '0.9', changefreq: 'weekly' },
+      { path: '/services/full-cycle-embedded-product-engineering', priority: '0.8', changefreq: 'weekly' },
+      { path: '/services/embedded-software-firmware-development', priority: '0.8', changefreq: 'weekly' },
+      { path: '/services/hardware-design-engineering', priority: '0.8', changefreq: 'weekly' },
+      { path: '/services/bsp-development', priority: '0.8', changefreq: 'weekly' },
+      { path: '/services/iot-edge-computing-solutions', priority: '0.8', changefreq: 'weekly' },
+      { path: '/services/automotive-embedded-systems', priority: '0.8', changefreq: 'weekly' },
       { path: '/about', priority: '0.8', changefreq: 'monthly' },
       { path: '/projects', priority: '0.8', changefreq: 'monthly' },
       { path: '/blogs', priority: '0.9', changefreq: 'daily' },
@@ -170,7 +176,7 @@ router.get('/api/og', (req, res) => {
       EMBEDDED <tspan fill="#55a630">INDIA</tspan>
     </text>
     <text x="320" y="610" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="500" fill="#94a3b8">
-      Think big. We do! | embeddedindia.in
+      Think Big. We Do! | embeddedindia.in
     </text>
     <text x="1000" y="610" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="600" fill="#80b918">
       ENGINEERING HUB
