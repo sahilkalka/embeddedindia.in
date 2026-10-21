@@ -135,3 +135,5 @@ No. `app.js` runs a self-healing permissions function on startup that grants wri
 1. Run `npm run pack:cpanel` on your computer.
 2. In cPanel File Manager, upload and extract `embeddedindia-cpanel-deploy.zip` over your existing folder.
 3. In cPanel Node.js App UI, click **Run NPM Install** and then click **Restart**.
+source /home/jiazxebj/nodevenv/embeddedindia/22/bin/activate && cd /home/jiazxebj/embeddedindia
+bash server-deploy.sh update
