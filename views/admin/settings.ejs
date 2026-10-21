@@ -1,0 +1,607 @@
+<%- include('layout_top') %>
+
+<div class="max-w-4xl space-y-8">
+  
+  <div>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2">
+      <span>⚙️ Global System, SMTP &amp; Account Settings</span>
+    </h1>
+    <p class="text-xs text-slate-500 mt-1">Configure company metadata, outgoing SMTP mailer, AdSense monetization, and administrative accounts</p>
+  </div>
+
+  <% if (success) { %>
+    <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center space-x-2 shadow-sm">
+      <span>✅ System configuration settings saved successfully!</span>
+    </div>
+  <% } %>
+
+  <!-- Main Settings Form -->
+  <form action="/admin/settings" method="POST" class="space-y-8">
+    
+    <!-- 1. General Company Information -->
+    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-4">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white border-b border-slate-100 dark:border-brand-border pb-2">
+        1. Company &amp; Contact Metadata
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Company / Brand Name</label>
+          <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Primary Inquiries Email</label>
+          <input type="email" name="contact_email" value="<%= settings.contact_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Phone / WhatsApp</label>
+          <input type="text" name="contact_phone" value="<%= settings.contact_phone || '+91 98765 43210' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Offices &amp; Locations</label>
+          <input type="text" name="contact_address" value="<%= settings.contact_address || 'Bangalore / Hyderabad / Pune, India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+      </div>
+
+      <!-- Homepage Hero Content -->
+      <div class="pt-3 border-t border-slate-100 dark:border-brand-border/60 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hero Main Heading</label>
+            <input type="text" name="hero_title" value="<%= settings.hero_title || 'Think Big.' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hero Subheading Prefix</label>
+            <input type="text" name="hero_subtitle" value="<%= settings.hero_subtitle || 'We Engineer:' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hero Description Paragraph</label>
+          <textarea name="hero_description" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs"><%= settings.hero_description || 'From early napkin architecture and high-speed PCB layouts to deterministic RTOS firmware, HIL automated testing, and volume SMT manufacturing.' %></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Outgoing Mail Server (SMTP) Configuration & Test -->
+    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+            2. Outgoing Mail Server (SMTP) Configuration
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Used for consultation inquiries, newsletter double opt-in, and automated engineering digests</p>
+        </div>
+        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+          SMTP Service
+        </span>
+      </div>
+
+      <!-- Quick Preset Helper Buttons -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-[11px] font-bold text-slate-500 mr-1">Quick Presets:</span>
+        <button type="button" onclick="setSmtpPreset('gmail')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-brand-border">
+          Gmail (smtp.gmail.com:587)
+        </button>
+        <button type="button" onclick="setSmtpPreset('sendgrid')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-brand-border">
+          SendGrid (smtp.sendgrid.net:587)
+        </button>
+        <button type="button" onclick="setSmtpPreset('mock')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-brand-border">
+          Dev / Local Mock
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">SMTP Host Server</label>
+          <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com or smtp.sendgrid.net" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Port</label>
+          <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" placeholder="587 or 465" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Encryption Protocol</label>
+          <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+            <option value="false" <%= settings.smtp_secure !== 'true' ? 'selected' : '' %>>STARTTLS (Port 587 / 25)</option>
+            <option value="true" <%= settings.smtp_secure === 'true' ? 'selected' : '' %>>SSL / TLS Direct (Port 465)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">SMTP Username / Email</label>
+          <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="mailer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">SMTP Password / App Key</label>
+          <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••••••" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sender Display Name</label>
+          <input type="text" name="smtp_from_name" value="<%= settings.smtp_from_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Sender Email Address</label>
+          <input type="email" name="smtp_from_email" value="<%= settings.smtp_from_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+      </div>
+
+      <!-- Live Test SMTP Connection Box -->
+      <div class="pt-4 border-t border-slate-100 dark:border-brand-border/60 space-y-3">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300">
+          🧪 Test SMTP Configuration &amp; Dispatch Verification Email
+        </label>
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+          <input type="email" id="smtpTestRecipient" value="<%= settings.contact_email || 'admin@embeddedindia.in' %>" placeholder="Recipient email for test delivery" class="flex-1 w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs">
+          <button type="button" id="btnTestSmtp" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-2 whitespace-nowrap active:scale-95 shadow">
+            <span>✉ Test SMTP Connection</span>
+          </button>
+        </div>
+        <div id="smtpTestResult" class="hidden p-3.5 rounded-xl text-xs font-mono"></div>
+      </div>
+    </div>
+
+    <!-- 3. Monetization & Ad Account Validation -->
+    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
+        <div>
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+            3. Monetization &amp; Ad Account Validation (Google AdSense)
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">Validate your publisher account, enforce ad slot injection, and generate compliant ads.txt</p>
+        </div>
+        <span class="text-[10px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold px-2.5 py-1 rounded-full uppercase">
+          Monetization
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Enable Google AdSense Slots</label>
+          <select id="enable_adsense" name="enable_adsense" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+            <option value="false" <%= settings.enable_adsense === 'false' ? 'selected' : '' %>>Disabled</option>
+            <option value="true" <%= settings.enable_adsense === 'true' ? 'selected' : '' %>>Enabled</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Google AdSense Publisher ID</label>
+          <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || 'ca-pub-2644536267352236' %>" placeholder="ca-pub-2644536267352236" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono font-semibold">
+        </div>
+      </div>
+
+      <!-- Ad Account Validation Feature -->
+      <div class="p-4 bg-slate-50 dark:bg-brand-dark/50 rounded-xl border border-slate-200 dark:border-brand-border/60 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-xs font-bold text-slate-900 dark:text-white block">Ad Account &amp; ads.txt Verification</span>
+            <span class="text-[11px] text-slate-500">Validates your publisher account syntax and creates the required root <code class="text-brand-500">/ads.txt</code> record</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" id="btnValidateAd" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl transition shadow active:scale-95 flex items-center space-x-1.5">
+              <span>⚡ Validate Ad Account &amp; Sync ads.txt</span>
+            </button>
+            <a href="/ads.txt" target="_blank" class="px-3 py-2 bg-slate-100 dark:bg-brand-surface hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-brand-border transition">
+              View /ads.txt &nearr;
+            </a>
+          </div>
+        </div>
+        <div id="adValidationResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
+      </div>
+    </div>
+
+    <!-- 4. Native Internal Promo Banners -->
+    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-4">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white border-b border-slate-100 dark:border-brand-border pb-2">
+        4. Native Internal Promotion Banner
+      </h2>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Status</label>
+        <select name="promo_banner_active" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+          <option value="true" <%= settings.promo_banner_active === 'true' ? 'selected' : '' %>>Active (Show on header announcement)</option>
+          <option value="false" <%= settings.promo_banner_active === 'false' ? 'selected' : '' %>>Hidden</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Banner Title / Pitch</label>
+        <input type="text" name="promo_banner_title" value="<%= settings.promo_banner_title || '' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Call-to-Action Text</label>
+          <input type="text" name="promo_banner_cta" value="<%= settings.promo_banner_cta || 'Book an Engineering Feasibility Call' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-semibold">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Destination URL (with UTM)</label>
+          <input type="text" name="promo_banner_url" value="<%= settings.promo_banner_url || '/contact?service=Hardware%20Design' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Button for Main Form -->
+    <div class="pt-2">
+      <button type="submit" class="px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm transition shadow-lg active:scale-95">
+        Save Global Configuration
+      </button>
+    </div>
+
+  </form>
+
+  <!-- 5. Administrator & Staff Accounts Management Panel (Validate & Add Account) -->
+  <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+    <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
+      <div>
+        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+          5. Team &amp; Administrator Account Management
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">Validate account credentials, assign roles, and grant admin access to engineering staff</p>
+      </div>
+      <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+        Access Control
+      </span>
+    </div>
+
+    <!-- Existing Accounts Table -->
+    <div class="overflow-x-auto rounded-xl border admin-table-container">
+      <table class="w-full text-left text-xs">
+        <thead class="admin-table-head uppercase font-bold text-[10px] tracking-wider">
+          <tr>
+            <th class="py-2.5 px-3">Account Email</th>
+            <th class="py-2.5 px-3">Username</th>
+            <th class="py-2.5 px-3">Role</th>
+            <th class="py-2.5 px-3">Created</th>
+            <th class="py-2.5 px-3 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody" class="admin-table-body divide-y text-slate-700 dark:text-slate-300">
+          <% (users || []).forEach(u => { %>
+            <tr id="user-row-<%= u.id %>">
+              <td class="py-3 px-3 font-semibold text-slate-900 dark:text-white">
+                <%= u.email %>
+                <% if (currentUser && currentUser.userId === u.id) { %>
+                  <span class="ml-1.5 px-1.5 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded text-[9px] font-bold">You</span>
+                <% } %>
+              </td>
+              <td class="py-3 px-3 font-mono text-[11px]"><%= u.username %></td>
+              <td class="py-3 px-3">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <%= u.role === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300' %>">
+                  <%= u.role %>
+                </span>
+              </td>
+              <td class="py-3 px-3 text-slate-500 text-[11px]">
+                <%= new Date(u.createdAt).toLocaleDateString() %>
+              </td>
+              <td class="py-3 px-3 text-right">
+                <% if (!currentUser || currentUser.userId !== u.id) { %>
+                  <button type="button" onclick="deleteAccount('<%= u.id %>')" class="text-red-500 hover:text-red-700 font-bold text-[11px]">
+                    Remove
+                  </button>
+                <% } else { %>
+                  <span class="text-slate-400 text-[10px]">Active</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Validate & Add New Account Card -->
+    <div class="p-5 bg-slate-50 dark:bg-brand-dark/40 rounded-xl border border-slate-200 dark:border-brand-border/60 space-y-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs font-bold text-slate-900 dark:text-white">➕ Add &amp; Validate New Account</span>
+        <span class="text-[10px] text-slate-500">(Enforces email format, uniqueness, and strong password checks)</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <div class="sm:col-span-2">
+          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Staff Email</label>
+          <input type="email" id="newAccountEmail" placeholder="engineer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Role</label>
+          <select id="newAccountRole" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-semibold">
+            <option value="admin">Administrator (Full Access)</option>
+            <option value="editor">Content Editor (Blogs only)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Password (Min 8 chars)</label>
+          <input type="password" id="newAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+        <button type="button" id="btnAddAccount" class="w-full sm:w-auto px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl transition shadow active:scale-95 flex items-center justify-center space-x-1.5">
+          <span>⚡ Validate &amp; Create Account</span>
+        </button>
+        <span class="text-[10px] text-slate-500">Account password is encrypted with salt rounds via bcrypt</span>
+      </div>
+
+      <div id="addAccountResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
+    </div>
+
+    <!-- Change Password Card for Currently Logged-in Staff -->
+    <div class="p-5 bg-slate-50 dark:bg-brand-dark/40 rounded-xl border border-slate-200 dark:border-brand-border/60 space-y-4">
+      <div class="flex items-center space-x-2">
+        <span class="text-xs font-bold text-slate-900 dark:text-white">🔑 Change Your Active Account Password</span>
+        <span class="text-[10px] text-slate-500">(Updates credentials for <%= currentUser ? currentUser.email : 'your active session' %>)</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">Current Password</label>
+          <input type="password" id="currentAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">New Password (Min 8 characters)</label>
+          <input type="password" id="updatedAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-mono">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-1">
+        <button type="button" id="btnChangePassword" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition shadow active:scale-95 flex items-center space-x-1.5">
+          <span>Update Password</span>
+        </button>
+      </div>
+
+      <div id="changePassResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // 1. SMTP Preset Autofill
+  function setSmtpPreset(type) {
+    if (type === 'gmail') {
+      document.getElementById('smtp_host').value = 'smtp.gmail.com';
+      document.getElementById('smtp_port').value = '587';
+      document.getElementById('smtp_secure').value = 'false';
+    } else if (type === 'sendgrid') {
+      document.getElementById('smtp_host').value = 'smtp.sendgrid.net';
+      document.getElementById('smtp_port').value = '587';
+      document.getElementById('smtp_secure').value = 'false';
+      document.getElementById('smtp_user').value = 'apikey';
+    } else if (type === 'mock') {
+      document.getElementById('smtp_host').value = 'localhost';
+      document.getElementById('smtp_port').value = '1025';
+      document.getElementById('smtp_secure').value = 'false';
+      document.getElementById('smtp_user').value = 'mock';
+      document.getElementById('smtp_pass').value = 'mock';
+    }
+  }
+
+  // 2. Test SMTP Connection
+  const btnTestSmtp = document.getElementById('btnTestSmtp');
+  const smtpTestRecipient = document.getElementById('smtpTestRecipient');
+  const smtpTestResult = document.getElementById('smtpTestResult');
+
+  if (btnTestSmtp) {
+    btnTestSmtp.addEventListener('click', async () => {
+      smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block';
+      smtpTestResult.innerHTML = '<span class="animate-pulse">🔄 Performing socket connection, TLS handshake, and dispatching verification email...</span>';
+      btnTestSmtp.disabled = true;
+
+      const payload = {
+        host: document.getElementById('smtp_host').value,
+        port: document.getElementById('smtp_port').value,
+        secure: document.getElementById('smtp_secure').value,
+        user: document.getElementById('smtp_user').value,
+        pass: document.getElementById('smtp_pass').value,
+        toEmail: smtpTestRecipient.value || document.getElementById('smtp_user').value
+      };
+
+      try {
+        const res = await fetch('/admin/settings/test-smtp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block space-y-1 shadow-sm';
+          smtpTestResult.innerHTML = `
+            <div class="font-bold text-sm">✅ SMTP Connection &amp; Delivery Successful!</div>
+            <div class="mt-1">${data.message || 'Verification test email dispatched successfully.'}</div>
+            <div class="text-[10px] text-slate-500 font-mono">Message ID: ${data.messageId}</div>
+          `;
+        } else {
+          smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block space-y-1';
+          smtpTestResult.innerHTML = `
+            <div class="font-bold text-sm">❌ SMTP Handshake Error</div>
+            <div>${data.error}</div>
+          `;
+        }
+      } catch (err) {
+        smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+        smtpTestResult.innerHTML = `❌ <strong>Network Error:</strong> ${err.message}`;
+      } finally {
+        btnTestSmtp.disabled = false;
+      }
+    });
+  }
+
+  // 3. Validate Ad Account & ads.txt Sync
+  const btnValidateAd = document.getElementById('btnValidateAd');
+  const adValidationResult = document.getElementById('adValidationResult');
+
+  if (btnValidateAd) {
+    btnValidateAd.addEventListener('click', async () => {
+      const pubId = document.getElementById('adsense_pub_id').value.trim();
+      adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block animate-pulse';
+      adValidationResult.textContent = 'Validating Google AdSense publisher syntax and generating /ads.txt...';
+      btnValidateAd.disabled = true;
+
+      try {
+        const res = await fetch('/admin/settings/validate-ad-account', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pubId })
+        });
+        const data = await res.json();
+        if (data.success) {
+          adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block space-y-1';
+          adValidationResult.innerHTML = `
+            <div class="font-bold text-sm">✅ Ad Account Validated &amp; Verified!</div>
+            <div><strong>Publisher ID:</strong> ${data.pubId}</div>
+            <div><strong>ads.txt Record:</strong> <code>${data.adsTxtLine}</code></div>
+            <div class="mt-1 text-[11px] text-emerald-700 dark:text-emerald-400">
+              Successfully generated and served at <a href="${data.adsTxtUrl}" target="_blank" class="underline font-bold">/ads.txt</a>
+            </div>
+          `;
+          document.getElementById('enable_adsense').value = 'true';
+        } else {
+          adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+          adValidationResult.innerHTML = `❌ <strong>Ad Account Validation Failed:</strong> ${data.error}`;
+        }
+      } catch (err) {
+        adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+        adValidationResult.innerHTML = `❌ <strong>Request Failed:</strong> ${err.message}`;
+      } finally {
+        btnValidateAd.disabled = false;
+      }
+    });
+  }
+
+  // 4. Validate & Add Account Feature
+  const btnAddAccount = document.getElementById('btnAddAccount');
+  const addAccountResult = document.getElementById('addAccountResult');
+
+  if (btnAddAccount) {
+    btnAddAccount.addEventListener('click', async () => {
+      const email = document.getElementById('newAccountEmail').value.trim();
+      const password = document.getElementById('newAccountPass').value;
+      const role = document.getElementById('newAccountRole').value;
+
+      if (!email) {
+        alert('Please enter an account email address.');
+        return;
+      }
+      if (!password || password.length < 8) {
+        alert('Password must be at least 8 characters long.');
+        return;
+      }
+
+      addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block animate-pulse';
+      addAccountResult.textContent = 'Validating email uniqueness and hashing credentials...';
+      btnAddAccount.disabled = true;
+
+      try {
+        const res = await fetch('/admin/settings/add-account', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role })
+        });
+        const data = await res.json();
+        if (data.success) {
+          addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block';
+          addAccountResult.innerHTML = `✅ <strong>${data.message}</strong>`;
+
+          // Append to table
+          const tbody = document.getElementById('usersTableBody');
+          const row = document.createElement('tr');
+          row.id = `user-row-${data.user.id}`;
+          row.innerHTML = `
+            <td class="py-3 px-3 font-semibold text-slate-900 dark:text-white">${data.user.email}</td>
+            <td class="py-3 px-3 font-mono text-[11px]">${data.user.username}</td>
+            <td class="py-3 px-3">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${data.user.role === 'admin' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'}">
+                ${data.user.role}
+              </span>
+            </td>
+            <td class="py-3 px-3 text-slate-500 text-[11px]">${new Date().toLocaleDateString()}</td>
+            <td class="py-3 px-3 text-right">
+              <button type="button" onclick="deleteAccount('${data.user.id}')" class="text-red-500 hover:text-red-700 font-bold text-[11px]">Remove</button>
+            </td>
+          `;
+          tbody.prepend(row);
+
+          // Clear inputs
+          document.getElementById('newAccountEmail').value = '';
+          document.getElementById('newAccountPass').value = '';
+        } else {
+          addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+          addAccountResult.innerHTML = `❌ <strong>Account Validation Error:</strong> ${data.error}`;
+        }
+      } catch (err) {
+        addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+        addAccountResult.innerHTML = `❌ <strong>Request Failed:</strong> ${err.message}`;
+      } finally {
+        btnAddAccount.disabled = false;
+      }
+    });
+  }
+
+  // 5. Delete Account Function
+  async function deleteAccount(id) {
+    if (!confirm('Are you sure you want to remove this staff account?')) return;
+    try {
+      const res = await fetch('/admin/settings/delete-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById(`user-row-${id}`)?.remove();
+      } else {
+        alert(data.error || 'Failed to remove account.');
+      }
+    } catch (e) {
+      alert('Error removing account: ' + e.message);
+    }
+  }
+
+  // 6. Change Password Function
+  const btnChangePassword = document.getElementById('btnChangePassword');
+  const changePassResult = document.getElementById('changePassResult');
+  if (btnChangePassword) {
+    btnChangePassword.addEventListener('click', async () => {
+      const currentPassword = document.getElementById('currentAccountPass').value;
+      const newPassword = document.getElementById('updatedAccountPass').value;
+
+      if (!currentPassword || !newPassword) {
+        changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+        changePassResult.textContent = 'Please fill out both current and new password.';
+        return;
+      }
+
+      btnChangePassword.disabled = true;
+      try {
+        const res = await fetch('/admin/settings/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (data.success) {
+          changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block';
+          changePassResult.textContent = '✅ ' + data.message;
+          document.getElementById('currentAccountPass').value = '';
+          document.getElementById('updatedAccountPass').value = '';
+        } else {
+          changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+          changePassResult.textContent = '❌ ' + data.error;
+        }
+      } catch (err) {
+        changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+        changePassResult.textContent = '❌ Request failed: ' + err.message;
+      } finally {
+        btnChangePassword.disabled = false;
+      }
+    });
+  }
+</script>
+
+<%- include('layout_bottom') %>

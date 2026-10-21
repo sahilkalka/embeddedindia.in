@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-palette="emerald">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title><%= seo.title %></title>
+  <meta name="description" content="<%= seo.description %>">
+  <meta name="keywords" content="<%= seo.keywords %>">
+  <link rel="canonical" href="<%= seo.canonical %>">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- OpenGraph & Twitter Cards -->
+  <meta property="og:type" content="<%= seo.ogType || 'website' %>">
+  <meta property="og:site_name" content="<%= seo.siteName %>">
+  <meta property="og:title" content="<%= seo.title %>">
+  <meta property="og:description" content="<%= seo.description %>">
+  <meta property="og:url" content="<%= seo.canonical %>">
+  <meta property="og:image" content="<%= seo.ogImage %>">
+  <meta name="twitter:card" content="<%= seo.twitterCard || 'summary_large_image' %>">
+  <meta name="twitter:title" content="<%= seo.title %>">
+  <meta name="twitter:description" content="<%= seo.description %>">
+  <meta name="twitter:image" content="<%= seo.ogImage %>">
+
+  <!-- JSON-LD Structured Data -->
+  <% if (seo.structuredData) { %>
+    <script type="application/ld+json">
+      <%- JSON.stringify(seo.structuredData) %>
+    </script>
+  <% } %>
+
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!-- Highlight.js syntax highlighting theme for code blocks -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+
+  <!-- Inline Script to apply dark mode & color scheme instantly and prevent flickering -->
+  <script>
+    // Theme Mode (Dark/Light)
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    // Modern 4 Color Schemes (Emerald, Cyan, Amber, Violet)
+    const savedPalette = localStorage.getItem('color-palette') || 'emerald';
+    document.documentElement.setAttribute('data-palette', savedPalette);
+  </script>
+</head>
+<body class="bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Announcement Bar (optional promo) -->
+  <% if (settings.promo_banner_active === 'true') { %>
+    <aside aria-label="Announcement" class="bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white text-xs sm:text-sm py-1.5 px-4 text-left sm:text-center font-bold flex items-center justify-between sm:justify-center space-x-2 shadow-sm border-b border-black/10 dark:border-white/10">
+      <div class="flex items-center space-x-2">
+        <span class="bg-white/20 text-white px-2 py-0.5 rounded-full text-[10px] tracking-wider uppercase font-black animate-pulse">New</span>
+        <span class="text-white drop-shadow-sm font-bold"><%= settings.promo_banner_title %></span>
+      </div>
+      <a href="<%= settings.promo_banner_url %>" class="underline hover:text-white/80 text-white font-black ml-2 inline-flex items-center group drop-shadow-sm">
+        <span><%= settings.promo_banner_cta %></span>
+        <span class="inline-block transform group-hover:translate-x-1 transition ml-1">&rarr;</span>
+      </a>
+    </aside>
+  <% } %>
+
+  <!-- Navigation Header -->
+  <header class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/98 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
+      
+      <!-- Brand Logo (Vector Icon + Semantic HTML Typography) -->
+      <a href="/" class="flex items-center space-x-2 sm:space-x-3 group flex-shrink-0">
+        <!-- Iconic Spaceship Delta Arrowhead Brandmark -->
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent p-0.5 shadow-md shadow-brand-500/20 group-hover:shadow-brand-500/40 transition duration-300 transform group-hover:scale-105 icon-bounce-container flex-shrink-0">
+          <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[8px] sm:rounded-[10px] flex items-center justify-center p-1.5 sm:p-2">
+            <svg id="siteBrandmarkSvg" class="w-full h-full text-brand-500 dark:text-accent transition-colors duration-300" viewBox="0 0 32 32" fill="currentColor">
+              <path d="M16 3C16.8 3 17.5 3.4 18 4.2L28.5 21.8C29.2 23 28.7 24.5 27.5 25.2C27.1 25.4 26.6 25.5 26.1 25.5H19.8C18.7 25.5 17.7 24.8 17.3 23.8L16 20.3L14.7 23.8C14.3 24.8 13.3 25.5 12.2 25.5H5.9C4.5 25.5 3.4 24.4 3.4 23C3.4 22.5 3.5 22.1 3.8 21.8L14 4.2C14.5 3.4 15.2 3 16 3Z"/>
+            </svg>
+          </div>
+        </div>
+        <!-- Semantic Brand Typography (High Contrast in Light and Dark) -->
+        <div class="flex flex-col">
+          <div class="text-base sm:text-2xl font-black tracking-tight leading-none text-slate-900 dark:text-white flex items-center">
+            <% const headerParts = (settings.site_name || 'Embedded India').split(' '); %>
+            <span><%= headerParts[0] %></span>
+            <% if (headerParts.length > 1) { %>
+              <span class="text-brand-500 dark:text-accent ml-1 sm:ml-1.5 font-black"><%= headerParts.slice(1).join(' ') %></span>
+            <% } %>
+          </div>
+          <span class="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-300 mt-0.5 sm:mt-1">Engineering Hub</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu with Smooth Indicator Lines -->
+      <nav class="hidden md:flex items-center space-x-7 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
+        <a href="/" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Home</a>
+        <a href="/services" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/services') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Services</a>
+        <a href="/projects" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/projects') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Projects</a>
+        <a href="/tools" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 flex items-center <%= currentPath.startsWith('/tools') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">
+          <span>Engineering Tools</span>
+          <span class="ml-1.5 px-1.5 py-0.5 text-[10px] bg-accent/20 text-accent dark:bg-accent/30 rounded font-bold uppercase tracking-wider animate-float-subtle">Hub</span>
+        </a>
+        <a href="/blogs" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/blogs') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Blogs</a>
+        <a href="/about" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/about' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">About</a>
+        <a href="/contact" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/contact' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Contact Us</a>
+      </nav>
+
+      <!-- Right Controls: Compact Color Scheme Dropdown, Theme Toggle & CTA -->
+      <div class="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0 ml-auto pl-2 sm:pl-0">
+        
+        <!-- Modern Compact Accent Color Dropdown -->
+        <div class="relative" id="palette-dropdown-wrapper">
+          <button id="palette-dropdown-btn" type="button" aria-label="Select accent color" aria-expanded="false" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95 flex items-center space-x-1 sm:space-x-1.5" title="Accent Color Scheme">
+            <!-- Palette Icon -->
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
+            </svg>
+            <span id="active-scheme-dot" class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 transition-colors shadow-xs" style="background-color: #007f5f;"></span>
+            <svg id="palette-chevron" class="w-3 h-3 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Floating Dropdown Menu -->
+          <div id="palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl shadow-2xl py-1.5 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150">
+            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider palette-header-label">
+              Accent Scheme
+            </div>
+            <button type="button" data-scheme="emerald" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition rounded-lg">
+              <span class="flex items-center space-x-2.5">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#007f5f] shadow-xs flex-shrink-0"></span>
+                <span>Cyber Emerald</span>
+              </span>
+              <span class="scheme-check hidden text-[#007f5f] font-bold text-xs">✓</span>
+            </button>
+            <button type="button" data-scheme="cyan" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition rounded-lg">
+              <span class="flex items-center space-x-2.5">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#0284c7] shadow-xs flex-shrink-0"></span>
+                <span>Quantum Cyan</span>
+              </span>
+              <span class="scheme-check hidden text-[#0284c7] font-bold text-xs">✓</span>
+            </button>
+            <button type="button" data-scheme="spacegrey" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition rounded-lg">
+              <span class="flex items-center space-x-2.5">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#475569] shadow-xs flex-shrink-0"></span>
+                <span>Space Grey</span>
+              </span>
+              <span class="scheme-check hidden text-[#475569] font-bold text-xs">✓</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dark / Light Mode Toggle Button -->
+        <button id="theme-toggle" type="button" aria-label="Toggle theme" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95">
+          <!-- Moon Icon (for Dark) -->
+          <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+          <!-- Sun Icon (for Light) -->
+          <svg id="theme-toggle-light-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+
+        <!-- Admin / CTA -->
+        <% if (locals.currentUser) { %>
+          <a href="/admin" class="hidden sm:inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold rounded-xl text-sm hover:border-brand-500 transition active:scale-95 shadow-sm">
+            Admin Panel
+          </a>
+        <% } else { %>
+          <a href="/contact" class="btn-shimmer hidden sm:inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5">
+            <span>Request Quote</span>
+          </a>
+        <% } %>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu" class="md:hidden p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-brand-surface rounded-lg sm:rounded-xl border border-slate-200 dark:border-[#1e3831] active:scale-95">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 dark:border-brand-border bg-white dark:bg-[#13221f] px-4 pt-3 pb-6 space-y-2 text-base font-semibold">
+      <a href="/" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath === '/' ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Home</a>
+      <a href="/services" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/services') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Services</a>
+      <a href="/projects" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/projects') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Projects</a>
+      <a href="/tools" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface text-accent font-bold">Engineering Tools (Calculators)</a>
+      <a href="/blogs" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/blogs') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Blogs</a>
+      <a href="/about" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath === '/about' ? 'text-brand-500 dark:text-accent font-bold' : '' %>">About</a>
+      <a href="/contact" class="block px-3 py-2 rounded-lg bg-brand-500 text-white text-center mt-2 font-bold btn-shimmer">Contact Us</a>
+
+      <!-- Compact Mobile Color Scheme Selector -->
+      <div class="pt-3 mt-3 border-t border-slate-200 dark:border-slate-800/80">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Accent Color</div>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" data-scheme="emerald" class="palette-btn flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-xs font-semibold text-slate-700 dark:text-slate-200 active:scale-95 transition">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#007f5f]"></span>
+            <span>Emerald</span>
+            <span class="scheme-check hidden text-[#007f5f] font-bold text-xs">✓</span>
+          </button>
+          <button type="button" data-scheme="cyan" class="palette-btn flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-xs font-semibold text-slate-700 dark:text-slate-200 active:scale-95 transition">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#0284c7]"></span>
+            <span>Cyan</span>
+            <span class="scheme-check hidden text-[#0284c7] font-bold text-xs">✓</span>
+          </button>
+          <button type="button" data-scheme="spacegrey" class="palette-btn flex items-center justify-center space-x-1.5 py-2 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/90 text-xs font-semibold text-slate-700 dark:text-slate-200 active:scale-95 transition">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#475569]"></span>
+            <span>Slate</span>
+            <span class="scheme-check hidden text-[#475569] font-bold text-xs">✓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow">

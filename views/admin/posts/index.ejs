@@ -1,0 +1,72 @@
+<%- include('../layout_top') %>
+
+<div class="space-y-6">
+  
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Engineering Blog CMS</h1>
+      <p class="text-xs text-slate-500 mt-1">Create, edit, schedule, and optimize technical articles</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2.5">
+      <a href="/admin/ai" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center space-x-1.5 active:scale-95">
+        <span>🤖 AI Engine Studio</span>
+      </a>
+      <a href="/admin/posts/new" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs transition shadow flex items-center space-x-2 active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span>Write New Article</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="rounded-2xl border overflow-hidden shadow-sm admin-table-container">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="admin-table-head uppercase font-bold text-[11px] tracking-wider">
+          <tr>
+            <th class="p-4">Title</th>
+            <th class="p-4">Category</th>
+            <th class="p-4">Status</th>
+            <th class="p-4">Views</th>
+            <th class="p-4">Published / Scheduled</th>
+            <th class="p-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="admin-table-body divide-y">
+          <% posts.forEach(post => { %>
+            <tr class="transition">
+              <td class="p-4 font-bold text-slate-900 dark:text-white max-w-xs truncate">
+                <a href="/blogs/<%= post.slug %>" target="_blank" class="hover:text-emerald-500 transition">
+                  <%= post.title %>
+                </a>
+              </td>
+              <td class="p-4">
+                <span class="px-2.5 py-1 rounded-md text-[10px] font-semibold admin-badge-category">
+                  <%= post.category %>
+                </span>
+              </td>
+              <td class="p-4">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase <%= post.status === 'published' ? 'admin-badge-published' : post.status === 'scheduled' ? 'admin-badge-scheduled' : 'admin-badge-draft' %>">
+                  <%= post.status %>
+                </span>
+              </td>
+              <td class="p-4 font-mono font-bold text-slate-700 dark:text-slate-200"><%= post.views %></td>
+              <td class="p-4 text-slate-500 dark:text-slate-300 font-medium">
+                <%= post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : (post.scheduledAt ? 'Scheduled: ' + new Date(post.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Draft') %>
+              </td>
+              <td class="p-4 text-right space-x-3 whitespace-nowrap">
+                <a href="/admin/posts/<%= post.id %>/edit" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline">Edit</a>
+                <form action="/admin/posts/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Delete this post?')" class="inline">
+                  <button type="submit" class="font-bold text-red-600 dark:text-red-400 hover:underline">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<%- include('../layout_bottom') %>

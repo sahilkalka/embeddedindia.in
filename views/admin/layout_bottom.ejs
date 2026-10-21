@@ -1,0 +1,100 @@
+  </main>
+
+  <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-500 transition-colors">
+    <p>Embedded India Administration Console &bull; Node.js &amp; Prisma ORM &bull; Version 1.0.0</p>
+  </footer>
+
+  <script>
+    // Theme Switcher Logic (Dark / Light)
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+    function updateIcons() {
+      if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
+      if (document.documentElement.classList.contains('dark')) {
+        themeToggleLightIcon.classList.remove('hidden');
+        themeToggleDarkIcon.classList.add('hidden');
+      } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+        themeToggleLightIcon.classList.add('hidden');
+      }
+    }
+
+    updateIcons();
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('color-theme', 'light');
+        } else {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('color-theme', 'dark');
+        }
+        updateIcons();
+      });
+    }
+
+    // Color Scheme Palette Switcher (Emerald, Cyan, Space Grey)
+    const paletteButtons = document.querySelectorAll('.palette-btn');
+    const adminPaletteDropdownBtn = document.getElementById('admin-palette-dropdown-btn');
+    const adminPaletteDropdownMenu = document.getElementById('admin-palette-dropdown-menu');
+    const adminActiveSchemeDot = document.getElementById('admin-active-scheme-dot');
+
+    const adminPaletteColorMap = {
+      emerald: '#007f5f',
+      cyan: '#0284c7',
+      spacegrey: '#475569'
+    };
+
+    function updatePaletteChecks(activeScheme) {
+      if (adminActiveSchemeDot) {
+        adminActiveSchemeDot.style.backgroundColor = adminPaletteColorMap[activeScheme] || '#007f5f';
+      }
+
+      paletteButtons.forEach(btn => {
+        const check = btn.querySelector('.scheme-check');
+        const isMatch = btn.dataset.scheme === activeScheme;
+        if (isMatch) {
+          if (check) check.classList.remove('hidden');
+          btn.classList.add('active-palette-item', 'font-bold');
+        } else {
+          if (check) check.classList.add('hidden');
+          btn.classList.remove('active-palette-item', 'font-bold');
+        }
+      });
+    }
+
+    const currentPalette = localStorage.getItem('color-palette') || 'emerald';
+    updatePaletteChecks(currentPalette);
+
+    if (adminPaletteDropdownBtn && adminPaletteDropdownMenu) {
+      adminPaletteDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = !adminPaletteDropdownMenu.classList.contains('hidden');
+        adminPaletteDropdownMenu.classList.toggle('hidden');
+        adminPaletteDropdownBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!adminPaletteDropdownMenu.contains(e.target) && !adminPaletteDropdownBtn.contains(e.target)) {
+          adminPaletteDropdownMenu.classList.add('hidden');
+          adminPaletteDropdownBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    paletteButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const scheme = btn.dataset.scheme;
+        document.documentElement.setAttribute('data-palette', scheme);
+        localStorage.setItem('color-palette', scheme);
+        updatePaletteChecks(scheme);
+        if (adminPaletteDropdownMenu) adminPaletteDropdownMenu.classList.add('hidden');
+      });
+    });
+  </script>
+
+</body>
+</html>

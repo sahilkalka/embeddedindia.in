@@ -1,0 +1,138 @@
+<%- include('layout_top') %>
+
+<div class="space-y-8">
+  
+  <!-- Dashboard Welcome -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Admin Dashboard</h1>
+      <p class="text-xs sm:text-sm text-slate-500 mt-1">Platform metrics, consultation inquiries, and automated services</p>
+    </div>
+
+    <!-- Quick Administrative Actions -->
+    <div class="flex flex-wrap items-center gap-2 text-xs">
+      <a href="/admin/ai" class="px-3.5 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl shadow transition hover:opacity-90 flex items-center space-x-1.5">
+        <span>✨ AI Article Engine</span>
+      </a>
+      <a href="/admin/settings" class="px-3.5 py-2 bg-slate-800 dark:bg-brand-surface hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-700 transition flex items-center space-x-1.5">
+        <span>⚙️ SMTP &amp; Accounts</span>
+      </a>
+      <button onclick="triggerCron('publish_scheduled')" class="px-3 py-2 bg-slate-200 dark:bg-brand-dark hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold rounded-xl transition">
+        Run Publisher Cron
+      </button>
+      <button onclick="triggerCron('send_digest')" class="px-3 py-2 bg-slate-200 dark:bg-brand-dark hover:bg-slate-300 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold rounded-xl transition">
+        Run Digest Cron
+      </button>
+    </div>
+  </div>
+
+  <div id="cron-toast" class="hidden p-4 rounded-xl text-xs font-bold"></div>
+
+  <!-- Metric KPI Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    
+    <div class="bg-white dark:bg-brand-surface p-6 rounded-2xl border border-slate-200 dark:border-brand-border shadow-sm">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Page Views</span>
+      <span class="text-3xl font-black text-slate-900 dark:text-white mt-1 block"><%= pageViews %></span>
+      <span class="text-[11px] text-emerald-600 dark:text-accent font-semibold mt-2 block">Live Telemetry Active</span>
+    </div>
+
+    <div class="bg-white dark:bg-brand-surface p-6 rounded-2xl border border-slate-200 dark:border-brand-border shadow-sm">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Consultation Inquiries</span>
+      <div class="flex items-baseline space-x-2 mt-1">
+        <span class="text-3xl font-black text-slate-900 dark:text-white"><%= totalInquiries %></span>
+        <% if (newInquiries > 0) { %>
+          <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full"><%= newInquiries %> New</span>
+        <% } %>
+      </div>
+      <a href="/admin/inquiries" class="text-[11px] text-brand-500 hover:underline font-semibold mt-2 block">Manage inquiries &rarr;</a>
+    </div>
+
+    <div class="bg-white dark:bg-brand-surface p-6 rounded-2xl border border-slate-200 dark:border-brand-border shadow-sm">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Active Subscribers</span>
+      <span class="text-3xl font-black text-slate-900 dark:text-white mt-1 block"><%= activeSubscribers %></span>
+      <span class="text-[11px] text-slate-500 mt-2 block"><%= totalSubscribers %> total leads signed up</span>
+    </div>
+
+    <div class="bg-white dark:bg-brand-surface p-6 rounded-2xl border border-slate-200 dark:border-brand-border shadow-sm">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Published Articles</span>
+      <span class="text-3xl font-black text-slate-900 dark:text-white mt-1 block"><%= totalPosts %></span>
+      <a href="/admin/posts/new" class="text-[11px] text-brand-500 hover:underline font-semibold mt-2 block">+ Write new guide &rarr;</a>
+    </div>
+
+  </div>
+
+  <!-- Popular Content & Calculator Analytics Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <!-- Top Blog Articles -->
+    <div class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-brand-border mb-4">
+        <h2 class="text-base font-bold text-slate-900 dark:text-white">Top Technical Guides</h2>
+        <a href="/admin/posts" class="text-xs text-brand-500 hover:underline font-bold">View all</a>
+      </div>
+      <div class="divide-y divide-slate-100 dark:divide-brand-border">
+        <% topPosts.forEach(post => { %>
+          <div class="py-3 flex items-center justify-between gap-4 text-xs">
+            <div class="truncate">
+              <a href="/blogs/<%= post.slug %>" target="_blank" class="font-bold text-slate-800 dark:text-slate-200 hover:text-brand-500 truncate block">
+                <%= post.title %>
+              </a>
+              <span class="text-[10px] text-slate-400"><%= post.category %></span>
+            </div>
+            <span class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark rounded-lg font-mono font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+              <%= post.views %> views
+            </span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Calculator Usage Telemetry -->
+    <div class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-brand-border mb-4">
+        <h2 class="text-base font-bold text-slate-900 dark:text-white">Engineering Calculator Usage</h2>
+        <a href="/tools" target="_blank" class="text-xs text-brand-500 hover:underline font-bold">View tools</a>
+      </div>
+      <div class="divide-y divide-slate-100 dark:divide-brand-border">
+        <% calculatorStats.forEach(stat => { %>
+          <div class="py-3 flex items-center justify-between text-xs">
+            <span class="font-mono font-bold text-slate-700 dark:text-slate-300 uppercase">
+              <%= stat.toolName %>
+            </span>
+            <span class="px-2.5 py-1 bg-brand-50 dark:bg-brand-900/50 text-brand-700 dark:text-accent font-mono font-bold rounded-lg">
+              <%= stat.executionCount %> runs
+            </span>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  async function triggerCron(action) {
+    const toast = document.getElementById('cron-toast');
+    toast.className = 'p-4 rounded-xl text-xs font-bold bg-brand-50 text-brand-700 block';
+    toast.textContent = 'Triggering background cron task: ' + action + '...';
+
+    try {
+      const res = await fetch('/admin/trigger-cron', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+      const data = await res.json();
+      toast.className = 'p-4 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 block';
+      toast.textContent = data.message;
+      setTimeout(() => toast.classList.add('hidden'), 5000);
+    } catch (e) {
+      toast.className = 'p-4 rounded-xl text-xs font-bold bg-red-50 text-red-800 border border-red-200 block';
+      toast.textContent = 'Failed to execute cron task.';
+    }
+  }
+</script>
+
+<%- include('layout_bottom') %>

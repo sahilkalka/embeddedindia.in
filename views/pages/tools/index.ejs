@@ -1,0 +1,203 @@
+<%- include('../../layouts/header') %>
+
+<!-- Tools Hub Hero (Left-Aligned with Ambient Mesh) -->
+<section class="py-16 lg:py-20 bg-white dark:bg-[#0d1715] border-b border-slate-200 dark:border-brand-border spaceship-ambient-mesh circuit-grid">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-left">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-brand-surface/90 border border-slate-200 dark:border-brand-border text-brand-600 dark:text-accent text-xs font-bold uppercase tracking-wider shadow-sm backdrop-blur-md animate-float-slow">
+        <span class="w-2 h-2 rounded-full bg-accent animate-ping"></span>
+        <span>Free Engineering Utilities</span>
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white mt-4 tracking-tight leading-tight">
+        Interactive Engineering Tools &amp; Calculators
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
+        Fast, mathematically accurate client-side calculators for hardware designers, high-speed PCB layout specialists, and embedded firmware engineers.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Tools Grid -->
+<section class="py-20 bg-slate-50 dark:bg-[#13221f]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      
+      <!-- 1. PCB Trace Width -->
+      <a href="/tools/pcb-trace" class="spotlight-card reveal-on-scroll group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">IPC-2221 Standard</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            PCB Trace Width Calculator
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Compute required copper trace width, temperature rise, cross-sectional area, and resistance for internal and external PCB layers.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Calculator</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 2. 555 Timer -->
+      <a href="/tools/555-timer" class="spotlight-card reveal-on-scroll delay-100 group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">Astable &amp; Monostable</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            555 Timer Circuit Calculator
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Calculate oscillator frequency, duty cycle, high/low intervals, and visualize the live waveform and dynamic circuit schematic.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Calculator</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 3. LED Resistor -->
+      <a href="/tools/led-resistor" class="spotlight-card reveal-on-scroll delay-200 group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">Ohm's Law &amp; E12/E24</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            LED Resistor &amp; Wattage Calc
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Find the ideal series dropping resistor, closest standard manufactured values, and safety power dissipation rating.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Calculator</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 4. UART Baud Rate -->
+      <a href="/tools/uart-baud" class="spotlight-card reveal-on-scroll delay-300 group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">Framing Error Analysis</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            UART Baud &amp; Timer Register Calc
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Calculate MCU baud reload values and framing error percentages across clock frequencies (STM32, AVR, 8051).
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Calculator</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 5. SMD Code Decoder -->
+      <a href="/tools/smd-code" class="spotlight-card reveal-on-scroll group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">EIA-96 / 3 &amp; 4 Digit</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            SMD Resistor Code Decoder
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Decode surface-mount resistor surface marking codes into ohms, tolerance, and multiplier instantly.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Decoder</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 6. IoT Battery Life -->
+      <a href="/tools/battery-life" class="spotlight-card reveal-on-scroll delay-100 group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">IoT Power Budget</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            IoT Battery Life Estimator
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Estimate years of battery operation for low-power wireless nodes based on sleep current, active transmit spikes, and duty cycles.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Estimator</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 7. Trace Impedance -->
+      <a href="/tools/trace-impedance" class="spotlight-card reveal-on-scroll delay-200 group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">High-Speed RF/Digital</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            Microstrip Impedance (Zo)
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Calculate characteristic 50-ohm and 90-ohm transmission line geometry on FR-4 and Rogers substrates.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Calculator</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+      <!-- 8. MCU Pinout Reference -->
+      <a href="/tools/mcu-pinout" class="spotlight-card reveal-on-scroll delay-300 group bg-white dark:bg-brand-surface rounded-2xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-xl flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-4 text-brand-500 dark:text-accent icon-bounce-container">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          </div>
+          <span class="text-[11px] font-bold uppercase text-brand-500 dark:text-accent tracking-wider">Cheat Sheet Reference</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mt-1 group-hover:text-brand-500 dark:group-hover:text-accent transition">
+            MCU Pinout Quick Guide
+          </h2>
+          <p class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+            Interactive pinout viewer for ESP32, STM32F103 (Blue Pill), and Raspberry Pi Pico RP2040 microcontrollers.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs font-bold text-brand-500 dark:text-accent">
+          <span>Open Pinout Guide</span>
+          <span>&rarr;</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- Engineering CTA Banner -->
+<section class="py-16 bg-brand-500 text-white text-center">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-extrabold">Need Custom PCB Layout, High-Speed Routing, or Firmware Architecture?</h2>
+    <p class="mt-3 text-brand-50 text-base max-w-xl mx-auto">
+      Our engineering team handles complex high-speed designs up to 16+ layers, RF antenna tuning, and custom Linux/RTOS board bring-up.
+    </p>
+    <a href="/contact" class="btn-shimmer inline-block mt-6 px-8 py-4 bg-white text-brand-900 font-bold rounded-xl shadow-lg hover:bg-slate-100 transition active:scale-95 transform hover:-translate-y-0.5">
+      Request an Engineering Consultation
+    </a>
+  </div>
+</section>
+
+<%- include('../../layouts/footer') %>

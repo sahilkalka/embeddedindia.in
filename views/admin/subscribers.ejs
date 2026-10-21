@@ -1,0 +1,60 @@
+<%- include('layout_top') %>
+
+<div class="space-y-6">
+  
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Newsletter Leads &amp; Subscribers</h1>
+      <p class="text-xs text-slate-500 mt-1">Manage email list and export for campaign broadcasts</p>
+    </div>
+
+    <!-- Export CSV Button -->
+    <a href="/admin/subscribers/export" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs transition shadow flex items-center space-x-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      <span>Export CSV List</span>
+    </a>
+  </div>
+
+  <div class="rounded-2xl border overflow-hidden shadow-sm admin-table-container">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="admin-table-head uppercase font-bold text-[11px] tracking-wider">
+          <tr>
+            <th class="p-4">Email</th>
+            <th class="p-4">Status</th>
+            <th class="p-4">Lead Magnet Sent</th>
+            <th class="p-4">Source Page</th>
+            <th class="p-4">Signup Date</th>
+          </tr>
+        </thead>
+        <tbody class="admin-table-body divide-y">
+          <% if (subscribers.length === 0) { %>
+            <tr>
+              <td colspan="5" class="p-8 text-center text-slate-400">No subscribers yet.</td>
+            </tr>
+          <% } %>
+          <% subscribers.forEach(sub => { %>
+            <tr class="transition">
+              <td class="p-4 font-bold text-slate-900 dark:text-white"><%= sub.email %></td>
+              <td class="p-4">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase <%= sub.status === 'active' ? 'admin-badge-published' : sub.status === 'pending' ? 'admin-badge-scheduled' : 'admin-badge-draft' %>">
+                  <%= sub.status %>
+                </span>
+              </td>
+              <td class="p-4 font-medium text-slate-700 dark:text-slate-300">
+                <%= sub.leadMagnetSent ? '✅ Delivered' : '⏳ Pending Verify' %>
+              </td>
+              <td class="p-4 text-slate-500 dark:text-slate-400 font-mono"><%= sub.source %></td>
+              <td class="p-4 text-slate-500 dark:text-slate-300 font-medium">
+                <%= new Date(sub.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<%- include('layout_bottom') %>

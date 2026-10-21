@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+prisma/*.db
+prisma/*.db-journal
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Deployment & Build artifacts
+*.tar.gz
+*.zip
+dist/
+build/
+tmp/
+scratch/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
