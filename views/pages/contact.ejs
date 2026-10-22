@@ -9,29 +9,31 @@
         <span>Get in Touch</span>
       </div>
       <h1 class="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white mt-4 tracking-tight leading-tight">
-        Contact Us
+        Contact &amp; Request for Quote (RFQ)
       </h1>
       <p class="mt-4 text-base sm:text-lg text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
-        Discuss your hardware architecture, review RFPs, or inquire about our turnkey engineering cycles. Email us at <a href="mailto:<%= settings.contact_email || 'info@embeddedindia.in' %>" class="text-brand-500 dark:text-accent font-semibold hover:underline"><%= settings.contact_email || 'info@embeddedindia.in' %></a> or submit your technical specifications below.
+        Discuss your hardware architecture, review RFPs, or inquire about our turnkey engineering cycles. Email our engineering desk directly at <a href="mailto:info@embeddedindia.in" class="text-brand-500 dark:text-accent font-bold hover:underline">info@embeddedindia.in</a> or submit your technical requirements below.
       </p>
     </div>
   </div>
 </section>
 
-<!-- Contact Form & Info Section -->
+<!-- Contact Form, Newsletter & Info Section -->
 <section class="py-20 bg-slate-50 dark:bg-[#13221f]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
       
-      <!-- Left Column: Contact Info & Support -->
+      <!-- Left Column: Contact Info, Guaranteed SLA, & Newsletter Signup Form -->
       <div class="lg:col-span-5 space-y-8">
+        
+        <!-- Direct Communication Card -->
         <div class="spotlight-card reveal-on-scroll bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-md">
           <div class="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-900/60 flex items-center justify-center mb-6 icon-bounce-container">
             <img src="/assets/images/contact-us.svg" alt="Contact Icon" class="w-10 h-10" onerror="this.src='/favicon.svg'">
           </div>
           <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Direct Communication</h2>
           <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed mb-6">
-            Our systems architects review incoming RFPs and inquiries daily. We provide technical NDAs prior to in-depth architecture discussions.
+            Our principal systems architects review incoming RFPs daily. We execute mutual Non-Disclosure Agreements (NDAs) prior to architectural schematic analysis.
           </p>
 
           <div class="space-y-4 text-sm">
@@ -40,8 +42,8 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </div>
               <div>
-                <strong class="text-slate-900 dark:text-white block">Email</strong>
-                <a href="mailto:<%= settings.contact_email || 'info@embeddedindia.in' %>" class="text-brand-500 dark:text-accent hover:underline"><%= settings.contact_email || 'info@embeddedindia.in' %></a>
+                <strong class="text-slate-900 dark:text-white block">Email Inquiries &amp; RFQs</strong>
+                <a href="mailto:info@embeddedindia.in" class="text-brand-500 dark:text-accent font-semibold hover:underline">info@embeddedindia.in</a>
               </div>
             </div>
 
@@ -50,7 +52,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>
               <div>
-                <strong class="text-slate-900 dark:text-white block">Offices &amp; Locations</strong>
+                <strong class="text-slate-900 dark:text-white block">Engineering Centers</strong>
                 <span class="text-slate-600 dark:text-slate-300"><%= settings.contact_address || 'Bangalore, Hyderabad, Pune • India' %></span>
               </div>
             </div>
@@ -61,7 +63,7 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
               </div>
               <div>
-                <strong class="text-slate-900 dark:text-white block">Phone / WhatsApp</strong>
+                <strong class="text-slate-900 dark:text-white block">Direct Line / WhatsApp</strong>
                 <a href="tel:<%= settings.contact_phone.replace(/[^0-9+]/g, '') %>" class="text-slate-600 dark:text-slate-300 hover:text-brand-500"><%= settings.contact_phone %></a>
               </div>
             </div>
@@ -72,21 +74,67 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               </div>
               <div>
-                <strong class="text-slate-900 dark:text-white block">Turnaround Guarantee</strong>
-                <span class="text-slate-600 dark:text-slate-300">Technical reply within 24 business hours</span>
+                <strong class="text-slate-900 dark:text-white block">Turnaround SLA</strong>
+                <span class="text-slate-600 dark:text-slate-300">Technical reply and feasibility review within 24 business hours</span>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Interactive Newsletter Signup Form Card -->
+        <div class="spotlight-card reveal-on-scroll bg-gradient-to-br from-slate-900 to-brand-950 text-white rounded-3xl p-8 border border-brand-800 shadow-xl space-y-4">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-bold uppercase tracking-wider">
+            <span>Free Engineering Lead Magnet</span>
+          </div>
+          <h3 class="text-xl font-extrabold text-white">Join 1,000+ Hardware &amp; Firmware Engineers</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Subscribe to our weekly engineering digest and instantly unlock <strong>The 2026 Embedded Hardware &amp; Firmware Design Checklist</strong> (PDF).
+          </p>
+
+          <form id="contact-newsletter-form" class="space-y-3 pt-2">
+            <div>
+              <label for="newsletter-email" class="sr-only">Work Email</label>
+              <input 
+                type="email" 
+                id="newsletter-email"
+                name="email" 
+                required 
+                placeholder="engineer@company.com" 
+                class="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent text-xs transition"
+              >
+            </div>
+            
+            <div id="newsletter-status-box" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+            <button 
+              type="submit" 
+              id="newsletter-submit-btn" 
+              class="w-full py-3 bg-accent hover:bg-accent-light text-slate-950 font-bold rounded-xl text-xs transition shadow-md flex items-center justify-center space-x-2 active:scale-95"
+            >
+              <span id="newsletter-btn-text">Subscribe &amp; Get Free Checklist</span>
+              <svg id="newsletter-spinner" class="hidden animate-spin w-4 h-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+            </button>
+            <p class="text-[10px] text-slate-400 text-center">Zero spam. Single-click unsubscribe at any time.</p>
+          </form>
+        </div>
+
       </div>
 
-      <!-- Right Column: Interactive Anti-Spam Contact Form -->
+      <!-- Right Column: Interactive Anti-Spam Contact / RFQ Form -->
       <div class="lg:col-span-7">
         <div class="spotlight-card reveal-on-scroll delay-100 bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-xl">
-          <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Send Us a Message</h2>
-          <p class="text-sm text-slate-600 dark:text-slate-300 mb-8">
-            Tell us about your embedded hardware or firmware project specifications.
-          </p>
+          <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100 dark:border-brand-border/60">
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Interactive RFQ &amp; Consultation</h2>
+              <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                Directly connected to our engineering dispatch at <a href="mailto:info@embeddedindia.in" class="text-brand-500 font-semibold hover:underline">info@embeddedindia.in</a>
+              </p>
+            </div>
+            <span class="px-2.5 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-700 dark:text-accent text-[11px] font-bold uppercase rounded-full">Encrypted</span>
+          </div>
 
           <form id="contact-form" class="space-y-6">
             
@@ -112,6 +160,20 @@
 
               <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                  Company / Organization
+                </label>
+                <input 
+                  type="text" 
+                  name="company" 
+                  placeholder="e.g. Acme Robotics Ltd."
+                  class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
+                >
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                   Work Email <span class="text-red-500">*</span>
                 </label>
                 <input 
@@ -122,12 +184,10 @@
                   class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
                 >
               </div>
-            </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
-                  Phone / WhatsApp (Optional)
+                  Phone / WhatsApp
                 </label>
                 <input 
                   type="tel" 
@@ -136,10 +196,12 @@
                   class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
                 >
               </div>
+            </div>
 
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
-                  Service Category
+                  Service Required <span class="text-red-500">*</span>
                 </label>
                 <select 
                   name="serviceCategory" 
@@ -155,30 +217,30 @@
                   <option value="Obsolescence" <%= sel.includes('obsolescence') ? 'selected' : '' %>>Component Obsolescence Redesign</option>
                 </select>
               </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
+                  Project Subject <span class="text-red-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="subject" 
+                  required 
+                  placeholder="e.g. 4-Layer STM32 Motor Controller Redesign"
+                  class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
+                >
+              </div>
             </div>
 
             <div>
               <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
-                Project Subject <span class="text-red-500">*</span>
-              </label>
-              <input 
-                type="text" 
-                name="subject" 
-                required 
-                placeholder="e.g. 4-Layer STM32 Motor Controller Redesign"
-                class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
-              >
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
-                Message / Technical Requirements <span class="text-red-500">*</span>
+                Project Details &amp; Technical Requirements <span class="text-red-500">*</span>
               </label>
               <textarea 
                 name="message" 
                 rows="5" 
                 required 
-                placeholder="Outline your target microcontroller, operating environment, production timeline, and key requirements..."
+                placeholder="Outline target microcontroller/SoC, expected operating environment, layer count, production volume, and timeline..."
                 class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition"
               ></textarea>
             </div>
@@ -190,12 +252,16 @@
               id="contact-submit-btn" 
               class="btn-shimmer w-full py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-lg transition text-base tracking-wide flex items-center justify-center space-x-2 active:scale-95"
             >
-              <span>Submit Inquiry to Engineering Team</span>
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              <span id="contact-btn-text">Submit Inquiry to info@embeddedindia.in</span>
+              <svg id="contact-spinner" class="hidden animate-spin w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <svg id="contact-btn-arrow" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
 
             <p class="text-[11px] text-slate-400 text-center">
-              Protected by server-side rate limiting and automated spam filters. Your email is kept strictly confidential.
+              Direct SMTP notification automatically dispatched to <span class="font-bold text-slate-600 dark:text-slate-300">info@embeddedindia.in</span>. Strict NDA confidentiality maintained.
             </p>
           </form>
 
@@ -206,19 +272,15 @@
   </div>
 </section>
 
-<!-- AJAX Submission Script & URL Parameter Auto-Select -->
+<!-- AJAX Submission Scripts & UI State Handlers -->
 <script>
-  const contactForm = document.getElementById('contact-form');
-  const contactStatus = document.getElementById('contact-status-box');
-  const submitBtn = document.getElementById('contact-submit-btn');
-
-  // Pre-select service category if URL param `service` is provided
+  // 1. Service auto-selection from query parameter
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get('service');
     if (serviceParam) {
       const s = serviceParam.toLowerCase();
-      const select = document.getElementById('serviceCategorySelect') || document.querySelector('select[name="serviceCategory"]');
+      const select = document.getElementById('serviceCategorySelect');
       if (select) {
         if (s.includes('hardware') || s.includes('pcb')) select.value = 'Hardware Design';
         else if (s.includes('firmware') || s.includes('bsp')) select.value = 'Firmware/BSP';
@@ -230,14 +292,26 @@
     }
   } catch (e) {}
 
+  // 2. Interactive Contact Form Submission with Spinner and Status Banner
+  const contactForm = document.getElementById('contact-form');
+  const contactStatus = document.getElementById('contact-status-box');
+  const contactSubmitBtn = document.getElementById('contact-submit-btn');
+  const contactSpinner = document.getElementById('contact-spinner');
+  const contactBtnArrow = document.getElementById('contact-btn-arrow');
+  const contactBtnText = document.getElementById('contact-btn-text');
+
   if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      submitBtn.disabled = true;
-      submitBtn.classList.add('opacity-70');
-      contactStatus.className = 'p-4 rounded-xl text-sm bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-accent font-semibold block';
-      contactStatus.textContent = 'Transmitting your inquiry securely...';
+      contactSubmitBtn.disabled = true;
+      contactSubmitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+      contactSpinner.classList.remove('hidden');
+      contactBtnArrow.classList.add('hidden');
+      contactBtnText.textContent = 'Transmitting to info@embeddedindia.in...';
+      
+      contactStatus.className = 'p-4 rounded-xl text-xs bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-accent font-semibold block border border-brand-200 dark:border-brand-800';
+      contactStatus.textContent = 'Verifying specifications and dispatching notification...';
 
       const formData = new FormData(contactForm);
       const data = Object.fromEntries(formData.entries());
@@ -252,19 +326,76 @@
         const result = await response.json();
 
         if (result.success) {
-          contactStatus.className = 'p-4 rounded-xl text-sm bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-semibold block border border-emerald-200 dark:border-emerald-800';
-          contactStatus.textContent = result.message;
+          contactStatus.className = 'p-4 rounded-xl text-xs bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 font-semibold block border border-emerald-200 dark:border-emerald-800 shadow-sm';
+          contactStatus.innerHTML = `<strong>Inquiry Received!</strong> ${result.message}`;
           contactForm.reset();
         } else {
-          contactStatus.className = 'p-4 rounded-xl text-sm bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 font-semibold block border border-red-200 dark:border-red-800';
-          contactStatus.textContent = result.message;
+          contactStatus.className = 'p-4 rounded-xl text-xs bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 font-semibold block border border-red-200 dark:border-red-800 shadow-sm';
+          contactStatus.innerHTML = `<strong>Submission Error:</strong> ${result.message || 'Please check all required fields.'}`;
         }
       } catch (err) {
-        contactStatus.className = 'p-4 rounded-xl text-sm bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 font-semibold block border border-red-200 dark:border-red-800';
-        contactStatus.textContent = 'Connection error. Please email <%= settings.contact_email || "info@embeddedindia.in" %> directly.';
+        contactStatus.className = 'p-4 rounded-xl text-xs bg-red-50 dark:bg-red-950/40 text-red-800 dark:text-red-300 font-semibold block border border-red-200 dark:border-red-800 shadow-sm';
+        contactStatus.innerHTML = '<strong>Connection Error:</strong> Could not reach the server. Please email <a href="mailto:info@embeddedindia.in" class="underline font-bold">info@embeddedindia.in</a> directly.';
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('opacity-70');
+        contactSubmitBtn.disabled = false;
+        contactSubmitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+        contactSpinner.classList.add('hidden');
+        contactBtnArrow.classList.remove('hidden');
+        contactBtnText.textContent = 'Submit Inquiry to info@embeddedindia.in';
+      }
+    });
+  }
+
+  // 3. Interactive Newsletter Form Submission on /contact
+  const newsletterForm = document.getElementById('contact-newsletter-form');
+  const newsletterStatus = document.getElementById('newsletter-status-box');
+  const newsletterSubmitBtn = document.getElementById('newsletter-submit-btn');
+  const newsletterSpinner = document.getElementById('newsletter-spinner');
+  const newsletterBtnText = document.getElementById('newsletter-btn-text');
+
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      newsletterSubmitBtn.disabled = true;
+      newsletterSubmitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+      newsletterSpinner.classList.remove('hidden');
+      newsletterBtnText.textContent = 'Subscribing...';
+
+      newsletterStatus.className = 'p-3 rounded-xl text-xs bg-white/10 text-slate-200 font-semibold block';
+      newsletterStatus.textContent = 'Registering your subscription...';
+
+      const formData = new FormData(newsletterForm);
+      const data = {
+        email: formData.get('email'),
+        source: 'contact-page'
+      };
+
+      try {
+        const response = await fetch('/api/newsletter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          newsletterStatus.className = 'p-3 rounded-xl text-xs bg-emerald-500/20 text-emerald-300 font-semibold block border border-emerald-500/40';
+          newsletterStatus.textContent = result.message;
+          newsletterForm.reset();
+        } else {
+          newsletterStatus.className = 'p-3 rounded-xl text-xs bg-red-500/20 text-red-300 font-semibold block border border-red-500/40';
+          newsletterStatus.textContent = result.message || 'Please provide a valid email address.';
+        }
+      } catch (err) {
+        newsletterStatus.className = 'p-3 rounded-xl text-xs bg-red-500/20 text-red-300 font-semibold block border border-red-500/40';
+        newsletterStatus.textContent = 'Network error. Please try again or email info@embeddedindia.in.';
+      } finally {
+        newsletterSubmitBtn.disabled = false;
+        newsletterSubmitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+        newsletterSpinner.classList.add('hidden');
+        newsletterBtnText.textContent = 'Subscribe & Get Free Checklist';
       }
     });
   }

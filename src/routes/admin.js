@@ -13,6 +13,7 @@ const aiGenerator = require('../services/aiGenerator');
 const aiScheduler = require('../services/aiScheduler');
 const { renderMarkdown } = require('../services/markdown');
 const mailer = require('../services/mailer');
+const { PREDEFINED_PALETTES, resolveTheme } = require('../services/themeEngine');
 
 // GET /admin/login - Login Page
 router.get('/login', (req, res) => {
@@ -143,6 +144,47 @@ router.get('/inquiries', async (req, res) => {
 });
 
 // POST /admin/inquiries/:id/status - Update Inquiry Status
+// GET /admin/inquiries/export - One-Click CSV Export
+router.get('/inquiries/export', async (req, res) => {
+  try {
+    const status = req.query.status || undefined;
+    const where = status ? { status } : {};
+    const inquiries = await prisma.inquiry.findMany({
+      where,
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const headers = ['ID', 'Date', 'Name', 'Company', 'Email', 'Phone', 'Service Category', 'Status', 'Subject', 'Message'];
+    const escapeCsv = (str) => {
+      if (str === null || str === undefined) return '""';
+      const clean = String(str).replace(/"/g, '""');
+      return '"' + clean + '"';
+    };
+
+    const rows = inquiries.map(inq => [
+      escapeCsv(inq.id),
+      escapeCsv(new Date(inq.createdAt).toISOString()),
+      escapeCsv(inq.name),
+      escapeCsv(inq.company || ''),
+      escapeCsv(inq.email),
+      escapeCsv(inq.phone || ''),
+      escapeCsv(inq.serviceCategory || ''),
+      escapeCsv(inq.status || 'new'),
+      escapeCsv(inq.subject || ''),
+      escapeCsv(inq.message || '')
+    ].join(','));
+
+    const csvContent = [headers.join(','), ...rows].join('\r\n');
+
+    res.header('Content-Type', 'text/csv; charset=utf-8');
+    res.header('Content-Disposition', 'attachment; filename="inquiries-export-' + Date.now() + '.csv"');
+    res.send(csvContent);
+  } catch (err) {
+    console.error('[INQUIRIES EXPORT ERROR]', err);
+    res.status(500).send('Error generating inquiries CSV export');
+  }
+});
+
 router.post('/inquiries/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
@@ -196,6 +238,48 @@ router.get('/subscribers/export', async (req, res) => {
     res.send(csv);
   } catch (err) {
     res.status(500).send('Failed to export CSV');
+  }
+});
+
+// POST /admin/subscribers/:id/approve - Manually Approve Subscriber & Dispatch Lead Magnet
+router.post('/subscribers/:id/approve', async (req, res) => {
+  try {
+    const subscriber = await prisma.subscriber.findUnique({
+      where: { id: req.params.id }
+    });
+
+    if (!subscriber) {
+      return res.status(404).send('Subscriber not found');
+    }
+
+    await prisma.subscriber.update({
+      where: { id: req.params.id },
+      data: {
+        status: 'active',
+        verifiedAt: new Date(),
+        verifyToken: null,
+        leadMagnetSent: true
+      }
+    });
+
+    // Trigger confirmation / dispatch email
+    const delivery = await mailer.sendLeadMagnetEmail(subscriber.email);
+    console.log('[ADMIN APPROVAL] Subscriber manually approved and lead magnet email triggered for:', subscriber.email, delivery);
+
+    res.redirect('/admin/subscribers');
+  } catch (err) {
+    console.error('[ADMIN APPROVE SUBSCRIBER ERROR]', err);
+    res.status(500).send('Failed to approve subscriber');
+  }
+});
+
+// POST /admin/subscribers/:id/delete - Delete Subscriber
+router.post('/subscribers/:id/delete', async (req, res) => {
+  try {
+    await prisma.subscriber.delete({ where: { id: req.params.id } });
+    res.redirect('/admin/subscribers');
+  } catch (err) {
+    res.status(500).send('Failed to delete subscriber');
   }
 });
 

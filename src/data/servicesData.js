@@ -32,8 +32,8 @@ const servicesData = {
         description: 'Hardware-in-the-Loop test bench automation, fault injection modeling, and automated regression suites.'
       },
       {
-        title: 'Turnkey NPI & Production Handover',
-        description: 'Full manufacturing data package: Gerbers, ODB++, pick-and-place centroids, panelization, and custom test jig designs.'
+        title: 'Turnkey NPI & Technical Documentation',
+        description: 'Essential documentation includes full manufacturing data package: Gerbers, ODB++, pick-and-place centroids, panelization, and custom test jig designs.'
       }
     ]
   },
@@ -104,8 +104,8 @@ const servicesData = {
         description: 'Low-noise operational amplifiers, 24-bit delta-sigma ADCs, galvanic isolation barriers, and guard ring routing.'
       },
       {
-        title: 'Design for Manufacturing & Assembly (DFM/DFA)',
-        description: 'IPC-7351 footprint validation, solder paste mask clearances, component spacing rules, and panelization design.'
+        title: 'Design for Manufacturing & Technical Documentation',
+        description: 'Essential documentation includes IPC-7351 footprint validation, solder paste mask clearances, component spacing rules, and panelization design.'
       }
     ]
   },
@@ -156,8 +156,8 @@ const servicesData = {
     description: 'Connected sensors with LoRaWAN, Cellular (4G/LTE-M), BLE 5.3, Wi-Fi 6, and on-device TinyML machine learning for predictive vibration monitoring.',
     features: [
       {
-        title: 'Multi-Protocol Wireless Connectivity',
-        description: 'LoRaWAN Class A/C, 4G LTE-M / NB-IoT, BLE 5.3 mesh, Wi-Fi 6, and Sub-GHz proprietary RF transceivers.'
+        title: 'Wireless Protocol Implementation',
+        description: 'Designing and integrating low-power wireless stacks (BLE, Wi-Fi, Zigbee, LoRaWAN, Cellular IoT, and MQTT/CoAP) for reliable device-to-cloud communication.'
       },
       {
         title: 'On-Device Edge AI & TinyML',

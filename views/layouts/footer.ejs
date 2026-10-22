@@ -1,6 +1,7 @@
   </main>
 
-  <!-- Newsletter Lead Magnet Strip (Rendered on public pages) -->
+  <!-- Newsletter Lead Magnet Strip (Rendered on public pages if enabled in Section Feature Flags) -->
+  <% if (settings.section_newsletter_enabled !== 'false') { %>
   <section class="bg-gradient-to-br from-brand-900 via-brand-800 to-[#0d1715] text-white py-14 border-t border-brand-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="bg-white/5 backdrop-blur-md rounded-2xl p-8 sm:p-10 border border-white/10 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
@@ -48,6 +49,7 @@
       </div>
     </div>
   </section>
+  <% } %>
 
   <!-- Footer -->
   <footer class="bg-white dark:bg-[#0d1715] border-t border-slate-200 dark:border-brand-border text-slate-600 dark:text-slate-400 transition-colors">
@@ -69,7 +71,7 @@
               <span class="text-xl font-black text-slate-900 dark:text-white leading-none">
                 <%= footerParts[0] %> <% if (footerParts.length > 1) { %><span class="text-brand-500 dark:text-accent"><%= footerParts.slice(1).join(' ') %></span><% } %>
               </span>
-              <span class="text-[9px] font-bold tracking-widest uppercase text-slate-700 dark:text-slate-300 mt-1">Engineering Hub</span>
+              <span class="text-[9px] font-bold tracking-widest uppercase text-slate-700 dark:text-slate-300 mt-1"><%= settings.site_tagline || 'Engineering Hub' %></span>
             </div>
           </a>
           <p class="text-sm leading-relaxed max-w-sm">
@@ -87,6 +89,30 @@
             </p>
             <% } %>
           </div>
+
+          <!-- Social Links -->
+          <div class="flex items-center space-x-3 pt-2">
+            <% if (settings.social_linkedin) { %>
+              <a href="<%= settings.social_linkedin %>" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-500 transition" aria-label="LinkedIn">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+            <% } %>
+            <% if (settings.social_github) { %>
+              <a href="<%= settings.social_github %>" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-500 transition" aria-label="GitHub">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              </a>
+            <% } %>
+            <% if (settings.social_twitter) { %>
+              <a href="<%= settings.social_twitter %>" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-500 transition" aria-label="Twitter">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              </a>
+            <% } %>
+            <% if (settings.social_youtube) { %>
+              <a href="<%= settings.social_youtube %>" target="_blank" rel="noopener noreferrer" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-500 transition" aria-label="YouTube">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              </a>
+            <% } %>
+          </div>
         </div>
 
         <!-- Services -->
@@ -98,22 +124,18 @@
             <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">IoT Edge Computing Solutions</a></li>
             <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">Automotive Embedded Systems</a></li>
             <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">HIL Testing &amp; Verification</a></li>
-            <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">Obsolescence Management</a></li>
           </ul>
         </div>
 
         <!-- Engineering Tools -->
         <div>
-          <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Engineering Tools</h3>
+          <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Engineering Calculators</h3>
           <ul class="mt-4 space-y-2.5 text-sm">
-            <li><a href="/tools/pcb-trace" class="hover:text-brand-500 dark:hover:text-accent transition">IPC-2221 PCB Trace Width</a></li>
+            <li><a href="/tools/pcb-trace" class="hover:text-brand-500 dark:hover:text-accent transition">PCB Trace Width Calculator</a></li>
             <li><a href="/tools/555-timer" class="hover:text-brand-500 dark:hover:text-accent transition">555 Timer Astable/Mono</a></li>
-            <li><a href="/tools/led-resistor" class="hover:text-brand-500 dark:hover:text-accent transition">LED Resistor &amp; Ohm's Law</a></li>
-            <li><a href="/tools/uart-baud" class="hover:text-brand-500 dark:hover:text-accent transition">UART Baud &amp; Error Calc</a></li>
-            <li><a href="/tools/smd-code" class="hover:text-brand-500 dark:hover:text-accent transition">SMD Resistor Decoder</a></li>
-            <li><a href="/tools/battery-life" class="hover:text-brand-500 dark:hover:text-accent transition">IoT Battery Life Estimator</a></li>
-            <li><a href="/tools/trace-impedance" class="hover:text-brand-500 dark:hover:text-accent transition">Microstrip Impedance Calc</a></li>
-            <li><a href="/tools/mcu-pinout" class="hover:text-brand-500 dark:hover:text-accent transition">MCU Pinout Reference</a></li>
+            <li><a href="/tools/led-resistor" class="hover:text-brand-500 dark:hover:text-accent transition">LED Current Limiting Resistor</a></li>
+            <li><a href="/tools/uart-baud" class="hover:text-brand-500 dark:hover:text-accent transition">UART Baud Rate Error</a></li>
+            <li><a href="/tools" class="hover:text-brand-500 dark:hover:text-accent transition font-bold text-brand-500 dark:text-accent">View All 8 Calculators &rarr;</a></li>
           </ul>
         </div>
 
@@ -134,7 +156,7 @@
       </div>
 
       <div class="mt-12 pt-8 border-t border-slate-200 dark:border-brand-border flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
-        <p>&copy; <%= new Date().getFullYear() %> <%= settings.site_name || 'Embedded India' %>. All rights reserved. Built for performance, security, and precision.</p>
+        <p><%= settings.footer_copyright || ('© ' + new Date().getFullYear() + ' ' + (settings.site_name || 'Embedded India') + '. All rights reserved. Built for performance, security, and precision.') %></p>
         <div class="flex space-x-6 mt-4 sm:mt-0">
           <a href="/privacy-policy" class="hover:underline">Privacy Policy</a>
           <a href="/contact" class="hover:underline">Engineering Inquiries</a>
@@ -145,6 +167,7 @@
   </footer>
 
   <!-- Cookie Consent Banner -->
+  <% if (settings.cookie_banner_enabled !== 'false') { %>
   <div id="cookie-banner" class="hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-md z-50 bg-white dark:bg-[#182c27] border border-slate-200 dark:border-brand-border rounded-2xl p-5 shadow-2xl transition">
     <div class="flex items-start gap-4">
       <div class="p-2 bg-brand-50 dark:bg-brand-900/50 rounded-xl text-brand-500 dark:text-accent">
@@ -153,7 +176,7 @@
       <div class="flex-1">
         <h4 class="text-sm font-bold text-slate-900 dark:text-white">Cookie &amp; Privacy Notice</h4>
         <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
-          We use cookies to ensure optimal functionality, save your theme preferences, and provide interactive engineering tools.
+          <%= settings.cookie_banner_text || 'We use cookies to ensure optimal functionality, save your theme preferences, and provide interactive engineering tools.' %>
         </p>
         <div class="flex items-center space-x-3 mt-3">
           <button id="cookie-accept" class="px-4 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition">Accept</button>
@@ -162,8 +185,58 @@
       </div>
     </div>
   </div>
+  <% } %>
 
-  <!-- Global Client-Side Scripts: Theme Toggle, 4 Modern Color Schemes, Cursor Spotlight & Scroll Reveals -->
+  <!-- Floating WhatsApp Widget -->
+  <% if (settings.enable_whatsapp_widget === 'true' && (settings.whatsapp_number || settings.contact_phone)) { %>
+    <% const waNum = (settings.whatsapp_number || settings.contact_phone || '').replace(/[^0-9]/g, ''); %>
+    <% const waMsg = encodeURIComponent(settings.whatsapp_preset_msg || 'Hello Embedded India, I have an inquiry about custom hardware and firmware engineering.'); %>
+    <aside aria-label="WhatsApp Chat Widget" class="fixed bottom-6 left-6 z-40">
+      <a href="https://wa.me/<%= waNum %>?text=<%= waMsg %>" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center transition-all transform hover:scale-110 active:scale-95 group" aria-label="Chat with an Engineer on WhatsApp">
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.06-2.124-.531-1.428-.591-2.348-2.036-2.42-2.133-.071-.097-.577-.768-.577-1.464 0-.697.362-1.039.49-1.182.129-.144.281-.179.375-.179.094 0 .188.001.27.006.087.004.204-.033.319.243.118.283.403.98.438 1.052.036.072.06.156.012.251-.048.096-.072.156-.144.239-.072.084-.152.187-.217.251-.072.072-.147.15-.063.294.084.144.372.613.799.992.549.487 1.012.638 1.156.709.144.072.228.06.312-.036.084-.096.36-.419.456-.563.096-.144.192-.12.324-.072.132.048.837.395.981.467.144.072.24.108.276.168.036.06.036.348-.108.753z"/>
+          <path d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.178L2.05 21.95l4.89-1.284C8.384 21.526 10.134 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.2c-1.638 0-3.167-.478-4.46-1.3l-.32-.203-3.308.868.883-3.224-.222-.352C3.69 14.622 3.2 13.153 3.2 11.6c0-4.852 3.948-8.8 8.8-8.8s8.8 3.948 8.8 8.8c0 4.851-3.948 8.8-8.8 8.8z"/>
+        </svg>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-xs font-bold pl-0 group-hover:pl-2">WhatsApp Us</span>
+      </a>
+    </aside>
+  <% } %>
+
+  <!-- Back-to-Top Floating Button -->
+  <% if (settings.enable_back_to_top !== 'false') { %>
+    <button id="back-to-top-btn" type="button" aria-label="Back to top" class="hidden fixed bottom-6 right-6 z-40 p-3 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+    </button>
+  <% } %>
+
+  <!-- Delayed Popup RFQ Modal -->
+  <% if (settings.enable_rfq_modal === 'true') { %>
+    <div id="rfq-auto-modal" aria-hidden="true" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="w-full max-w-lg bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+        <button id="rfq-modal-close" type="button" aria-label="Close dialog" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <span class="px-2.5 py-1 bg-accent/20 text-accent font-bold rounded-full text-xs uppercase tracking-wider">Fast-Track RFQ</span>
+        <h3 class="text-xl font-black text-slate-900 dark:text-white mt-2">Have a New Embedded Design Project?</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Get an engineering proposal with turnaround times and BOM estimates within 24 hours.</p>
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <a href="/contact" class="btn-shimmer flex-1 text-center py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs shadow-md transition">
+            Request Quote Now &rarr;
+          </a>
+          <button type="button" id="rfq-modal-dismiss" class="px-4 py-3 bg-slate-100 dark:bg-brand-dark text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-200 transition">
+            Maybe Later
+          </button>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Admin Dynamic Body Script Injection -->
+  <% if (settings.custom_body_scripts && settings.custom_body_scripts.trim()) { %>
+    <%- settings.custom_body_scripts %>
+  <% } %>
+
+  <!-- Global Client-Side Scripts -->
   <script>
     // 1. Theme Switcher Logic (Dark / Light)
     const themeToggleBtn = document.getElementById('theme-toggle');
@@ -195,7 +268,7 @@
       });
     }
 
-    // 2. Modern 3 Color Scheme Switcher (Emerald, Cyan, Space Grey) + Dynamic Favicon
+    // 2. Palette Selection Switcher
     const paletteButtons = document.querySelectorAll('.palette-btn');
     const paletteDropdownBtn = document.getElementById('palette-dropdown-btn');
     const paletteDropdownMenu = document.getElementById('palette-dropdown-menu');
@@ -203,31 +276,19 @@
     const activeSchemeDot = document.getElementById('active-scheme-dot');
 
     const paletteColorMap = {
-      emerald: '#007f5f',
-      cyan: '#0284c7',
-      spacegrey: '#475569'
+      'silicon-dark-blue': '#0077b6',
+      'pcb-emerald-green': '#10b981',
+      'automotive-slate-red': '#ef4444',
+      'industrial-amber-charcoal': '#f59e0b',
+      'clean-light-enterprise': '#2563eb'
     };
 
-    function updateFavicon(color) {
-      const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#0b1412"/><path d="M16 4C16.8 4 17.5 4.4 18 5.2L28 21.8C28.7 23 28.2 24.5 27 25.2C26.6 25.4 26.1 25.5 25.6 25.5H19.8C18.7 25.5 17.7 24.8 17.3 23.8L16 20.3L14.7 23.8C14.3 24.8 13.3 25.5 12.2 25.5H6.4C5 25.5 3.9 24.4 3.9 23C3.9 22.5 4 22.1 4.3 21.8L14 5.2C14.5 4.4 15.2 4 16 4Z" fill="${color}"/></svg>`;
-      const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-      link.type = 'image/svg+xml';
-      link.rel = 'icon';
-      link.href = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(faviconSvg);
-      document.getElementsByTagName('head')[0].appendChild(link);
-    }
-
     function applyPalette(scheme) {
-      const safeScheme = ['emerald', 'cyan', 'spacegrey'].includes(scheme) ? scheme : 'emerald';
+      const safeScheme = paletteColorMap[scheme] ? scheme : 'pcb-emerald-green';
       document.documentElement.setAttribute('data-palette', safeScheme);
       localStorage.setItem('color-palette', safeScheme);
 
-      const colorHex = paletteColorMap[safeScheme] || '#007f5f';
-
-      // Update favicon color dynamically
-      updateFavicon(colorHex);
-
-      // Update active indicator dot in header dropdown button
+      const colorHex = paletteColorMap[safeScheme] || '#10b981';
       if (activeSchemeDot) {
         activeSchemeDot.style.backgroundColor = colorHex;
       }
@@ -235,21 +296,19 @@
       paletteButtons.forEach(btn => {
         const check = btn.querySelector('.scheme-check');
         const isMatch = btn.dataset.scheme === safeScheme;
-
         if (isMatch) {
           if (check) check.classList.remove('hidden');
-          btn.classList.add('active-palette-item', 'font-bold');
+          btn.classList.add('font-bold');
         } else {
           if (check) check.classList.add('hidden');
-          btn.classList.remove('active-palette-item', 'font-bold');
+          btn.classList.remove('font-bold');
         }
       });
     }
 
-    const initialScheme = localStorage.getItem('color-palette') || 'emerald';
+    const initialScheme = localStorage.getItem('color-palette') || '<%= settings.active_theme_palette || "pcb-emerald-green" %>';
     applyPalette(initialScheme);
 
-    // Toggle Palette Dropdown
     if (paletteDropdownBtn && paletteDropdownMenu) {
       paletteDropdownBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -271,7 +330,7 @@
     paletteButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         applyPalette(btn.dataset.scheme);
-        if (paletteDropdownMenu && !paletteDropdownMenu.classList.contains('hidden')) {
+        if (paletteDropdownMenu) {
           paletteDropdownMenu.classList.add('hidden');
           if (paletteDropdownBtn) paletteDropdownBtn.setAttribute('aria-expanded', 'false');
           if (paletteChevron) paletteChevron.classList.remove('rotate-180');
@@ -279,50 +338,51 @@
       });
     });
 
-    // 3. Global Spotlight Tracking & 3D Tilt Physics for Cards
-    function initCardInteractivity() {
-      const cards = document.querySelectorAll('.spotlight-card, .interactive-card');
-      cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          card.style.setProperty('--mouse-x', `${x}px`);
-          card.style.setProperty('--mouse-y', `${y}px`);
-
-          // Subtle 3D Tilt micro-interaction
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const rotateX = ((y - centerY) / centerY) * -3.5;
-          const rotateY = ((x - centerX) / centerX) * 3.5;
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-        });
-
-        card.addEventListener('mouseleave', () => {
-          card.style.transform = '';
-        });
+    // 3. Back-to-Top Button Scroll Handler
+    const backToTopBtn = document.getElementById('back-to-top-btn');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          backToTopBtn.classList.remove('hidden');
+        } else {
+          backToTopBtn.classList.add('hidden');
+        }
+      });
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
-    initCardInteractivity();
 
-    // 4. Global Scroll Reveal Observer (IntersectionObserver)
-    const revealElements = document.querySelectorAll('.reveal-on-scroll');
-    if (revealElements.length > 0 && 'IntersectionObserver' in window) {
-      const revealObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    // 4. Delayed RFQ Popup Modal Handler
+    const rfqModal = document.getElementById('rfq-auto-modal');
+    const rfqClose = document.getElementById('rfq-modal-close');
+    const rfqDismiss = document.getElementById('rfq-modal-dismiss');
+    if (rfqModal && !sessionStorage.getItem('rfq-dismissed')) {
+      const delaySec = Number('<%= settings.rfq_modal_delay_sec || 5 %>') || 5;
+      setTimeout(() => {
+        if (!sessionStorage.getItem('rfq-dismissed')) {
+          rfqModal.classList.remove('hidden');
+        }
+      }, delaySec * 1000);
 
-      revealElements.forEach(el => revealObserver.observe(el));
-    } else {
-      revealElements.forEach(el => el.classList.add('revealed'));
+      const hideRfq = () => {
+        rfqModal.classList.add('hidden');
+        sessionStorage.setItem('rfq-dismissed', 'true');
+      };
+      if (rfqClose) rfqClose.addEventListener('click', hideRfq);
+      if (rfqDismiss) rfqDismiss.addEventListener('click', hideRfq);
     }
 
-    // 5. Mobile Menu
+    // 5. Card Spotlight Cursor Tracker
+    document.querySelectorAll('.spotlight-card, .interactive-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+        card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      });
+    });
+
+    // 6. Mobile Navigation Menu
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     if (mobileMenuBtn && mobileMenu) {
@@ -333,7 +393,7 @@
       });
     }
 
-    // 5b. Header Quick Search Widget
+    // 7. Header Quick Search Widget
     const searchBtn = document.getElementById('header-search-btn');
     const searchModal = document.getElementById('header-search-modal');
     const searchClose = document.getElementById('header-search-close');
@@ -356,7 +416,7 @@
       { type: 'Tool', title: 'Microstrip Controlled Trace Impedance', url: '/tools/trace-impedance', desc: 'Characteristic impedance 50-ohm calculation' },
       { type: 'Tool', title: 'Microcontroller Pinout & Peripheral Reference', url: '/tools/mcu-pinout', desc: 'STM32, ESP32, and RP2040 pin multiplexing' },
       { type: 'Blog', title: 'Hardware & Firmware Co-Design', url: '/blogs/bridging-the-divide', desc: 'Aligning hardware and firmware engineering workflows' },
-      { type: 'Blog', title: 'Hardware-in-the-Loop (HIL) Testing', url: '/blogs/hil-testing-mission-critical-systems', desc: 'Automated test rigs for mission-critical validation' },
+      { type: 'Blog', title: 'Hardware-in-the-Loop (HIL) Testing', url: '/blogs/hardware-in-the-loop-hil', desc: 'Automated test rigs for mission-critical validation' },
       { type: 'Page', title: 'Engineering Services Portfolio', url: '/services', desc: 'All hardware and firmware engineering disciplines' },
       { type: 'Page', title: 'Client Projects & Case Studies', url: '/projects', desc: 'Bus AC controllers, water dispensers, IoT gateways' },
       { type: 'Page', title: 'About Embedded India', url: '/about', desc: 'Company vision, precision standards, and engineering presence' },
@@ -406,7 +466,6 @@
     if (searchInput && searchResults) {
       searchInput.addEventListener('input', () => {
         const q = searchInput.value.trim().toLowerCase();
-        // Do NOT render "No results" on initial page load or when query < 2 chars
         if (q.length < 2) {
           searchResults.innerHTML = '';
           searchResults.classList.add('hidden');
@@ -422,7 +481,6 @@
         searchResults.classList.remove('hidden');
 
         if (matches.length === 0) {
-          // ONLY show "No results" when query is typed (>= 2 chars) and has 0 matches
           searchResults.innerHTML = `
             <div class="p-6 text-center text-slate-500 dark:text-slate-400">
               <p class="font-bold text-sm">No results found for "${searchInput.value.trim()}"</p>
@@ -444,7 +502,7 @@
       });
     }
 
-    // 6. Cookie Banner
+    // 8. Cookie Banner Handling
     const cookieBanner = document.getElementById('cookie-banner');
     const cookieAccept = document.getElementById('cookie-accept');
     const cookieDecline = document.getElementById('cookie-decline');
@@ -461,7 +519,7 @@
       });
     }
 
-    // 7. Newsletter Form Submission AJAX
+    // 9. Newsletter Form Submission AJAX
     const newsletterForm = document.getElementById('newsletter-form');
     const newsletterStatus = document.getElementById('newsletter-status');
     if (newsletterForm) {

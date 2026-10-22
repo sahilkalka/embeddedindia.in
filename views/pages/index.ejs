@@ -1,5 +1,6 @@
 <%- include('../layouts/header') %>
 
+<% if (settings.section_hero_enabled !== "false") { %>
 <!-- Spaceship-Inspired Ambient Hero Section with Interactive Canvas -->
 <section class="relative overflow-hidden spaceship-ambient-mesh circuit-grid py-16 lg:py-24 border-b border-slate-200/80 dark:border-[#1e3831] transition-colors">
   
@@ -207,7 +208,9 @@ void init_embedded_system(void) {
     </div>
   </div>
 </section>
+<% } %>
 
+<% if (settings.section_sandbox_enabled !== "false") { %>
 <!-- Interactive Mini-Engineering Sandbox (Instant Trace Calculator on Homepage) -->
 <section class="py-12 bg-white dark:bg-brand-dark border-b border-slate-200/80 dark:border-brand-border">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -252,6 +255,7 @@ void init_embedded_system(void) {
     </div>
   </div>
 </section>
+<% } %>
 
 <!-- More Than Just Service Section (Value Proposition) -->
 <section class="py-16 bg-white dark:bg-[#0f1c18] border-b border-slate-200/80 dark:border-brand-border/60 transition-colors">
@@ -329,6 +333,7 @@ void init_embedded_system(void) {
   </div>
 </section>
 
+<% if (settings.section_services_enabled !== "false") { %>
 <!-- Services We Offer Section (Spaceship Style Spotlight Hover Cards) -->
 <section class="py-20 bg-slate-50 dark:bg-brand-dark transition-colors">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -460,6 +465,224 @@ void init_embedded_system(void) {
 
   </div>
 </section>
+<% } %>
+
+<!-- Featured Engineering Projects Spotlight Section -->
+<% if (settings.section_projects_enabled !== 'false') { %>
+<section class="py-20 bg-white dark:bg-[#0b1412] border-b border-slate-200/80 dark:border-brand-border/60 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div>
+        <span class="px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+          Proven Hardware
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          Featured Engineering Case Studies
+        </h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          Production electronics deployed across Indian automotive, utilities, and consumer industries.
+        </p>
+      </div>
+      <a href="/projects" class="mt-4 md:mt-0 inline-flex items-center text-xs font-bold text-brand-500 dark:text-accent hover:underline">
+        View All Projects Portfolio &rarr;
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="spotlight-card bg-slate-50 dark:bg-brand-surface rounded-3xl p-6 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-brand-500 dark:text-accent">Automotive / HVAC</span>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-1 mb-2">Automotive Bus AC Controller</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Dual CAN-bus architecture, 12V/24V transient protection, and multi-zone PID temperature regulation for transit coaches.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <a href="/projects" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+            Inspect Architecture &rarr;
+          </a>
+        </div>
+      </div>
+
+      <div class="spotlight-card bg-slate-50 dark:bg-brand-surface rounded-3xl p-6 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-brand-500 dark:text-accent">Commercial IoT</span>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-1 mb-2">Smart Water Dispenser Controller</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Capacitive touch interface, optical water level monitoring, RS-485 telemetry, and automated sanitary UV cycles.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <a href="/projects" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+            Inspect Architecture &rarr;
+          </a>
+        </div>
+      </div>
+
+      <div class="spotlight-card bg-slate-50 dark:bg-brand-surface rounded-3xl p-6 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition duration-300">
+        <div>
+          <span class="text-[10px] font-bold uppercase text-brand-500 dark:text-accent">Industrial Automation</span>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-1 mb-2">Substation RTU Edge Gateway</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Linux BSP with dual Ethernet, galvanic isolation, IEC 60870-5-104 protocol support, and fail-safe dual bank eMMC FOTA.
+          </p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <a href="/projects" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+            Inspect Architecture &rarr;
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Recent Technical Articles Section -->
+<% if (settings.section_blogs_enabled !== 'false') { %>
+<section class="py-20 bg-slate-50 dark:bg-brand-dark border-b border-slate-200/80 dark:border-brand-border/60 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <div>
+        <span class="px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+          Engineering Insights
+        </span>
+        <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          Latest Technical Articles
+        </h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+          Peer-reviewed hardware guides, functional safety breakdowns, and firmware architectural patterns.
+        </p>
+      </div>
+      <a href="/blogs" class="mt-4 md:mt-0 inline-flex items-center text-xs font-bold text-brand-500 dark:text-accent hover:underline">
+        Read All Technical Blogs &rarr;
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <% if (locals.recentPosts && recentPosts.length > 0) { %>
+        <% recentPosts.forEach(post => { %>
+          <a href="/blogs/<%= post.slug %>" class="bg-white dark:bg-brand-surface rounded-3xl p-6 border border-slate-200 dark:border-brand-border hover:border-brand-500 transition shadow-sm block group">
+            <span class="text-[10px] font-bold uppercase text-brand-500 dark:text-accent"><%= post.category || 'Embedded Electronics' %></span>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-brand-500 transition mt-2 mb-2 line-clamp-2">
+              <%= post.title %>
+            </h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
+              <%= post.summary %>
+            </p>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <div class="col-span-3 text-center py-8 text-xs text-slate-400">
+          Articles loading from engineering database...
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Client Testimonials & Social Proof -->
+<% if (settings.section_testimonials_enabled !== 'false') { %>
+<section id="testimonials" class="py-20 bg-white dark:bg-[#0b1412] border-b border-slate-200/80 dark:border-brand-border/60 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <span class="px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+        Client Testimonials
+      </span>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+        Trusted by Tier-1 OEM Engineers
+      </h2>
+      <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">
+        What technology leaders and engineering directors say about partnering with Embedded India.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between">
+        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
+          "Embedded India delivered our multi-layer CAN-FD ECU prototype in under 4 weeks with zero board respins. Their DFM review caught 3 critical footprint errors early."
+        </p>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white">Rajesh K.</h4>
+          <span class="text-[11px] text-slate-500">VP Hardware Engineering, EV Powertrain</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between">
+        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
+          "Their low-power firmware architecture squeezed 3.5 years of battery life from a 1200mAh coin cell on our LoRaWAN agricultural asset trackers."
+        </p>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white">Vikram S.</h4>
+          <span class="text-[11px] text-slate-500">CTO, Smart Agri IoT</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between">
+        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
+          "Seamless HIL testing automation that gave our functional safety audit team 100% test branch coverage for ISO 26262 ASIL-B compliance."
+        </p>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white">Anand M.</h4>
+          <span class="text-[11px] text-slate-500">Principal Embedded Architect, Automotive</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- Frequently Asked Questions (FAQ) -->
+<% if (settings.section_faq_enabled !== 'false') { %>
+<section id="faq" class="py-20 bg-slate-50 dark:bg-brand-dark transition-colors">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <span class="px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+        Answers &amp; Clarity
+      </span>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+        Frequently Asked Questions
+      </h2>
+      <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">
+        Everything you need to know about our turnkey hardware, firmware, and manufacturing contracts.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>What is the typical prototype turnaround timeline?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          Standard turnkey prototype turn is 3 to 4 weeks, which includes schematic design, layout routing, bare PCB fabrication, component sourcing, SMT assembly, and bench verification bring-up.
+        </p>
+      </details>
+
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>Who retains the Intellectual Property (IP) and design files?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          You retain 100% ownership of all IP, Gerber manufacturing packages, BOMs, native CAD schematics (Altium/KiCad), and firmware source code repositories upon completion.
+        </p>
+      </details>
+
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>Can you assist with volume production and SMT manufacturing?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          Yes. We partner with ISO 9001 and IATF 16949 certified EMS facilities across Bangalore, Pune, and Noida for pilot runs and high-volume production with custom automated factory test jigs.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+<% } %>
 
 <!-- Interactive Scripts: Particle Canvas, Typewriter, Spotlight Cursor, Oscilloscope & Bring-Up -->
 <script>
@@ -476,6 +699,7 @@ void init_embedded_system(void) {
   let charIndex = 0;
   let isDeleting = false;
 
+  if (!typewriterTarget) return;
   function typeStep() {
     const currentPhrase = typewriterPhrases[phraseIndex];
     if (isDeleting) {
@@ -798,7 +1022,7 @@ int ddr3_phy_training(void) {
   const bringUpStatus = document.getElementById('bringUpStatus');
   const termLogs = document.getElementById('terminalLogs');
 
-  btnBringUp.addEventListener('click', () => {
+  if (btnBringUp) btnBringUp.addEventListener('click', () => {
     // Switch to terminal tab
     tabBtns.forEach(b => {
       b.className = b.getAttribute('data-tab') === 'terminal' ? 'px-3 py-1 rounded-md bg-brand-500 text-white font-black border border-white/20 console-tab-btn' : 'px-3 py-1 rounded-md text-slate-300 hover:text-white font-bold console-tab-btn';
@@ -852,8 +1076,7 @@ int ddr3_phy_training(void) {
     miniWidthMmResult.textContent = '(' + widthMm.toFixed(2) + ' mm)';
   }
 
-  miniSlider.addEventListener('input', updateMiniTrace);
-  updateMiniTrace();
-</script>
+  if (miniSlider) { miniSlider.addEventListener('input', updateMiniTrace); updateMiniTrace(); }
+  </script>
 
 <%- include('../layouts/footer') %>

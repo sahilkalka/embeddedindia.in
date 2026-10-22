@@ -12,6 +12,7 @@ const { seoMiddleware } = require('./middleware/seo');
 const { optionalAuth } = require('./middleware/auth');
 const { initCronJobs } = require('./cron/jobs');
 const prisma = require('./services/db');
+const mailer = require('./services/mailer');
 
 // Route modules
 const seoRoutes = require('./routes/seo');
@@ -36,16 +37,44 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "https://cdnjs.cloudflare.com",
+        "https://pagead2.googlesyndication.com",
+        "https://connect.facebook.net",
+        "https://cdn.carbonads.com",
+        "https://srv.carbonads.net",
+        "https://fonts.googleapis.com"
+      ],
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://cdnjs.cloudflare.com",
+        "https://fonts.googleapis.com"
+      ],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "data:"],
-      connectSrc: ["'self'"],
+      fontSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.gstatic.com", "data:"],
+      connectSrc: [
+        "'self'",
+        "https://pagead2.googlesyndication.com",
+        "https://www.facebook.com",
+        "https://srv.carbonads.net"
+      ],
+      frameSrc: [
+        "'self'",
+        "https://www.youtube.com",
+        "https://www.youtube-nocookie.com",
+        "https://googleads.g.doubleclick.net",
+        "https://tpc.googlesyndication.com"
+      ],
       frameAncestors: ["'none'"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"]
     }
   },
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
@@ -80,11 +109,42 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(seoMiddleware);
 app.use(optionalAuth);
 
+// Maintenance Mode Interceptor
+app.use((req, res, next) => {
+  const { settings } = res.locals;
+  if (settings && settings.maintenance_mode === 'true') {
+    const isExcluded =
+      req.path.startsWith('/admin') ||
+      req.path.startsWith('/login') ||
+      req.path.startsWith('/api/auth') ||
+      req.path.startsWith('/css') ||
+      req.path.startsWith('/js') ||
+      req.path.startsWith('/assets') ||
+      req.path.startsWith('/favicon');
+
+    if (!isExcluded) {
+      return res.status(503).render('pages/message', {
+        title: 'Maintenance in Progress',
+        heading: 'Scheduled Engineering Maintenance',
+        message: settings.maintenance_message || 'Our engineering team is currently performing scheduled system updates. Please check back shortly.',
+        buttonText: 'Try Again',
+        buttonLink: req.originalUrl || '/'
+      });
+    }
+  }
+  next();
+});
+
 // Mount Sitemaps, Robots & OG Image
 app.use('/', seoRoutes);
 
 // Mount API routes
 app.use('/api', apiRoutes);
+
+// Direct /contact POST route delegation
+if (apiRoutes.handleContact) {
+  app.post('/contact', apiRoutes.handleContact);
+}
 
 // Mount Interactive Calculators
 app.use('/tools', toolsRoutes);
@@ -206,6 +266,11 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`📚 Technical Blog: http://localhost:${PORT}/blogs`);
     console.log(`🗺️ Sitemap: http://localhost:${PORT}/sitemap.xml`);
     console.log(`========================================================\n`);
+
+    // Verify SMTP connection on startup
+    mailer.verifySmtp().catch(smtpErr => {
+      console.warn('[SMTP INIT NOTICE]', smtpErr.message);
+    });
 
     initCronJobs();
 

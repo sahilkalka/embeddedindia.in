@@ -1,298 +1,981 @@
 <%- include('layout_top') %>
 
-<div class="max-w-4xl space-y-6">
+<div class="max-w-5xl space-y-8">
   
-  <div>
-    <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2">
-      <span>⚙️ Global System, SMTP &amp; Account Settings</span>
-    </h1>
-    <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-1">Configure company metadata, outgoing SMTP mailer, AdSense monetization, and administrative accounts</p>
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2">
+        <span>⚙️ Site Customizer, Theme Engine &amp; Monetization Hub</span>
+      </h1>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Configure dynamic styling, typography, feature flags, multi-provider monetization, SEO overrides, and SMTP delivery</p>
+    </div>
+
+    <div class="flex items-center space-x-2">
+      <a href="/" target="_blank" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border border-slate-300 dark:border-slate-700">
+        <span>View Live Site</span>
+        <span>&nearr;</span>
+      </a>
+      <button type="submit" form="mainSettingsForm" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition shadow-md active:scale-95 flex items-center space-x-1.5">
+        <span>💾 Save All Changes</span>
+      </button>
+    </div>
   </div>
 
   <% if (success) { %>
-    <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center space-x-2 shadow-sm">
-      <span>✅ System configuration settings saved successfully!</span>
+    <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center space-x-2 shadow-sm animate-in fade-in duration-200">
+      <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+      <span>All system customizations, palettes, SEO tags, and monetization rules saved and applied live!</span>
     </div>
   <% } %>
 
-  <!-- Main Settings Form -->
-  <form action="/admin/settings" method="POST" class="space-y-6">
-    
-    <!-- 1. General Company Information -->
-    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
-      <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
-        1. Company &amp; Contact Metadata
-      </h2>
+  <!-- Quick Navigation Sub-Tabs -->
+  <div class="flex items-center space-x-2 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800 text-xs font-bold">
+    <a href="#theme-engine" class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-accent whitespace-nowrap">🎨 1. Theme &amp; Palettes</a>
+    <a href="#site-customizer" class="px-3.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">🎛️ 2. No-Code Customizer</a>
+    <a href="#feature-flags" class="px-3.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">🚩 3. Feature Flags</a>
+    <a href="#seo-scripts" class="px-3.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">🔍 4. Dynamic SEO &amp; Scripts</a>
+    <a href="#monetization-ads" class="px-3.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">💰 5. Monetization &amp; Ads</a>
+    <a href="#smtp-settings" class="px-3.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">📧 6. Outgoing SMTP</a>
+    <a href="#team-accounts" class="px-3.5 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-nowrap">👥 7. Team Accounts</a>
+  </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Company / Brand Name</label>
-          <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-        </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Primary Inquiries Email</label>
-          <input type="email" name="contact_email" value="<%= settings.contact_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-        </div>
-      </div>
+  <form id="mainSettingsForm" action="/admin/settings" method="POST" class="space-y-8">
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <!-- ========================================== -->
+    <!-- MODULE 1: DYNAMIC THEME & COLOR PALETTE ENGINE -->
+    <!-- ========================================== -->
+    <section id="theme-engine" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Phone / WhatsApp</label>
-          <input type="text" name="contact_phone" value="<%= settings.contact_phone || '+91 98765 43210' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-        </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Offices &amp; Locations</label>
-          <input type="text" name="contact_address" value="<%= settings.contact_address || 'Bangalore / Hyderabad / Pune, India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-        </div>
-      </div>
-
-      <!-- Homepage Hero Content -->
-      <div class="pt-4 border-t border-slate-100 dark:border-[rgba(255,255,255,0.08)] space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Hero Main Heading</label>
-            <input type="text" name="hero_title" value="<%= settings.hero_title || 'Think Big.' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-          </div>
-          <div>
-            <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Hero Subheading Prefix</label>
-            <input type="text" name="hero_subtitle" value="<%= settings.hero_subtitle || 'We Engineer:' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-          </div>
-        </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Hero Description Paragraph</label>
-          <textarea name="hero_description" rows="2" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs transition"><%= settings.hero_description || 'From early napkin architecture and high-speed PCB layouts to deterministic RTOS firmware, HIL automated testing, and volume SMT manufacturing.' %></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Outgoing Mail Server (SMTP) Configuration & Test -->
-    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
-        <div>
-          <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white">
-            2. Outgoing Mail Server (SMTP) Configuration
+          <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+            <span>🎨 Dynamic Theme &amp; Color Palette Engine</span>
           </h2>
-          <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">Used for consultation inquiries, newsletter double opt-in, and automated engineering digests</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Select from 5 predefined B2B Embedded Tech palettes or define custom hex values injected directly into root CSS variables.</p>
         </div>
-        <span class="text-[10px] bg-emerald-50 dark:bg-[rgba(16,185,129,0.15)] text-emerald-700 dark:text-[#34D399] border border-emerald-200 dark:border-[rgba(16,185,129,0.3)] font-bold px-2.5 py-1 rounded-full uppercase">
-          SMTP Service
+        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+          Theme Engine
         </span>
       </div>
 
-      <!-- Quick Preset Helper Buttons -->
-      <div class="flex flex-wrap items-center gap-2 text-xs">
-        <span class="text-[11px] font-bold text-slate-500 dark:text-[#94A3B8] mr-1">Quick Presets:</span>
-        <button type="button" onclick="setSmtpPreset('gmail')" class="px-2.5 py-1 bg-slate-100 dark:bg-[#16211D] hover:bg-slate-200 dark:hover:bg-[#1f2e29] rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-[rgba(255,255,255,0.08)]">
-          Gmail (smtp.gmail.com:587)
-        </button>
-        <button type="button" onclick="setSmtpPreset('sendgrid')" class="px-2.5 py-1 bg-slate-100 dark:bg-[#16211D] hover:bg-slate-200 dark:hover:bg-[#1f2e29] rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-[rgba(255,255,255,0.08)]">
-          SendGrid (smtp.sendgrid.net:587)
-        </button>
-        <button type="button" onclick="setSmtpPreset('mock')" class="px-2.5 py-1 bg-slate-100 dark:bg-[#16211D] hover:bg-slate-200 dark:hover:bg-[#1f2e29] rounded-lg text-slate-700 dark:text-slate-300 text-[11px] font-semibold transition border border-slate-200 dark:border-[rgba(255,255,255,0.08)]">
-          Dev / Local Mock
-        </button>
+      <!-- Predefined Palettes Selector Cards -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-3">
+          Select Active Live Palette:
+        </label>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <!-- 1. Silicon Dark Blue -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'silicon-dark-blue') ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="silicon-dark-blue" <%= (settings.active_theme_palette === 'silicon-dark-blue') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('silicon-dark-blue')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">1. Silicon Dark Blue</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">Semicon</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0a1128" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#101f42" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0077b6" title="Accent 1"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#00b4d8" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 2. PCB Emerald Green -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (!settings.active_theme_palette || settings.active_theme_palette === 'pcb-emerald-green') ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="pcb-emerald-green" <%= (!settings.active_theme_palette || settings.active_theme_palette === 'pcb-emerald-green') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('pcb-emerald-green')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">2. PCB Emerald Green</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">Default B2B</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0b1412" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#11221e" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#10b981" title="Accent 1"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#34d399" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f1f5f9" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 3. Automotive Slate/Red -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'automotive-slate-red') ? 'border-red-500 bg-red-50/20 dark:bg-red-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="automotive-slate-red" <%= (settings.active_theme_palette === 'automotive-slate-red') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('automotive-slate-red')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">3. Automotive Slate/Red</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-100 text-red-800">CAN / ECU</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f172a" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#1e293b" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#ef4444" title="Accent 1"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#f87171" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 4. Industrial Amber/Charcoal -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'industrial-amber-charcoal') ? 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="industrial-amber-charcoal" <%= (settings.active_theme_palette === 'industrial-amber-charcoal') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('industrial-amber-charcoal')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">4. Industrial Amber</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">Factory IIoT</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#18181b" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#27272a" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#f59e0b" title="Accent 1"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#fbbf24" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#fafafa" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 5. Clean Light Enterprise -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'clean-light-enterprise') ? 'border-blue-600 bg-blue-50/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="clean-light-enterprise" <%= (settings.active_theme_palette === 'clean-light-enterprise') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('clean-light-enterprise')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">5. Clean Light Enterprise</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">High Contrast</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#ffffff" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#2563eb" title="Accent 1"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#3b82f6" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f172a" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 6. Custom Hex Palette -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'custom') ? 'border-purple-500 bg-purple-50/20 dark:bg-purple-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="custom" <%= (settings.active_theme_palette === 'custom') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('custom')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">6. Custom Hex Engine</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800">User Defined</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_bg_primary" style="background:<%= settings.palette_bg_primary || '#0b1412' %>"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_bg_surface" style="background:<%= settings.palette_bg_surface || '#11221e' %>"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_accent_primary" style="background:<%= settings.palette_accent_primary || '#10b981' %>"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_accent_secondary" style="background:<%= settings.palette_accent_secondary || '#34d399' %>"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_text_primary" style="background:<%= settings.palette_text_primary || '#f1f5f9' %>"></span>
+            </div>
+          </label>
+
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="sm:col-span-2">
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">SMTP Host Server</label>
-          <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com or smtp.sendgrid.net" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+      <!-- Custom Palette Hex Color Inputs (CRUD) -->
+      <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase text-slate-800 dark:text-slate-200">Custom Palette Hex Variables (--root CSS injection)</span>
+          <span class="text-[11px] text-slate-400">Values propagate automatically across all templates</span>
         </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Port</label>
-          <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" placeholder="587 or 465" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-xs">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--bg-primary</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_bg_primary" value="<%= settings.palette_bg_primary || '#0b1412' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_bg_primary', this.value)">
+              <input type="text" id="palette_bg_primary" name="palette_bg_primary" value="<%= settings.palette_bg_primary || '#0b1412' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--bg-surface</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_bg_surface" value="<%= settings.palette_bg_surface || '#11221e' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_bg_surface', this.value)">
+              <input type="text" id="palette_bg_surface" name="palette_bg_surface" value="<%= settings.palette_bg_surface || '#11221e' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--text-primary</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_text_primary" value="<%= settings.palette_text_primary || '#f1f5f9' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_text_primary', this.value)">
+              <input type="text" id="palette_text_primary" name="palette_text_primary" value="<%= settings.palette_text_primary || '#f1f5f9' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--text-muted</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_text_muted" value="<%= settings.palette_text_muted || '#94a3b8' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_text_muted', this.value)">
+              <input type="text" id="palette_text_muted" name="palette_text_muted" value="<%= settings.palette_text_muted || '#94a3b8' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--accent-primary</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_accent_primary" value="<%= settings.palette_accent_primary || '#10b981' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_accent_primary', this.value)">
+              <input type="text" id="palette_accent_primary" name="palette_accent_primary" value="<%= settings.palette_accent_primary || '#10b981' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--accent-sec</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_accent_secondary" value="<%= settings.palette_accent_secondary || '#34d399' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_accent_secondary', this.value)">
+              <input type="text" id="palette_accent_secondary" name="palette_accent_secondary" value="<%= settings.palette_accent_secondary || '#34d399' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">--border-color</label>
+            <div class="flex items-center space-x-1">
+              <input type="color" id="picker_border_color" value="<%= settings.palette_border_color || '#1e3831' %>" class="w-7 h-7 rounded border-none cursor-pointer" oninput="syncColorInput('palette_border_color', this.value)">
+              <input type="text" id="palette_border_color" name="palette_border_color" value="<%= settings.palette_border_color || '#1e3831' %>" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Live Interactive Component Preview Card -->
+      <div id="liveThemePreviewBox" class="p-6 rounded-2xl border transition-all space-y-3" style="background: <%= theme ? theme.palette.bgPrimary : '#0b1412' %>; border-color: <%= theme ? theme.palette.borderColor : '#1e3831' %>">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full" style="background: <%= theme ? theme.palette.accentPrimary : '#10b981' %>; color: #fff;">
+            Live Theme Preview
+          </span>
+          <span class="text-xs font-mono" style="color: <%= theme ? theme.palette.textMuted : '#94a3b8' %>">
+            Active: <%= theme ? theme.palette.name : 'PCB Emerald Green' %>
+          </span>
+        </div>
+        <div class="p-4 rounded-xl" style="background: <%= theme ? theme.palette.bgSurface : '#11221e' %>; border: 1px solid <%= theme ? theme.palette.borderColor : '#1e3831' %>">
+          <h3 class="text-base font-extrabold" style="color: <%= theme ? theme.palette.textPrimary : '#f1f5f9' %>">
+            Turnkey Embedded Engineering Lab
+          </h3>
+          <p class="text-xs mt-1" style="color: <%= theme ? theme.palette.textMuted : '#94a3b8' %>">
+            From early architectural feasibility and high-speed PCB layouts to deterministic RTOS firmware.
+          </p>
+          <div class="mt-4 flex items-center space-x-3">
+            <button type="button" class="px-4 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm" style="background: <%= theme ? theme.palette.accentPrimary : '#10b981' %>">
+              Primary CTA
+            </button>
+            <span class="text-xs font-semibold" style="color: <%= theme ? theme.palette.accentSecondary : '#34d399' %>">Secondary Metric Accent &rarr;</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODULE 2: NO-CODE SITE CUSTOMIZER -->
+    <!-- ========================================== -->
+    <section id="site-customizer" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Encryption Protocol</label>
-          <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-            <option value="false" <%= settings.smtp_secure !== 'true' ? 'selected' : '' %>>STARTTLS (Port 587 / 25)</option>
-            <option value="true" <%= settings.smtp_secure === 'true' ? 'selected' : '' %>>SSL / TLS Direct (Port 465)</option>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+            <span>🎛️ No-Code Site Customizer (Typography, Copy &amp; UX)</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Control typography hierarchy, global brand strings, UX behavior toggles, and conversion widgets without touching code.</p>
+        </div>
+        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+          Customizer
+        </span>
+      </div>
+
+      <!-- 2A. Typography & Layout -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-brand-border/60">
+          Typography &amp; Layout Scale
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Heading Font Family</label>
+            <select name="heading_font" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <% const hFonts = ['Inter', 'Space Grotesk', 'Roboto', 'Montserrat', 'Poppins', 'Outfit', 'Fira Code']; %>
+              <% hFonts.forEach(f => { %>
+                <option value="<%= f %>" <%= (settings.heading_font === f) ? 'selected' : '' %>><%= f %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Body Font Family</label>
+            <select name="body_font" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <% const bFonts = ['Inter', 'Open Sans', 'Roboto', 'Lato', 'Source Sans Pro', 'JetBrains Mono']; %>
+              <% bFonts.forEach(f => { %>
+                <option value="<%= f %>" <%= (settings.body_font === f) ? 'selected' : '' %>><%= f %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Base Font Size</label>
+            <select name="base_font_size" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <option value="14px" <%= settings.base_font_size === '14px' ? 'selected' : '' %>>14px (Compact Technical)</option>
+              <option value="15px" <%= settings.base_font_size === '15px' ? 'selected' : '' %>>15px (Balanced)</option>
+              <option value="16px" <%= (!settings.base_font_size || settings.base_font_size === '16px') ? 'selected' : '' %>>16px (Standard Default)</option>
+              <option value="17px" <%= settings.base_font_size === '17px' ? 'selected' : '' %>>17px (High Readability)</option>
+              <option value="18px" <%= settings.base_font_size === '18px' ? 'selected' : '' %>>18px (Large Display)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 pt-2">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Border Radius Scale</label>
+            <select name="border_radius_scale" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <option value="0.25rem" <%= settings.border_radius_scale === '0.25rem' ? 'selected' : '' %>>Sharp (4px)</option>
+              <option value="0.5rem" <%= settings.border_radius_scale === '0.5rem' ? 'selected' : '' %>>Subtle (8px)</option>
+              <option value="1rem" <%= (!settings.border_radius_scale || settings.border_radius_scale === '1rem') ? 'selected' : '' %>>Modern (16px Default)</option>
+              <option value="1.5rem" <%= settings.border_radius_scale === '1.5rem' ? 'selected' : '' %>>Pill / High Curve (24px)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Container Max Width</label>
+            <select name="container_max_width" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <option value="72rem" <%= settings.container_max_width === '72rem' ? 'selected' : '' %>>Compact (1152px / 6xl)</option>
+              <option value="80rem" <%= (!settings.container_max_width || settings.container_max_width === '80rem') ? 'selected' : '' %>>Standard (1280px / 7xl)</option>
+              <option value="90rem" <%= settings.container_max_width === '90rem' ? 'selected' : '' %>>Ultra-Wide (1440px)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Card Shadow Intensity</label>
+            <select name="card_shadow_intensity" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <option value="none" <%= settings.card_shadow_intensity === 'none' ? 'selected' : '' %>>Flat (None)</option>
+              <option value="subtle" <%= settings.card_shadow_intensity === 'subtle' ? 'selected' : '' %>>Subtle Shadow</option>
+              <option value="medium" <%= (!settings.card_shadow_intensity || settings.card_shadow_intensity === 'medium') ? 'selected' : '' %>>Medium Depth</option>
+              <option value="high" <%= settings.card_shadow_intensity === 'high' ? 'selected' : '' %>>Elevated 3D</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Glassmorphism Blur</label>
+            <select name="enable_glassmorphism" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-800 dark:text-white">
+              <option value="true" <%= settings.enable_glassmorphism === 'true' ? 'selected' : '' %>>Enabled (Backdrop Filter)</option>
+              <option value="false" <%= settings.enable_glassmorphism === 'false' ? 'selected' : '' %>>Disabled (Solid Colors)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2B. Content & Global Strings -->
+      <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-brand-border/60">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-brand-border/60">
+          Global Brand Strings &amp; Footer Metadata
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Brand Name</label>
+            <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Header Tagline</label>
+            <input type="text" name="site_tagline" value="<%= settings.site_tagline || 'Engineering Hub' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Footer Copyright Text</label>
+            <input type="text" name="footer_copyright" value="<%= settings.footer_copyright || '' %>" placeholder="© 2026 Embedded India. All rights reserved." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">LinkedIn Company URL</label>
+            <input type="text" name="social_linkedin" value="<%= settings.social_linkedin || '' %>" placeholder="https://linkedin.com/company/..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">GitHub Organization URL</label>
+            <input type="text" name="social_github" value="<%= settings.social_github || '' %>" placeholder="https://github.com/..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Twitter / X Handle</label>
+            <input type="text" name="social_twitter" value="<%= settings.social_twitter || '' %>" placeholder="https://x.com/..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">YouTube Channel URL</label>
+            <input type="text" name="social_youtube" value="<%= settings.social_youtube || '' %>" placeholder="https://youtube.com/@..." class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono text-slate-900 dark:text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Primary Email</label>
+            <input type="email" name="contact_email" value="<%= settings.contact_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
+            <input type="text" name="contact_phone" value="<%= settings.contact_phone || '+91 98765 43210' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Offices &amp; Locations</label>
+            <input type="text" name="contact_address" value="<%= settings.contact_address || 'Bangalore • Hyderabad • Pune, India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cookie Notice Banner Text</label>
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+            <div class="sm:col-span-9">
+              <input type="text" name="cookie_banner_text" value="<%= settings.cookie_banner_text || 'We use cookies to ensure optimal functionality, save your theme preferences, and provide interactive engineering tools.' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
+            </div>
+            <div class="sm:col-span-3">
+              <select name="cookie_banner_enabled" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+                <option value="true" <%= settings.cookie_banner_enabled !== 'false' ? 'selected' : '' %>>Banner Enabled</option>
+                <option value="false" <%= settings.cookie_banner_enabled === 'false' ? 'selected' : '' %>>Banner Disabled</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2C. Behavior & UX Toggles -->
+      <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-brand-border/60">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-brand-border/60">
+          Behavior &amp; Conversion UX Toggles
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Navbar Position</label>
+            <select name="nav_sticky" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+              <option value="true" <%= settings.nav_sticky !== 'false' ? 'selected' : '' %>>Sticky Top (Follow Scroll)</option>
+              <option value="false" <%= settings.nav_sticky === 'false' ? 'selected' : '' %>>Static Relative</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Default Theme Mode</label>
+            <select name="default_theme_mode" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+              <option value="dark" <%= (!settings.default_theme_mode || settings.default_theme_mode === 'dark') ? 'selected' : '' %>>Dark Mode (Default)</option>
+              <option value="light" <%= settings.default_theme_mode === 'light' ? 'selected' : '' %>>Light Mode</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Smooth Scrolling</label>
+            <select name="enable_smooth_scroll" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+              <option value="true" <%= settings.enable_smooth_scroll !== 'false' ? 'selected' : '' %>>Enabled (scroll-smooth)</option>
+              <option value="false" <%= settings.enable_smooth_scroll === 'false' ? 'selected' : '' %>>Disabled (Instant jump)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Back-to-Top Floating Button</label>
+            <select name="enable_back_to_top" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+              <option value="true" <%= settings.enable_back_to_top !== 'false' ? 'selected' : '' %>>Enabled</option>
+              <option value="false" <%= settings.enable_back_to_top === 'false' ? 'selected' : '' %>>Disabled</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Popup RFQ Modal</label>
+            <select name="enable_rfq_modal" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+              <option value="false" <%= settings.enable_rfq_modal === 'false' ? 'selected' : '' %>>Disabled</option>
+              <option value="true" <%= settings.enable_rfq_modal === 'true' ? 'selected' : '' %>>Enabled</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">RFQ Modal Delay (Seconds)</label>
+            <input type="number" name="rfq_modal_delay_sec" min="1" max="60" value="<%= settings.rfq_modal_delay_sec || '5' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+          </div>
+        </div>
+
+        <!-- WhatsApp Chat Widget Details -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800">
+          <div>
+            <label class="block text-xs font-bold text-emerald-800 dark:text-emerald-300 mb-1">WhatsApp Widget Toggle</label>
+            <select name="enable_whatsapp_widget" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-emerald-300 dark:border-emerald-700 text-xs font-semibold text-slate-900 dark:text-white">
+              <option value="false" <%= settings.enable_whatsapp_widget === 'false' ? 'selected' : '' %>>Disabled</option>
+              <option value="true" <%= settings.enable_whatsapp_widget === 'true' ? 'selected' : '' %>>Enabled (Show Floating Widget)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-emerald-800 dark:text-emerald-300 mb-1">WhatsApp Phone (with Country Code)</label>
+            <input type="text" name="whatsapp_number" value="<%= settings.whatsapp_number || '+91 98765 43210' %>" placeholder="+919876543210" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-emerald-300 dark:border-emerald-700 text-xs font-mono text-slate-900 dark:text-white">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-emerald-800 dark:text-emerald-300 mb-1">Preset Greeting Message</label>
+            <input type="text" name="whatsapp_preset_msg" value="<%= settings.whatsapp_preset_msg || 'Hello Embedded India, I have an inquiry about custom hardware and firmware engineering.' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-emerald-300 dark:border-emerald-700 text-xs text-slate-900 dark:text-white">
+          </div>
+        </div>
+
+        <!-- Maintenance Mode Toggle -->
+        <div class="p-4 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-900 dark:text-amber-300">🚨 Maintenance Mode (Returns 503 to visitors; /admin remains unlocked)</span>
+            <select name="maintenance_mode" class="px-3 py-1.5 rounded-xl bg-white dark:bg-brand-surface border border-amber-300 dark:border-amber-700 text-xs font-bold text-slate-900 dark:text-white">
+              <option value="false" <%= settings.maintenance_mode !== 'true' ? 'selected' : '' %>>Live / Normal Mode</option>
+              <option value="true" <%= settings.maintenance_mode === 'true' ? 'selected' : '' %>>Active Maintenance Mode</option>
+            </select>
+          </div>
+          <input type="text" name="maintenance_message" value="<%= settings.maintenance_message || 'Our engineering team is currently performing scheduled system updates. Please check back shortly.' %>" placeholder="Maintenance banner message..." class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-amber-200 dark:border-amber-800 text-xs text-slate-900 dark:text-white">
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODULE 3: FUTURE-READY MODULES & FEATURE FLAGS -->
+    <!-- ========================================== -->
+    <section id="feature-flags" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+            <span>🚩 Modular Section Feature Flags</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Toggle individual public site sections on or off instantly across the homepage and footer.</p>
+        </div>
+        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+          Feature Flags
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">1. Hero Section</label>
+          <select name="section_hero_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_hero_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_hero_enabled === 'false' ? 'selected' : '' %>>Hide</option>
           </select>
         </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">SMTP Username / Email</label>
-          <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="mailer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">2. Interactive Sandbox</label>
+          <select name="section_sandbox_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_sandbox_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_sandbox_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
         </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">SMTP Password / App Key</label>
-          <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">3. Services Grid</label>
+          <select name="section_services_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_services_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_services_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
         </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">4. Projects Spotlight</label>
+          <select name="section_projects_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_projects_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_projects_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">5. Recent Blogs</label>
+          <select name="section_blogs_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_blogs_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_blogs_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">6. Testimonials</label>
+          <select name="section_testimonials_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_testimonials_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_testimonials_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">7. FAQ Section</label>
+          <select name="section_faq_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_faq_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_faq_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-1">
+          <label class="block text-xs font-bold text-slate-800 dark:text-slate-200">8. Newsletter Strip</label>
+          <select name="section_newsletter_enabled" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="true" <%= settings.section_newsletter_enabled !== 'false' ? 'selected' : '' %>>Show</option>
+            <option value="false" <%= settings.section_newsletter_enabled === 'false' ? 'selected' : '' %>>Hide</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODULE 4: DYNAMIC SEO & CUSTOM SCRIPT INJECTOR -->
+    <!-- ========================================== -->
+    <section id="seo-scripts" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+            <span>🔍 Dynamic SEO &amp; Custom Scripts Manager</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure per-route meta overrides, live robots.txt rules, and inject third-party scripts into &lt;head&gt; and &lt;body&gt;.</p>
+        </div>
+        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
+          SEO &amp; Scripts
+        </span>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Sender Display Name</label>
-          <input type="text" name="smtp_from_name" value="<%= settings.smtp_from_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Global Default Title</label>
+          <input type="text" name="site_title_default" value="<%= settings.site_title_default || 'Embedded System Design & Development Services in India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
         </div>
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Sender Email Address</label>
-          <input type="email" name="smtp_from_email" value="<%= settings.smtp_from_email || 'info@embeddedindia.in' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Global Default Meta Keywords</label>
+          <input type="text" name="site_keywords_default" value="<%= settings.site_keywords_default || 'embedded systems india, PCB design bangalore, firmware development, IoT edge computing' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white">
         </div>
       </div>
 
-      <!-- Live Test SMTP Connection Box -->
-      <div class="pt-4 border-t border-slate-100 dark:border-[rgba(255,255,255,0.06)] space-y-3">
-        <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">
-          🧪 Test SMTP Configuration &amp; Dispatch Verification Email
-        </label>
-        <div class="flex flex-col sm:flex-row items-center gap-3">
-          <input type="email" id="smtpTestRecipient" value="<%= settings.contact_email || 'admin@embeddedindia.in' %>" placeholder="Recipient email for test delivery" class="flex-1 w-full h-[42px] px-3 py-2 rounded-[8px] bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs transition">
-          <button type="button" id="btnTestSmtp" class="w-full sm:w-auto h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center justify-center space-x-2 whitespace-nowrap">
-            <span>✉ Test SMTP Connection</span>
-          </button>
-        </div>
-        <div id="smtpTestResult" class="hidden p-3.5 rounded-xl text-xs font-mono"></div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Global Default Meta Description</label>
+        <textarea name="site_description_default" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white"><%= settings.site_description_default || 'Embedded System Design & Development Services in India, from concept to production. Specializing in IoT, microcontrollers, and hardware/firmware solutions.' %></textarea>
       </div>
-    </div>
 
-    <!-- 3. Monetization & Ad Account Validation -->
-    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
-      <div class="flex items-center justify-between border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
+      <!-- Route-Specific SEO Overrides JSON -->
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs font-bold text-slate-700 dark:text-slate-300">Route-Specific SEO Overrides (JSON format: route -&gt; title, description, keywords)</label>
+          <span class="text-[10px] text-slate-400 font-mono">Example: {"/about": {"title": "About Us", "description": "..."}}</span>
+        </div>
+        <textarea name="seo_route_overrides" rows="3" placeholder='{"/projects": {"title": "Portfolio - Embedded India", "description": "Custom hardware projects"}}' class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs text-slate-900 dark:text-white"><%= settings.seo_route_overrides || '' %></textarea>
+      </div>
+
+      <!-- Live robots.txt Editor -->
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label class="text-xs font-bold text-slate-700 dark:text-slate-300">robots.txt Live Editor</label>
+          <a href="/robots.txt" target="_blank" class="text-[11px] text-brand-500 hover:underline">View live /robots.txt &nearr;</a>
+        </div>
+        <textarea name="robots_txt_custom" rows="4" placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin/&#10;Sitemap: https://embeddedindia.in/sitemap.xml" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs text-slate-900 dark:text-white"><%= settings.robots_txt_custom || '' %></textarea>
+      </div>
+
+      <!-- Custom Scripts Injection -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white">
-            3. Monetization &amp; Ad Account Validation (Google AdSense)
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Custom &lt;head&gt; Scripts (Analytics, Meta, Fonts)</label>
+          <textarea name="custom_head_scripts" rows="4" placeholder="<!-- Injected directly before </head> -->&#10;<script>/* custom code */</script>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs text-slate-900 dark:text-white"><%= settings.custom_head_scripts || '' %></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Custom &lt;body&gt; Scripts (Chatbots, Conversion Pixels)</label>
+          <textarea name="custom_body_scripts" rows="4" placeholder="<!-- Injected directly before </body> -->&#10;<script>/* custom code */</script>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs text-slate-900 dark:text-white"><%= settings.custom_body_scripts || '' %></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODULE 5: MONETIZATION & MULTI-PROVIDER AD ENGINE -->
+    <!-- ========================================== -->
+    <section id="monetization-ads" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+            <span>💰 Monetization &amp; Multi-Provider Ad Engine</span>
           </h2>
-          <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">Validate your publisher account, enforce ad slot injection, and generate compliant ads.txt</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Manage Google AdSense, Meta Pixel / Audience, Carbon Ads, ethical B2B sponsor banners, placement slots, and ads.txt.</p>
         </div>
-        <span class="text-[10px] bg-emerald-50 dark:bg-[rgba(16,185,129,0.15)] text-emerald-700 dark:text-[#34D399] border border-emerald-200 dark:border-[rgba(16,185,129,0.3)] font-bold px-2.5 py-1 rounded-full uppercase">
+        <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
           Monetization
         </span>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- 5A. Multi-Provider Credentials -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        
+        <!-- Google AdSense -->
+        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-900 dark:text-white">Google AdSense</h4>
+            <select name="enable_adsense" class="px-2 py-1 rounded-lg bg-white dark:bg-brand-surface text-[11px] font-bold border border-slate-300 dark:border-slate-700">
+              <option value="false" <%= settings.enable_adsense === 'false' ? 'selected' : '' %>>Disabled</option>
+              <option value="true" <%= settings.enable_adsense === 'true' ? 'selected' : '' %>>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Publisher ID</label>
+            <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || 'ca-pub-2644536267352236' %>" class="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+          </div>
+          <button type="button" id="btnValidateAd" class="w-full py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition active:scale-95">
+            ⚡ Validate &amp; Sync ads.txt
+          </button>
+          <div id="adValidationResult" class="hidden p-2 rounded text-[11px] font-mono"></div>
+        </div>
+
+        <!-- Meta Pixel / Audience Network -->
+        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-900 dark:text-white">Meta Pixel / Audience</h4>
+            <select name="enable_meta_pixel" class="px-2 py-1 rounded-lg bg-white dark:bg-brand-surface text-[11px] font-bold border border-slate-300 dark:border-slate-700">
+              <option value="false" <%= settings.enable_meta_pixel !== 'true' ? 'selected' : '' %>>Disabled</option>
+              <option value="true" <%= settings.enable_meta_pixel === 'true' ? 'selected' : '' %>>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Pixel ID</label>
+            <input type="text" name="meta_pixel_id" value="<%= settings.meta_pixel_id || '' %>" placeholder="123456789012345" class="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+          </div>
+          <p class="text-[10px] text-slate-400">Loads Meta Pixel snippet for conversion tracking across quote requests and tool calculators.</p>
+        </div>
+
+        <!-- Carbon Ads (Tech-Ethical) -->
+        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-slate-900 dark:text-white">Carbon Ads (Ethical)</h4>
+            <select name="enable_carbon_ads" class="px-2 py-1 rounded-lg bg-white dark:bg-brand-surface text-[11px] font-bold border border-slate-300 dark:border-slate-700">
+              <option value="false" <%= settings.enable_carbon_ads !== 'true' ? 'selected' : '' %>>Disabled</option>
+              <option value="true" <%= settings.enable_carbon_ads === 'true' ? 'selected' : '' %>>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-500 mb-1">Serve ID &amp; Placement ID</label>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" name="carbon_serve_id" value="<%= settings.carbon_serve_id || '' %>" placeholder="Serve ID" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+              <input type="text" name="carbon_placement_id" value="<%= settings.carbon_placement_id || '' %>" placeholder="Placement" class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400">Lightweight, privacy-focused non-intrusive ads targeted to software and embedded hardware developers.</p>
+        </div>
+
+      </div>
+
+      <!-- 5B. Ethical B2B Sponsor Banner Configuration -->
+      <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Ethical B2B Industry Sponsor Banner</h4>
+          <select name="enable_sponsor_banner" class="px-3 py-1.5 rounded-xl bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+            <option value="false" <%= settings.enable_sponsor_banner !== 'true' ? 'selected' : '' %>>Disabled</option>
+            <option value="true" <%= settings.enable_sponsor_banner === 'true' ? 'selected' : '' %>>Enabled (Display Sponsor Unit)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Banner Image URL</label>
+            <input type="text" name="sponsor_banner_img" value="<%= settings.sponsor_banner_img || '' %>" placeholder="https://.../sponsor-logo.png" class="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Target Click URL (with UTM)</label>
+            <input type="text" name="sponsor_banner_url" value="<%= settings.sponsor_banner_url || '' %>" placeholder="https://partner.com/?utm_source=embeddedindia" class="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Sponsor Brand / Alt</label>
+            <input type="text" name="sponsor_banner_alt" value="<%= settings.sponsor_banner_alt || '' %>" placeholder="Acme EMS & PCB Assembly" class="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Caption / Pitch Text</label>
+            <input type="text" name="sponsor_banner_text" value="<%= settings.sponsor_banner_text || '' %>" placeholder="High-Precision SMT Fabrication in India" class="w-full px-2.5 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs">
+          </div>
+        </div>
+      </div>
+
+      <!-- 5C. 5 Configurable Ad Placement Slots -->
+      <div class="space-y-4">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white pb-2 border-b border-slate-100 dark:border-brand-border/60">
+          5 Configurable Ad Placement Slots
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+          
+          <!-- Slot 1 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 dark:text-white">1. Blog Header Leaderboard</span>
+              <select name="ad_slot_blog_header" class="px-2 py-1 rounded bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+                <option value="false" <%= settings.ad_slot_blog_header !== 'true' ? 'selected' : '' %>>Disabled</option>
+                <option value="true" <%= settings.ad_slot_blog_header === 'true' ? 'selected' : '' %>>Active</option>
+              </select>
+            </div>
+            <textarea name="custom_ad_html_header" rows="2" placeholder="Custom HTML/JS ad snippet or leave blank for default provider..." class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_ad_html_header || '' %></textarea>
+          </div>
+
+          <!-- Slot 2 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 dark:text-white">2. In-Article Paragraph Slot</span>
+              <select name="ad_slot_in_article" class="px-2 py-1 rounded bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+                <option value="false" <%= settings.ad_slot_in_article !== 'true' ? 'selected' : '' %>>Disabled</option>
+                <option value="true" <%= settings.ad_slot_in_article === 'true' ? 'selected' : '' %>>Active</option>
+              </select>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[11px] text-slate-500 whitespace-nowrap">Inject after &lt;p&gt; #</span>
+              <input type="number" name="ad_in_article_p_index" min="1" max="20" value="<%= settings.ad_in_article_p_index || '3' %>" class="w-16 px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-bold">
+            </div>
+            <textarea name="custom_ad_html_in_article" rows="2" placeholder="Custom in-article HTML/JS snippet or leave blank..." class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_ad_html_in_article || '' %></textarea>
+          </div>
+
+          <!-- Slot 3 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 dark:text-white">3. Sticky Blog Sidebar</span>
+              <select name="ad_slot_blog_sidebar" class="px-2 py-1 rounded bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+                <option value="false" <%= settings.ad_slot_blog_sidebar !== 'true' ? 'selected' : '' %>>Disabled</option>
+                <option value="true" <%= settings.ad_slot_blog_sidebar === 'true' ? 'selected' : '' %>>Active</option>
+              </select>
+            </div>
+            <textarea name="custom_ad_html_sidebar" rows="2" placeholder="Custom sidebar HTML/JS tag..." class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_ad_html_sidebar || '' %></textarea>
+          </div>
+
+          <!-- Slot 4 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 dark:text-white">4. Post-Article Footer Slot</span>
+              <select name="ad_slot_post_footer" class="px-2 py-1 rounded bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+                <option value="false" <%= settings.ad_slot_post_footer !== 'true' ? 'selected' : '' %>>Disabled</option>
+                <option value="true" <%= settings.ad_slot_post_footer === 'true' ? 'selected' : '' %>>Active</option>
+              </select>
+            </div>
+            <textarea name="custom_ad_html_footer" rows="2" placeholder="Custom post-article HTML/JS tag..." class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_ad_html_footer || '' %></textarea>
+          </div>
+
+          <!-- Slot 5 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-900 dark:text-white">5. Global Header Promo Bar</span>
+              <select name="promo_banner_active" class="px-2 py-1 rounded bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+                <option value="false" <%= settings.promo_banner_active === 'false' ? 'selected' : '' %>>Hidden</option>
+                <option value="true" <%= settings.promo_banner_active === 'true' ? 'selected' : '' %>>Active</option>
+              </select>
+            </div>
+            <input type="text" name="promo_banner_title" value="<%= settings.promo_banner_title || '' %>" placeholder="Banner text headline..." class="w-full px-2 py-1.5 rounded-lg bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs">
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" name="promo_banner_cta" value="<%= settings.promo_banner_cta || 'Book Consultation' %>" placeholder="CTA Button" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-[11px]">
+              <input type="text" name="promo_banner_url" value="<%= settings.promo_banner_url || '/contact' %>" placeholder="Target URL" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-[11px] font-mono">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 5D. Root ads.txt Live Editor -->
+      <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase text-slate-800 dark:text-slate-200">ads.txt Content (Served live at /ads.txt for IAB verification)</span>
+          <a href="/ads.txt" target="_blank" class="text-[11px] text-brand-500 hover:underline">View /ads.txt &nearr;</a>
+        </div>
+        <textarea name="ads_txt_content" rows="4" placeholder="google.com, pub-2644536267352236, DIRECT, f08c47fec0942fa0" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-xs"><%= settings.ads_txt_content || 'google.com, pub-2644536267352236, DIRECT, f08c47fec0942fa0' %></textarea>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODULE 6: OUTGOING SMTP CONFIGURATION -->
+    <!-- ========================================== -->
+    <section id="smtp-settings" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Enable Google AdSense Slots</label>
-          <select id="enable_adsense" name="enable_adsense" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-            <option value="false" <%= settings.enable_adsense === 'false' ? 'selected' : '' %>>Disabled</option>
-            <option value="true" <%= settings.enable_adsense === 'true' ? 'selected' : '' %>>Enabled</option>
+          <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+            <span>📧 Outgoing SMTP Mailer Configuration</span>
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Dispatches real-time inquiry alerts to info@embeddedindia.in, double opt-in verification, and technical digests.</p>
+        </div>
+        <span class="text-[10px] bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-bold px-2.5 py-1 rounded-full uppercase">
+          SMTP Transport
+        </span>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400">Quick Presets:</span>
+        <button type="button" onclick="setSmtpPreset('gmail')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark rounded-lg font-semibold hover:bg-slate-200 transition">Gmail (587)</button>
+        <button type="button" onclick="setSmtpPreset('sendgrid')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark rounded-lg font-semibold hover:bg-slate-200 transition">SendGrid (587)</button>
+        <button type="button" onclick="setSmtpPreset('mock')" class="px-2.5 py-1 bg-slate-100 dark:bg-brand-dark rounded-lg font-semibold hover:bg-slate-200 transition">Local Dev Mock</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Host</label>
+          <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com or smtp.titan.email" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Port</label>
+          <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">TLS / SSL Mode</label>
+          <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+            <option value="false" <%= settings.smtp_secure !== 'true' ? 'selected' : '' %>>STARTTLS (Port 587 - Default)</option>
+            <option value="true" <%= settings.smtp_secure === 'true' ? 'selected' : '' %>>SSL / TLS (Port 465)</option>
           </select>
         </div>
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Google AdSense Publisher ID</label>
-          <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || 'ca-pub-2644536267352236' %>" placeholder="ca-pub-2644536267352236" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono font-semibold transition">
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Username / Email</label>
+          <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="info@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Password / App Secret</label>
+          <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-mono">
         </div>
       </div>
 
-      <!-- Ad Account Validation Feature Sub-Card -->
-      <div class="p-5 rounded-[12px] bg-slate-50 dark:bg-[#16211D] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] space-y-3">
+      <!-- Test SMTP Dispatch Box -->
+      <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span class="text-[0.95rem] font-semibold text-[#0F172A] dark:text-[#F8FAFC] block">Ad Account &amp; ads.txt Verification</span>
-            <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8]">Validates your publisher account syntax and creates the required root <code class="text-brand-500 font-mono">/ads.txt</code> record</span>
+            <span class="text-xs font-bold text-slate-900 dark:text-white block">Diagnostic Outbound Handshake</span>
+            <span class="text-[11px] text-slate-500">Test socket TLS handshake and verify direct delivery to recipient</span>
           </div>
-          <div class="flex items-center gap-2">
-            <button type="button" id="btnValidateAd" class="h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center space-x-1.5">
-              <span>⚡ Validate Ad Account &amp; Sync ads.txt</span>
+          <div class="flex items-center space-x-2">
+            <input type="email" id="smtpTestRecipient" placeholder="info@embeddedindia.in" value="info@embeddedindia.in" class="px-3 py-1.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+            <button type="button" id="btnTestSmtp" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm active:scale-95 whitespace-nowrap">
+              ⚡ Test Delivery
             </button>
-            <a href="/ads.txt" target="_blank" class="h-[42px] px-4 flex items-center justify-center bg-white dark:bg-[#0C1310] hover:bg-slate-100 dark:hover:bg-[#16211D] text-[#334155] dark:text-slate-200 text-xs font-bold rounded-[8px] border border-slate-300 dark:border-[rgba(255,255,255,0.14)] transition shadow-sm">
-              View /ads.txt &nearr;
-            </a>
           </div>
         </div>
-        <div id="adValidationResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
+        <div id="smtpTestResult" class="hidden p-3 rounded-xl text-xs font-mono"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- 4. Native Internal Promo Banners -->
-    <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-5 mb-6">
-      <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
-        4. Native Internal Promotion Banner
-      </h2>
-
-      <div>
-        <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Banner Status</label>
-        <select name="promo_banner_active" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-          <option value="true" <%= settings.promo_banner_active === 'true' ? 'selected' : '' %>>Active (Show on header announcement)</option>
-          <option value="false" <%= settings.promo_banner_active === 'false' ? 'selected' : '' %>>Hidden</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Banner Title / Pitch</label>
-        <input type="text" name="promo_banner_title" value="<%= settings.promo_banner_title || '' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Call-to-Action Text</label>
-          <input type="text" name="promo_banner_cta" value="<%= settings.promo_banner_cta || 'Book an Engineering Feasibility Call' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
-        </div>
-        <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Destination URL (with UTM)</label>
-          <input type="text" name="promo_banner_url" value="<%= settings.promo_banner_url || '/contact?service=Hardware%20Design' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
-        </div>
-      </div>
-
-      <!-- Contained Save Global Configuration Button inside Section 4 Footer Bar -->
-      <div class="pt-4 border-t border-slate-200 dark:border-[rgba(255,255,255,0.06)] flex items-center justify-end">
-        <button type="submit" class="h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white font-bold rounded-[8px] text-xs sm:text-sm transition shadow-sm active:scale-95 flex items-center justify-center space-x-2">
-          <span>💾 Save Global Configuration</span>
-        </button>
-      </div>
+    <!-- Save Bar inside Form -->
+    <div class="pt-4 flex items-center justify-end">
+      <button type="submit" class="px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-black rounded-2xl text-sm transition shadow-lg shadow-brand-500/25 active:scale-95 flex items-center space-x-2">
+        <span>💾 Save All Configuration Changes</span>
+      </button>
     </div>
 
   </form>
 
-  <!-- 5. Administrator & Staff Accounts Management Panel (Validate & Add Account) -->
-  <div class="bg-white dark:bg-[#111916] rounded-[14px] p-6 border border-slate-200 dark:border-[rgba(16,185,129,0.18)] shadow-sm space-y-6 mb-6">
-    <div class="flex items-center justify-between border-b border-slate-100 dark:border-[rgba(255,255,255,0.08)] pb-3">
+  <!-- ========================================== -->
+  <!-- MODULE 7: TEAM & ADMINISTRATOR ACCOUNTS -->
+  <!-- ========================================== -->
+  <section id="team-accounts" class="bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+    <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4">
       <div>
-        <h2 class="text-base font-bold uppercase tracking-wide text-[#0F172A] dark:text-white">
-          5. Team &amp; Administrator Account Management
+        <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
+          <span>👥 Team &amp; Staff Account Access</span>
         </h2>
-        <p class="text-xs text-slate-500 dark:text-[#94A3B8] mt-0.5">Validate account credentials, assign roles, and grant admin access to engineering staff</p>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Manage admin and editor staff accounts with bcrypt password hashing.</p>
       </div>
-      <span class="text-[10px] bg-emerald-50 dark:bg-[rgba(16,185,129,0.15)] text-emerald-700 dark:text-[#34D399] border border-emerald-200 dark:border-[rgba(16,185,129,0.3)] font-bold px-2.5 py-1 rounded-full uppercase">
+      <span class="text-[10px] bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent font-bold px-2.5 py-1 rounded-full uppercase">
         Access Control
       </span>
     </div>
 
     <!-- Existing Accounts Table -->
-    <div class="overflow-x-auto rounded-[12px] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] bg-white dark:bg-[#111916]">
-      <table class="w-full text-left">
-        <thead>
-          <tr class="bg-slate-50 dark:bg-[rgba(255,255,255,0.03)] border-b border-slate-200 dark:border-[rgba(255,255,255,0.06)]">
-            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Account Email</th>
-            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Username</th>
-            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Role</th>
-            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8]">Created</th>
-            <th class="py-3 px-4 text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[#64748B] dark:text-[#94A3B8] text-right">Actions</th>
+    <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-brand-border">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-50 dark:bg-brand-dark border-b border-slate-200 dark:border-brand-border font-bold uppercase text-slate-500">
+          <tr>
+            <th class="py-3 px-4">Account Email</th>
+            <th class="py-3 px-4">Username</th>
+            <th class="py-3 px-4">Role</th>
+            <th class="py-3 px-4">Created</th>
+            <th class="py-3 px-4 text-right">Action</th>
           </tr>
         </thead>
-        <tbody id="usersTableBody" class="divide-y divide-slate-100 dark:divide-[rgba(255,255,255,0.06)] text-slate-700 dark:text-slate-300">
+        <tbody class="divide-y divide-slate-100 dark:divide-brand-border">
           <% (users || []).forEach(u => { %>
-            <tr id="user-row-<%= u.id %>" class="hover:bg-slate-50 dark:hover:bg-[rgba(255,255,255,0.02)] transition">
-              <td class="py-3.5 px-4 align-middle font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
+            <tr class="hover:bg-slate-50 dark:hover:bg-brand-dark/50 transition">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">
                 <%= u.email %>
                 <% if (currentUser && currentUser.userId === u.id) { %>
-                  <span class="ml-1.5 px-2 py-0.5 bg-[rgba(16,185,129,0.15)] text-[#059669] dark:text-[#34D399] border border-[rgba(16,185,129,0.3)] rounded-full text-[10px] font-bold">You</span>
+                  <span class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold">You</span>
                 <% } %>
               </td>
-              <td class="py-3.5 px-4 align-middle font-mono text-[11px] text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]"><%= u.username %></td>
-              <td class="py-3.5 px-4 align-middle border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
-                <% if (u.role === 'admin') { %>
-                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.75rem] font-semibold uppercase bg-[rgba(16,185,129,0.15)] text-[#059669] dark:text-[#34D399] border border-[rgba(16,185,129,0.3)]">
-                    Admin
-                  </span>
-                <% } else { %>
-                  <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.75rem] font-semibold uppercase bg-blue-50 dark:bg-[rgba(59,130,246,0.15)] text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-[rgba(59,130,246,0.3)]">
-                    <%= u.role %>
-                  </span>
-                <% } %>
+              <td class="py-3 px-4 font-mono text-slate-500"><%= u.username %></td>
+              <td class="py-3 px-4">
+                <span class="px-2 py-0.5 rounded-full uppercase font-bold text-[10px] <%= u.role === 'admin' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800' %>">
+                  <%= u.role %>
+                </span>
               </td>
-              <td class="py-3.5 px-4 align-middle text-slate-500 dark:text-[#94A3B8] text-[11px] border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
-                <%= new Date(u.createdAt).toLocaleDateString() %>
-              </td>
-              <td class="py-3.5 px-4 align-middle text-right border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
+              <td class="py-3 px-4 text-slate-400"><%= new Date(u.createdAt).toLocaleDateString() %></td>
+              <td class="py-3 px-4 text-right">
                 <% if (!currentUser || currentUser.userId !== u.id) { %>
-                  <button type="button" onclick="deleteAccount('<%= u.id %>')" class="text-[#DC2626] dark:text-[#F87171] hover:bg-[rgba(239,68,68,0.12)] px-2.5 py-1 rounded-[6px] font-semibold text-[11px] transition">
-                    Remove
-                  </button>
+                  <button type="button" onclick="deleteAccount('<%= u.id %>')" class="text-red-500 hover:text-red-700 font-bold">Remove</button>
                 <% } else { %>
-                  <span class="text-slate-400 dark:text-slate-500 text-[11px]">Active</span>
+                  <span class="text-slate-400">Active</span>
                 <% } %>
               </td>
             </tr>
@@ -301,76 +984,125 @@
       </table>
     </div>
 
-    <!-- Validate & Add New Account Sub-Card -->
-    <div class="p-5 rounded-[12px] bg-slate-50 dark:bg-[#16211D] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] space-y-4">
-      <div class="flex items-center space-x-2 flex-wrap gap-1">
-        <span class="text-[0.95rem] font-semibold text-[#0F172A] dark:text-[#F8FAFC]">➕ Add &amp; Validate New Account</span>
-        <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8] font-normal">(Enforces email format, uniqueness, and strong password checks)</span>
-      </div>
-
-      <!-- Responsive 3-column CSS Grid -->
-      <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))] items-end">
+    <!-- Create Staff User Box -->
+    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
+      <span class="text-xs font-bold text-slate-900 dark:text-white block">➕ Add New Staff Account</span>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Staff Email</label>
-          <input type="email" id="newAccountEmail" placeholder="engineer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs transition">
+          <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Email</label>
+          <input type="email" id="newAccountEmail" placeholder="engineer@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs">
         </div>
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Role</label>
-          <select id="newAccountRole" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-semibold transition">
+          <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Role</label>
+          <select id="newAccountRole" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold">
             <option value="admin">Administrator (Full Access)</option>
-            <option value="editor">Content Editor (Blogs only)</option>
+            <option value="editor">Editor (Blogs & Articles)</option>
           </select>
         </div>
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Password (Min 8 chars)</label>
-          <input type="password" id="newAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+          <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Password (Min 8 Chars)</label>
+          <input type="password" id="newAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
         </div>
       </div>
 
-      <div class="pt-4 border-t border-slate-200 dark:border-[rgba(255,255,255,0.06)] flex flex-col sm:flex-row items-center justify-between gap-3">
-        <button type="button" id="btnAddAccount" class="w-full sm:w-auto h-[42px] px-5 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center justify-center space-x-1.5">
-          <span>⚡ Validate &amp; Create Account</span>
+      <div class="flex items-center justify-between pt-2">
+        <button type="button" id="btnAddAccount" class="px-5 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition shadow-sm active:scale-95">
+          Validate &amp; Create Account
         </button>
-        <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8]">Account password is encrypted with salt rounds via bcrypt</span>
+        <span class="text-[11px] text-slate-400">Enforces salted bcrypt hashing</span>
       </div>
-
-      <div id="addAccountResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
+      <div id="addAccountResult" class="hidden p-3 rounded-xl text-xs font-mono"></div>
     </div>
 
-    <!-- Change Password Sub-Card for Currently Logged-in Staff -->
-    <div class="p-5 rounded-[12px] bg-slate-50 dark:bg-[#16211D] border border-slate-200 dark:border-[rgba(255,255,255,0.08)] space-y-4">
-      <div class="flex items-center space-x-2 flex-wrap gap-1">
-        <span class="text-[0.95rem] font-semibold text-[#0F172A] dark:text-[#F8FAFC]">🔑 Change Your Active Account Password</span>
-        <span class="text-[0.8rem] text-[#475569] dark:text-[#94A3B8] font-normal">(Updates credentials for <%= currentUser ? currentUser.email : 'your active session' %>)</span>
-      </div>
-
-      <!-- Responsive 2-column CSS Grid -->
-      <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
+    <!-- Password Change for Active Staff -->
+    <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
+      <span class="text-xs font-bold text-slate-900 dark:text-white block">🔑 Update Your Active Password</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">Current Password</label>
-          <input type="password" id="currentAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+          <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Current Password</label>
+          <input type="password" id="currentAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
         </div>
         <div>
-          <label class="block text-[0.85rem] font-medium text-[#334155] dark:text-[#CBD5E1] mb-[6px]">New Password (Min 8 characters)</label>
-          <input type="password" id="updatedAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#0C1310] text-[#0F172A] dark:text-[#F1F5F9] placeholder-[#94A3B8] dark:placeholder-[#64748B] border border-[#CBD5E1] dark:border-[rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-[#10B981] text-xs font-mono transition">
+          <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">New Password</label>
+          <input type="password" id="updatedAccountPass" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
         </div>
       </div>
-
-      <div class="pt-4 border-t border-slate-200 dark:border-[rgba(255,255,255,0.06)] flex items-center justify-start">
-        <button type="button" id="btnChangePassword" class="h-[42px] px-5 bg-[rgba(16,185,129,0.12)] border border-[#10B981] text-[#059669] dark:text-[#34D399] hover:bg-[#10B981] hover:text-[#052E16] text-xs font-bold rounded-[8px] transition shadow-sm active:scale-95 flex items-center space-x-1.5">
-          <span>Update Password</span>
-        </button>
-      </div>
-
-      <div id="changePassResult" class="hidden p-3 rounded-lg text-xs font-mono"></div>
+      <button type="button" id="btnChangePassword" class="px-5 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-white rounded-xl text-xs font-bold transition">
+        Update Password
+      </button>
+      <div id="changePassResult" class="hidden p-3 rounded-xl text-xs font-mono"></div>
     </div>
-
-  </div>
+  </section>
 
 </div>
 
 <script>
-  // 1. SMTP Preset Autofill
+  // 1. Predefined Palettes Dictionary for Interactive Client-Side Preview
+  const PALETTES = {
+    'silicon-dark-blue': { name: 'Silicon Dark Blue', bgPrimary: '#0a1128', bgSurface: '#101f42', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#0077b6', accentSecondary: '#00b4d8', borderColor: '#1e3a8a' },
+    'pcb-emerald-green': { name: 'PCB Emerald Green', bgPrimary: '#0b1412', bgSurface: '#11221e', textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: '#10b981', accentSecondary: '#34d399', borderColor: '#1e3831' },
+    'automotive-slate-red': { name: 'Automotive Slate/Red', bgPrimary: '#0f172a', bgSurface: '#1e293b', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#ef4444', accentSecondary: '#f87171', borderColor: '#334155' },
+    'industrial-amber-charcoal': { name: 'Industrial Amber', bgPrimary: '#18181b', bgSurface: '#27272a', textPrimary: '#fafafa', textMuted: '#a1a1aa', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', borderColor: '#3f3f46' },
+    'clean-light-enterprise': { name: 'Clean Light Enterprise', bgPrimary: '#f8fafc', bgSurface: '#ffffff', textPrimary: '#0f172a', textMuted: '#64748b', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', borderColor: '#e2e8f0' }
+  };
+
+  function previewPalette(key) {
+    let p = PALETTES[key];
+    if (key === 'custom') {
+      p = {
+        name: 'Custom Palette',
+        bgPrimary: document.getElementById('palette_bg_primary').value,
+        bgSurface: document.getElementById('palette_bg_surface').value,
+        textPrimary: document.getElementById('palette_text_primary').value,
+        textMuted: document.getElementById('palette_text_muted').value,
+        accentPrimary: document.getElementById('palette_accent_primary').value,
+        accentSecondary: document.getElementById('palette_accent_secondary').value,
+        borderColor: document.getElementById('palette_border_color').value
+      };
+    } else if (p) {
+      document.getElementById('palette_bg_primary').value = p.bgPrimary;
+      document.getElementById('picker_bg_primary').value = p.bgPrimary;
+      document.getElementById('palette_bg_surface').value = p.bgSurface;
+      document.getElementById('picker_bg_surface').value = p.bgSurface;
+      document.getElementById('palette_text_primary').value = p.textPrimary;
+      document.getElementById('picker_text_primary').value = p.textPrimary;
+      document.getElementById('palette_text_muted').value = p.textMuted;
+      document.getElementById('picker_text_muted').value = p.textMuted;
+      document.getElementById('palette_accent_primary').value = p.accentPrimary;
+      document.getElementById('picker_accent_primary').value = p.accentPrimary;
+      document.getElementById('palette_accent_secondary').value = p.accentSecondary;
+      document.getElementById('picker_accent_secondary').value = p.accentSecondary;
+      document.getElementById('palette_border_color').value = p.borderColor;
+      document.getElementById('picker_border_color').value = p.borderColor;
+    }
+
+    if (p) {
+      const box = document.getElementById('liveThemePreviewBox');
+      box.style.background = p.bgPrimary;
+      box.style.borderColor = p.borderColor;
+      const subCard = box.querySelector('div.p-4');
+      if (subCard) {
+        subCard.style.background = p.bgSurface;
+        subCard.style.borderColor = p.borderColor;
+      }
+      const title = box.querySelector('h3');
+      if (title) title.style.color = p.textPrimary;
+      const desc = box.querySelector('p');
+      if (desc) desc.style.color = p.textMuted;
+      const btn = box.querySelector('button');
+      if (btn) btn.style.background = p.accentPrimary;
+      const secText = box.querySelector('span.text-xs');
+      if (secText) secText.style.color = p.accentSecondary;
+    }
+  }
+
+  function syncColorInput(inputId, hex) {
+    document.getElementById(inputId).value = hex;
+    previewPalette('custom');
+  }
+
+  // 2. SMTP Preset Autofill
   function setSmtpPreset(type) {
     if (type === 'gmail') {
       document.getElementById('smtp_host').value = 'smtp.gmail.com';
@@ -390,171 +1122,111 @@
     }
   }
 
-  // 2. Test SMTP Connection
+  // 3. Test SMTP Delivery
   const btnTestSmtp = document.getElementById('btnTestSmtp');
   const smtpTestRecipient = document.getElementById('smtpTestRecipient');
   const smtpTestResult = document.getElementById('smtpTestResult');
 
   if (btnTestSmtp) {
     btnTestSmtp.addEventListener('click', async () => {
-      smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block';
-      smtpTestResult.innerHTML = '<span class="animate-pulse">🔄 Performing socket connection, TLS handshake, and dispatching verification email...</span>';
+      smtpTestResult.className = 'p-3 rounded-xl text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block';
+      smtpTestResult.innerHTML = '<span class="animate-pulse">🔄 Executing socket TLS handshake & email delivery...</span>';
       btnTestSmtp.disabled = true;
-
-      const payload = {
-        host: document.getElementById('smtp_host').value,
-        port: document.getElementById('smtp_port').value,
-        secure: document.getElementById('smtp_secure').value,
-        user: document.getElementById('smtp_user').value,
-        pass: document.getElementById('smtp_pass').value,
-        toEmail: smtpTestRecipient.value || document.getElementById('smtp_user').value
-      };
 
       try {
         const res = await fetch('/admin/settings/test-smtp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            host: document.getElementById('smtp_host').value,
+            port: document.getElementById('smtp_port').value,
+            secure: document.getElementById('smtp_secure').value,
+            user: document.getElementById('smtp_user').value,
+            pass: document.getElementById('smtp_pass').value,
+            toEmail: smtpTestRecipient.value || 'info@embeddedindia.in'
+          })
         });
         const data = await res.json();
         if (data.success) {
-          smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block space-y-1 shadow-sm';
-          smtpTestResult.innerHTML = `
-            <div class="font-bold text-sm">✅ SMTP Connection &amp; Delivery Successful!</div>
-            <div class="mt-1">${data.message || 'Verification test email dispatched successfully.'}</div>
-            <div class="text-[10px] text-slate-500 font-mono">Message ID: ${data.messageId}</div>
-          `;
+          smtpTestResult.className = 'p-3 rounded-xl text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block';
+          smtpTestResult.innerHTML = `<strong>✅ SMTP Success!</strong><br>${data.message}<br><span class="text-[10px] text-slate-500">Msg ID: ${data.messageId}</span>`;
         } else {
-          smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block space-y-1';
-          smtpTestResult.innerHTML = `
-            <div class="font-bold text-sm">❌ SMTP Handshake Error</div>
-            <div>${data.error}</div>
-          `;
+          smtpTestResult.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+          smtpTestResult.innerHTML = `<strong>❌ Handshake Failed:</strong><br>${data.error}`;
         }
       } catch (err) {
-        smtpTestResult.className = 'p-3.5 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        smtpTestResult.innerHTML = `❌ <strong>Network Error:</strong> ${err.message}`;
+        smtpTestResult.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
+        smtpTestResult.innerHTML = `Network Error: ${err.message}`;
       } finally {
         btnTestSmtp.disabled = false;
       }
     });
   }
 
-  // 3. Validate Ad Account & ads.txt Sync
+  // 4. Validate AdSense Account
   const btnValidateAd = document.getElementById('btnValidateAd');
   const adValidationResult = document.getElementById('adValidationResult');
-
   if (btnValidateAd) {
     btnValidateAd.addEventListener('click', async () => {
-      const pubId = document.getElementById('adsense_pub_id').value.trim();
-      adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block animate-pulse';
-      adValidationResult.textContent = 'Validating Google AdSense publisher syntax and generating /ads.txt...';
-      btnValidateAd.disabled = true;
-
+      adValidationResult.className = 'p-2 rounded text-[11px] font-mono bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 block animate-pulse';
+      adValidationResult.textContent = 'Validating Publisher ID...';
       try {
-        const res = await fetch('/admin/settings/validate-ad-account', {
+        const res = await fetch('/admin/settings/validate-ad', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pubId })
+          body: JSON.stringify({ pubId: document.getElementById('adsense_pub_id').value })
         });
         const data = await res.json();
         if (data.success) {
-          adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block space-y-1';
-          adValidationResult.innerHTML = `
-            <div class="font-bold text-sm">✅ Ad Account Validated &amp; Verified!</div>
-            <div><strong>Publisher ID:</strong> ${data.pubId}</div>
-            <div><strong>ads.txt Record:</strong> <code>${data.adsTxtLine}</code></div>
-            <div class="mt-1 text-[11px] text-emerald-700 dark:text-emerald-400">
-              Successfully generated and served at <a href="${data.adsTxtUrl}" target="_blank" class="underline font-bold">/ads.txt</a>
-            </div>
-          `;
-          document.getElementById('enable_adsense').value = 'true';
+          adValidationResult.className = 'p-2 rounded text-[11px] font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 block';
+          adValidationResult.textContent = `✅ ${data.message} (${data.adsTxtLine})`;
         } else {
-          adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-          adValidationResult.innerHTML = `❌ <strong>Ad Account Validation Failed:</strong> ${data.error}`;
+          adValidationResult.className = 'p-2 rounded text-[11px] font-mono bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 block';
+          adValidationResult.textContent = `❌ ${data.error}`;
         }
       } catch (err) {
-        adValidationResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        adValidationResult.innerHTML = `❌ <strong>Request Failed:</strong> ${err.message}`;
-      } finally {
-        btnValidateAd.disabled = false;
+        adValidationResult.className = 'p-2 rounded text-[11px] font-mono bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 block';
+        adValidationResult.textContent = `Network Error: ${err.message}`;
       }
     });
   }
 
-  // 4. Validate & Add Account Feature
+  // 5. Staff Account Creation
   const btnAddAccount = document.getElementById('btnAddAccount');
   const addAccountResult = document.getElementById('addAccountResult');
-
   if (btnAddAccount) {
     btnAddAccount.addEventListener('click', async () => {
-      const email = document.getElementById('newAccountEmail').value.trim();
-      const password = document.getElementById('newAccountPass').value;
-      const role = document.getElementById('newAccountRole').value;
-
-      if (!email) {
-        alert('Please enter an account email address.');
-        return;
-      }
-      if (!password || password.length < 8) {
-        alert('Password must be at least 8 characters long.');
-        return;
-      }
-
-      addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 block animate-pulse';
-      addAccountResult.textContent = 'Validating email uniqueness and hashing credentials...';
-      btnAddAccount.disabled = true;
-
+      addAccountResult.className = 'p-3 rounded-xl text-xs font-mono bg-blue-50 dark:bg-blue-950 text-blue-800 dark:text-blue-300 block animate-pulse';
+      addAccountResult.textContent = 'Creating account...';
       try {
         const res = await fetch('/admin/settings/add-account', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, role })
+          body: JSON.stringify({
+            email: document.getElementById('newAccountEmail').value,
+            role: document.getElementById('newAccountRole').value,
+            password: document.getElementById('newAccountPass').value
+          })
         });
         const data = await res.json();
         if (data.success) {
-          addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block';
-          addAccountResult.innerHTML = `✅ <strong>${data.message}</strong>`;
-
-          // Append to table
-          const tbody = document.getElementById('usersTableBody');
-          const row = document.createElement('tr');
-          row.id = `user-row-${data.user.id}`;
-          row.className = 'hover:bg-slate-50 dark:hover:bg-[rgba(255,255,255,0.02)] transition';
-          row.innerHTML = `
-            <td class="py-3.5 px-4 align-middle font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">${data.user.email}</td>
-            <td class="py-3.5 px-4 align-middle font-mono text-[11px] text-slate-600 dark:text-slate-400 border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">${data.user.username}</td>
-            <td class="py-3.5 px-4 align-middle border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
-              <span class="inline-block px-2.5 py-0.5 rounded-full text-[0.75rem] font-semibold uppercase ${data.user.role === 'admin' ? 'bg-[rgba(16,185,129,0.15)] text-[#059669] dark:text-[#34D399] border border-[rgba(16,185,129,0.3)]' : 'bg-blue-50 dark:bg-[rgba(59,130,246,0.15)] text-blue-700 dark:text-blue-400 border border-blue-200 dark:border-[rgba(59,130,246,0.3)]'}">
-                ${data.user.role}
-              </span>
-            </td>
-            <td class="py-3.5 px-4 align-middle text-slate-500 dark:text-[#94A3B8] text-[11px] border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">${new Date().toLocaleDateString()}</td>
-            <td class="py-3.5 px-4 align-middle text-right border-b border-slate-100 dark:border-[rgba(255,255,255,0.06)]">
-              <button type="button" onclick="deleteAccount('${data.user.id}')" class="text-[#DC2626] dark:text-[#F87171] hover:bg-[rgba(239,68,68,0.12)] px-2.5 py-1 rounded-[6px] font-semibold text-[11px] transition">Remove</button>
-            </td>
-          `;
-          tbody.prepend(row);
-
-          // Clear inputs
-          document.getElementById('newAccountEmail').value = '';
-          document.getElementById('newAccountPass').value = '';
+          addAccountResult.className = 'p-3 rounded-xl text-xs font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 block';
+          addAccountResult.textContent = `✅ ${data.message}`;
+          setTimeout(() => location.reload(), 1200);
         } else {
-          addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-          addAccountResult.innerHTML = `❌ <strong>Account Validation Error:</strong> ${data.error}`;
+          addAccountResult.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 block';
+          addAccountResult.textContent = `❌ ${data.error}`;
         }
       } catch (err) {
-        addAccountResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        addAccountResult.innerHTML = `❌ <strong>Request Failed:</strong> ${err.message}`;
-      } finally {
-        btnAddAccount.disabled = false;
+        addAccountResult.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 block';
+        addAccountResult.textContent = `Network Error: ${err.message}`;
       }
     });
   }
 
-  // 5. Delete Account Function
+  // 6. Delete Account
   async function deleteAccount(id) {
-    if (!confirm('Are you sure you want to remove this staff account?')) return;
+    if (!confirm('Remove this staff account?')) return;
     try {
       const res = await fetch('/admin/settings/delete-account', {
         method: 'POST',
@@ -562,52 +1234,38 @@
         body: JSON.stringify({ id })
       });
       const data = await res.json();
-      if (data.success) {
-        document.getElementById(`user-row-${id}`)?.remove();
-      } else {
-        alert(data.error || 'Failed to remove account.');
-      }
-    } catch (e) {
-      alert('Error removing account: ' + e.message);
+      if (data.success) location.reload();
+      else alert(data.error);
+    } catch (err) {
+      alert('Network error removing account');
     }
   }
 
-  // 6. Change Password Function
+  // 7. Change Password
   const btnChangePassword = document.getElementById('btnChangePassword');
   const changePassResult = document.getElementById('changePassResult');
   if (btnChangePassword) {
     btnChangePassword.addEventListener('click', async () => {
-      const currentPassword = document.getElementById('currentAccountPass').value;
-      const newPassword = document.getElementById('updatedAccountPass').value;
-
-      if (!currentPassword || !newPassword) {
-        changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        changePassResult.textContent = 'Please fill out both current and new password.';
-        return;
-      }
-
-      btnChangePassword.disabled = true;
       try {
         const res = await fetch('/admin/settings/change-password', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ currentPassword, newPassword })
+          body: JSON.stringify({
+            currentPassword: document.getElementById('currentAccountPass').value,
+            newPassword: document.getElementById('updatedAccountPass').value
+          })
         });
         const data = await res.json();
         if (data.success) {
-          changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 block';
-          changePassResult.textContent = '✅ ' + data.message;
-          document.getElementById('currentAccountPass').value = '';
-          document.getElementById('updatedAccountPass').value = '';
+          changePassResult.className = 'p-3 rounded-xl text-xs font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 block';
+          changePassResult.textContent = `✅ ${data.message}`;
         } else {
-          changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-          changePassResult.textContent = '❌ ' + data.error;
+          changePassResult.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 block';
+          changePassResult.textContent = `❌ ${data.error}`;
         }
       } catch (err) {
-        changePassResult.className = 'p-3 rounded-lg text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        changePassResult.textContent = '❌ Request failed: ' + err.message;
-      } finally {
-        btnChangePassword.disabled = false;
+        changePassResult.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-800 dark:text-red-300 block';
+        changePassResult.textContent = `Network Error: ${err.message}`;
       }
     });
   }

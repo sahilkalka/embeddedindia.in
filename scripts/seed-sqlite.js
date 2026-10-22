@@ -67,7 +67,7 @@ async function seed() {
     {
       title: 'Bridging the Divide: How to Align Hardware and Firmware Teams',
       slug: 'bridging-the-divide',
-      category: 'Guides',
+      category: 'Co-Development',
       tags: 'firmware,hardware,co-design,agile',
       summary: 'Embedded projects frequently suffer delays because hardware and software teams work in silos. Discover proven co-design workflows to eliminate finger-pointing.',
       readingTime: 4,
@@ -108,7 +108,7 @@ Ensure hardware teams route dedicated SWD/JTAG headers, logic analyzer test poin
     {
       title: 'Hardware-in-the-Loop (HIL) Testing: Why It\'s Crucial for Mission-Critical Systems',
       slug: 'hardware-in-the-loop-hil',
-      category: 'Embedded Electronics',
+      category: 'Functional Safety',
       tags: 'testing,HIL,automotive,verification,QA',
       summary: 'Why physical testing alone is insufficient. How HIL simulation isolates corner cases in automotive ECUs, battery management systems, and medical devices.',
       readingTime: 5,
@@ -149,7 +149,7 @@ def test_overcurrent_protection():
     {
       title: 'Managing Component Obsolescence in Industrial PCB Designs',
       slug: 'pcb-obsolescence',
-      category: 'Troubleshooting',
+      category: 'Lifecycle Management',
       tags: 'PCB,supply-chain,obsolescence,BOM,redesign',
       summary: 'Strategies to protect long-lifecycle industrial products from sudden component end-of-life (EOL) announcements and chip shortages.',
       readingTime: 4,
@@ -178,7 +178,7 @@ Integrate API tools with component aggregators to receive automated PCN (Product
     {
       title: 'Securing the Embedded Boot Chain: From Silicon to Application',
       slug: 'securing-the-boot-chain',
-      category: 'Embedded Electronics',
+      category: 'Embedded Security',
       tags: 'security,cryptography,secure-boot,trustzone,OTA',
       summary: 'How to implement hardware root-of-trust, cryptographic signature verification, and anti-rollback protection in connected IoT microcontrollers.',
       readingTime: 6,

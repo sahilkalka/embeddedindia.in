@@ -16,8 +16,8 @@ function sanitizeText(value) {
   return purify.sanitize(String(value), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }).trim();
 }
 
-// POST /api/contact - Handle Contact Us form
-router.post('/contact', contactLimiter, async (req, res) => {
+// POST /api/contact & POST /contact - Handle Contact Us form
+const handleContact = async (req, res) => {
   try {
     const { name, email, phone, company, subject, serviceCategory, message, website_url_trap } = req.body;
 
@@ -51,7 +51,7 @@ router.post('/contact', contactLimiter, async (req, res) => {
       ? `Company: ${cleanCompany}\n\n${cleanMessage}`
       : cleanMessage;
 
-    // Save to Database
+    // Save to Database FIRST
     const inquiry = await prisma.inquiry.create({
       data: {
         name: cleanName.slice(0, 100),
@@ -64,8 +64,11 @@ router.post('/contact', contactLimiter, async (req, res) => {
       }
     });
 
-    // Layer 3: Send automated alert email to Admin
-    mailer.sendInquiryNotification(inquiry).catch(err => {
+    // Layer 3: Send immediate admin notification email to info@embeddedindia.in
+    mailer.sendInquiryNotification({
+      ...inquiry,
+      company: cleanCompany
+    }).catch(err => {
       console.error('[MAILER ERROR] Failed to send admin inquiry notification:', err.message);
     });
 
@@ -77,10 +80,12 @@ router.post('/contact', contactLimiter, async (req, res) => {
     console.error('[CONTACT API ERROR]', err);
     return res.status(500).json({ success: false, message: 'An internal error occurred. Please try again or email info@embeddedindia.in directly.' });
   }
-});
+};
 
-// POST /api/newsletter/subscribe - Double Opt-in Newsletter Signup
-router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
+router.post('/contact', contactLimiter, handleContact);
+
+// POST /api/newsletter & POST /api/newsletter/subscribe - Double Opt-in Newsletter Signup
+const handleNewsletterSubscribe = async (req, res) => {
   try {
     const { email, source, honeypot } = req.body;
 
@@ -113,7 +118,7 @@ router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
       });
     }
 
-    await prisma.subscriber.upsert({
+    const subscriber = await prisma.subscriber.upsert({
       where: { email: emailClean },
       update: {
         verifyToken,
@@ -128,7 +133,12 @@ router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
       }
     });
 
-    // Send verification email
+    // 1. Send immediate admin notification/approval request email to info@embeddedindia.in
+    mailer.sendNewsletterAdminNotification(subscriber).catch(err => {
+      console.error('[MAILER ERROR] Newsletter admin notification failed:', err.message);
+    });
+
+    // 2. Send double-opt-in verification email to subscriber
     mailer.sendVerificationEmail(emailClean, verifyToken).catch(err => {
       console.error('[MAILER ERROR] Verification mail failed:', err.message);
     });
@@ -141,7 +151,10 @@ router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
     console.error('[NEWSLETTER SUBSCRIBE ERROR]', err);
     return res.status(500).json({ success: false, message: 'Error processing subscription. Please try again.' });
   }
-});
+};
+
+router.post('/newsletter/subscribe', newsletterLimiter, handleNewsletterSubscribe);
+router.post('/newsletter', newsletterLimiter, handleNewsletterSubscribe);
 
 // GET /api/newsletter/verify - Verify Double Opt-in Token
 router.get('/newsletter/verify', async (req, res) => {
@@ -225,3 +238,4 @@ router.get('/newsletter/unsubscribe', async (req, res) => {
 });
 
 module.exports = router;
+module.exports.handleContact = handleContact;

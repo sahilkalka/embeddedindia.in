@@ -86,6 +86,12 @@ router.get('/sitemap.xml', async (req, res) => {
 // Dynamic robots.txt
 router.get('/robots.txt', (req, res) => {
   const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+  const customRobots = res.locals.settings?.robots_txt_custom;
+  if (customRobots && customRobots.trim()) {
+    res.header('Content-Type', 'text/plain; charset=utf-8');
+    return res.send(customRobots.trim() + '\n');
+  }
+
   const robots = `User-agent: *
 Allow: /
 Disallow: /admin/
@@ -98,9 +104,15 @@ Sitemap: ${appUrl}/sitemap.xml
   res.send(robots);
 });
 
-// Dynamic /ads.txt (IAB / Google AdSense Validation)
+// Dynamic /ads.txt (IAB / Multi-Provider Ad Engine Validation)
 router.get('/ads.txt', async (req, res) => {
   try {
+    const customAdsTxt = res.locals.settings?.ads_txt_content;
+    if (customAdsTxt && customAdsTxt.trim()) {
+      res.header('Content-Type', 'text/plain; charset=utf-8');
+      return res.send(customAdsTxt.trim() + '\n');
+    }
+
     const fs = require('fs');
     const path = require('path');
     const adsTxtPath = path.join(__dirname, '../../public/ads.txt');
