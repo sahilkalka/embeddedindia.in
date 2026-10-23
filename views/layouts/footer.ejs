@@ -265,6 +265,9 @@
           localStorage.setItem('color-theme', 'dark');
         }
         updateIcons();
+        if (typeof applyPalette === 'function') {
+          applyPalette(localStorage.getItem('color-palette') || 'cyber-emerald');
+        }
       });
     }
 

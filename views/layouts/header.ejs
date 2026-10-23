@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="<%= settings.enable_smooth_scroll === 'false' ? '' : 'scroll-smooth' %>" data-palette="emerald">
+<html lang="en" class="<%= settings.enable_smooth_scroll === 'false' ? '' : 'scroll-smooth' %> overflow-x-hidden max-w-full" data-palette="emerald">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -116,7 +116,7 @@
     document.documentElement.setAttribute('data-palette', savedPalette);
   </script>
 </head>
-<body class="bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col">
+<body class="bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col overflow-x-hidden max-w-full">
 
   <!-- Top Announcement Bar / Global Promo Bar (Slot 5) -->
   <% if (settings.promo_banner_active === 'true' || settings.ad_slot_promo_bar === 'true') { %>
@@ -133,7 +133,7 @@
   <% } %>
 
   <!-- Navigation Header (Sticky or Relative based on Customizer Toggle) -->
-  <header class="<%= settings.nav_sticky === 'false' ? 'relative' : 'sticky top-0' %> z-50 bg-white/95 dark:bg-slate-900/98 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
+  <header class="<%= settings.nav_sticky === 'false' ? 'relative' : 'sticky top-0' %> z-50 bg-white/95 dark:bg-slate-900 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
       
       <!-- Brand Logo (Vector Icon + Semantic HTML Typography) -->
@@ -159,11 +159,13 @@
         </div>
       </a>
 
-      <!-- Live Hardware Lab Status Pill -->
-      <div class="hidden xl:inline-flex items-center space-x-2 px-3 py-1 bg-brand-500/10 dark:bg-accent/15 border border-brand-500/20 rounded-full text-[11px] font-bold text-brand-700 dark:text-accent flex-shrink-0">
-        <span class="w-2 h-2 rounded-full bg-brand-500 dark:bg-accent live-radar"></span>
-        <span><%= settings.lab_status_text || 'Bangalore Lab: Online' %></span>
-      </div>
+      <!-- Live Hardware Lab Status Pill (Compact, Truncated & Configurable) -->
+      <% if (settings.lab_event_enabled !== 'false') { %>
+      <a href="<%= settings.lab_event_url || '/about#lab' %>" title="<%= settings.lab_status_text || 'Bangalore Lab: Online • 4 Active SMT Lines • HIL Station #2 Active' %>" class="hidden xl:inline-flex items-center space-x-2 px-3 py-1 bg-brand-500/10 dark:bg-accent/15 hover:bg-brand-500/20 dark:hover:bg-accent/25 border border-brand-500/20 rounded-full text-[11px] font-bold text-brand-700 dark:text-accent flex-shrink-0 transition max-w-[210px] 2xl:max-w-xs group cursor-pointer shadow-xs">
+        <span class="w-2 h-2 rounded-full bg-brand-500 dark:bg-accent live-radar flex-shrink-0"></span>
+        <span class="truncate"><%= settings.lab_event_label || (settings.lab_status_text ? settings.lab_status_text.split('•')[0].trim() : 'Bangalore Lab: Online') %></span>
+      </a>
+      <% } %>
 
       <!-- Desktop Navigation Menu with Smooth Indicator Lines -->
       <nav aria-label="Primary Navigation" class="hidden md:flex items-center space-x-7 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
