@@ -621,8 +621,26 @@ const handleAddAccount = async (req, res) => {
 };
 router.post('/settings/add-account', handleAddAccount);
 router.post('/add-account', handleAddAccount);
+router.post('/users/create', handleAddAccount);
 
 // POST /admin/settings/delete-account - Remove Staff Account
+router.post('/users/:id/delete', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const currentUserId = req.user?.id || req.user?.userId;
+    if (currentUserId && currentUserId === id) {
+      return res.json({ success: false, error: 'Cannot delete your own active session account.' });
+    }
+    const total = await prisma.user.count();
+    if (total <= 1) {
+      return res.json({ success: false, error: 'Cannot remove the last remaining administrator account.' });
+    }
+    await prisma.user.delete({ where: { id } });
+    res.json({ success: true, message: 'Account successfully removed.' });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+});
 router.post('/settings/delete-account', async (req, res) => {
   try {
     const { id } = req.body;
@@ -806,7 +824,7 @@ router.post('/ai/auto-gen/run-now', handleAiSchedulerRunNow);
 router.post('/admin/ai/auto-gen/run-now', handleAiSchedulerRunNow);
 
 // POST /admin/trigger-cron - Test background jobs
-router.post('/trigger-cron', async (req, res) => {
+const handleTriggerCron = async (req, res) => {
   try {
     const { action } = req.body;
     if (action === 'publish_scheduled') {
@@ -820,7 +838,10 @@ router.post('/trigger-cron', async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
-});
+};
+router.post('/trigger-cron', handleTriggerCron);
+router.post('/cron/trigger', handleTriggerCron);
+
 
 
 // ====================================================================

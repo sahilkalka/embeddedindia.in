@@ -917,7 +917,7 @@ void init_embedded_system(void) {
   let charIndex = 0;
   let isDeleting = false;
 
-  if (!typewriterTarget) return;
+  if (typewriterTarget) {
   function typeStep() {
     const currentPhrase = typewriterPhrases[phraseIndex];
     if (isDeleting) {
@@ -942,6 +942,7 @@ void init_embedded_system(void) {
     setTimeout(typeStep, speed);
   }
   typeStep();
+  }
 
   // 2. Interactive Interactive Background Circuit Particle Canvas
   const nodeCanvas = document.getElementById('circuitNodesCanvas');

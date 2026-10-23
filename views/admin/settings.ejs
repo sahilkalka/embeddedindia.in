@@ -42,8 +42,130 @@
     </div>
   <% } %>
 
-  <!-- SETTINGS PAGES CONTAINER -->
-  <div class="space-y-8">
+  <!-- MOBILE HORIZONTAL MODULE SWITCHER (< lg) -->
+  <div class="lg:hidden flex items-center space-x-2 pb-2 overflow-x-auto whitespace-nowrap" id="settings-mobile-nav">
+    <button type="button" onclick="switchSettingsSection('theme-engine')" data-settings-tab="theme-engine" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-500 text-white shadow-xs">
+      🎨 Themes
+    </button>
+    <button type="button" onclick="switchSettingsSection('site-customizer')" data-settings-tab="site-customizer" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      🎛️ Customizer
+    </button>
+    <button type="button" onclick="switchSettingsSection('feature-flags')" data-settings-tab="feature-flags" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      🚩 Flags
+    </button>
+    <button type="button" onclick="switchSettingsSection('seo-scripts')" data-settings-tab="seo-scripts" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      🔍 SEO
+    </button>
+    <button type="button" onclick="switchSettingsSection('monetization-ads')" data-settings-tab="monetization-ads" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      💰 Monetization
+    </button>
+    <button type="button" onclick="switchSettingsSection('newsletter-config')" data-settings-tab="newsletter-config" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      📰 Newsletter
+    </button>
+    <button type="button" onclick="switchSettingsSection('smtp-settings')" data-settings-tab="smtp-settings" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      📧 SMTP
+    </button>
+    <button type="button" onclick="switchSettingsSection('team-accounts')" data-settings-tab="team-accounts" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+      👥 Staff
+    </button>
+  </div>
+
+  <!-- 2-COLUMN MAIN SETTINGS LAYOUT (TALL NARROW LEFT STRIP + RIGHT CONTENT) -->
+  <div class="flex flex-col lg:flex-row items-stretch gap-6">
+    
+    <!-- LEFT SIDEBAR: DARK FLOATING STRIP WITH EXPAND/COLLAPSE AS PER USER IMAGE -->
+    <aside id="settingsLeftSidebar" class="hidden lg:flex flex-col w-60 flex-shrink-0 sticky top-20 min-h-[calc(100vh-6.5rem)] bg-[#0f1422] dark:bg-[#0c101c] rounded-[28px] border border-slate-800 shadow-2xl p-4 justify-between transition-all duration-300 ease-in-out">
+      
+      <!-- Top Section: Brand Avatar & Collapse Toggle Button -->
+      <div>
+        <div class="flex items-center justify-between pb-5 mb-3 border-b border-slate-800/80">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-400 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md ring-2 ring-blue-500/30 flex-shrink-0">
+              <span class="tracking-tighter">EI</span>
+            </div>
+            <div class="sidebar-text overflow-hidden transition-opacity duration-200">
+              <span class="text-xs font-black tracking-tight text-white block leading-tight">Settings Hub</span>
+              <span class="text-[10px] text-slate-400 font-mono">Embedded India</span>
+            </div>
+          </div>
+
+          <!-- Collapse / Expand Toggle Button (< / >) -->
+          <button id="sidebarCollapseToggle" type="button" onclick="toggleSidebarCollapse()" class="w-7 h-7 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-95 flex-shrink-0" title="Toggle Sidebar Width">
+            <svg id="collapseChevronIcon" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navigation Items Stack -->
+        <nav class="space-y-1.5" id="settings-sidebar-nav">
+          
+          <!-- 1. Themes & Palettes -->
+          <button type="button" data-settings-tab="theme-engine" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition flex items-center space-x-3 bg-white text-slate-900 shadow-lg" title="Themes & Palettes">
+            <span class="text-base flex-shrink-0">🎨</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Themes</span>
+          </button>
+
+          <!-- 2. Site Customizer -->
+          <button type="button" data-settings-tab="site-customizer" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Site Customizer">
+            <span class="text-base flex-shrink-0">🎛️</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Customizer</span>
+          </button>
+
+          <!-- 3. Flags & Live Preview -->
+          <button type="button" data-settings-tab="feature-flags" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Feature Flags & Preview">
+            <span class="text-base flex-shrink-0">🚩</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Flags &amp; Live</span>
+          </button>
+
+          <!-- 4. Dynamic SEO -->
+          <button type="button" data-settings-tab="seo-scripts" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Dynamic SEO & AI">
+            <span class="text-base flex-shrink-0">🔍</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Dynamic SEO</span>
+          </button>
+
+          <!-- 5. Monetization Hub -->
+          <button type="button" data-settings-tab="monetization-ads" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Monetization & Ad Engine">
+            <span class="text-base flex-shrink-0">💰</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Monetization</span>
+          </button>
+
+          <!-- 6. Technical Newsletter -->
+          <button type="button" data-settings-tab="newsletter-config" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Newsletter Digest Engine">
+            <span class="text-base flex-shrink-0">📰</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Newsletter</span>
+          </button>
+
+          <!-- 7. SMTP & Mail -->
+          <button type="button" data-settings-tab="smtp-settings" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="SMTP & Recipient Routing">
+            <span class="text-base flex-shrink-0">📧</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">SMTP &amp; Routing</span>
+          </button>
+
+          <!-- 8. Staff Accounts -->
+          <button type="button" data-settings-tab="team-accounts" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Staff Accounts & Access">
+            <span class="text-base flex-shrink-0">👥</span>
+            <span class="sidebar-text whitespace-nowrap overflow-hidden">Staff Accounts</span>
+          </button>
+
+        </nav>
+      </div>
+
+      <!-- Bottom Pinned Section: Return to Dashboard & Exit Settings -->
+      <div class="pt-4 border-t border-slate-800/80 space-y-1.5">
+        <a href="/admin" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Return to Admin Dashboard">
+          <span class="text-base flex-shrink-0">⊞</span>
+          <span class="sidebar-text whitespace-nowrap overflow-hidden">Dashboard</span>
+        </a>
+        <a href="/admin/logout" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-red-400 hover:text-red-300 hover:bg-red-500/10" title="Sign Out">
+          <span class="text-base flex-shrink-0">⇥</span>
+          <span class="sidebar-text whitespace-nowrap overflow-hidden">Exit Settings</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- RIGHT CONTENT AREA -->
+    <div class="flex-1 min-w-0 space-y-6">
 
     <!-- ============================================================== -->
     <!-- MODULE 1: DYNAMIC THEME & COLOR PALETTE ENGINE (SIDE-BY-SIDE) -->
@@ -76,168 +198,184 @@
               Choose Active Public &amp; Admin Palette:
             </label>
 
-            <!-- 1. Cyber Emerald -->
-            <% const isEmerald = (!settings.active_theme_palette || settings.active_theme_palette === 'cyber-emerald' || settings.active_theme_palette === 'emerald' || settings.active_theme_palette === 'pcb-emerald-green'); %>
-            <div data-palette-card="cyber-emerald" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isEmerald ? 'border-brand-500 bg-brand-50/20 dark:bg-brand-900/20 ring-2 ring-brand-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('cyber-emerald')">
+<% 
+            const PALETTES_LIST = [
+              {
+                key: 'cyber-emerald',
+                num: '1',
+                name: 'Cyber Emerald',
+                badge: 'Default B2B',
+                badgeClass: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
+                borderActiveClass: 'border-brand-500 bg-brand-50/20 dark:bg-brand-900/20 ring-2 ring-brand-500/20',
+                radioClass: 'text-brand-500 focus:ring-brand-500',
+                activeLabelColor: 'text-brand-600 dark:text-accent',
+                defaults: { bgPrimary: '#0b1412', bgSurface: '#13221e', accentPrimary: '#059669', accentSecondary: '#55a630', textPrimary: '#f1f5f9', borderColor: '#1e3831' },
+                isActive: (!settings.active_theme_palette || settings.active_theme_palette === 'cyber-emerald' || settings.active_theme_palette === 'emerald' || settings.active_theme_palette === 'pcb-emerald-green')
+              },
+              {
+                key: 'quantum-cyan',
+                num: '2',
+                name: 'Quantum Cyan',
+                badge: 'Quantum',
+                badgeClass: 'bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300',
+                borderActiveClass: 'border-sky-500 bg-sky-50/20 dark:bg-sky-950/20 ring-2 ring-sky-500/20',
+                radioClass: 'text-sky-500 focus:ring-sky-500',
+                activeLabelColor: 'text-sky-600 dark:text-sky-400',
+                defaults: { bgPrimary: '#08101a', bgSurface: '#0f1d2e', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', textPrimary: '#f8fafc', borderColor: '#172a42' },
+                isActive: (settings.active_theme_palette === 'quantum-cyan' || settings.active_theme_palette === 'cyan' || settings.active_theme_palette === 'silicon-dark-blue')
+              },
+              {
+                key: 'titanium-slate',
+                num: '3',
+                name: 'Titanium Slate',
+                badge: 'Precision',
+                badgeClass: 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300',
+                borderActiveClass: 'border-slate-500 bg-slate-100/50 dark:bg-slate-800/40 ring-2 ring-slate-500/20',
+                radioClass: 'text-slate-600 focus:ring-slate-600',
+                activeLabelColor: 'text-slate-700 dark:text-slate-300',
+                defaults: { bgPrimary: '#090d16', bgSurface: '#0f172a', accentPrimary: '#38bdf8', accentSecondary: '#64748b', textPrimary: '#f8fafc', borderColor: '#334155' },
+                isActive: (settings.active_theme_palette === 'titanium-slate' || settings.active_theme_palette === 'spacegrey' || settings.active_theme_palette === 'automotive-slate-red')
+              },
+              {
+                key: 'solar-amber',
+                num: '4',
+                name: 'Solar Amber',
+                badge: 'Industrial',
+                badgeClass: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300',
+                borderActiveClass: 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/20 ring-2 ring-amber-500/20',
+                radioClass: 'text-amber-500 focus:ring-amber-500',
+                activeLabelColor: 'text-amber-600 dark:text-amber-400',
+                defaults: { bgPrimary: '#18181b', bgSurface: '#27272a', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', textPrimary: '#fafafa', borderColor: '#3f3f46' },
+                isActive: (settings.active_theme_palette === 'solar-amber' || settings.active_theme_palette === 'industrial-amber-charcoal')
+              },
+              {
+                key: 'supernova-violet',
+                num: '5',
+                name: 'Supernova Violet',
+                badge: 'Deep Space',
+                badgeClass: 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300',
+                borderActiveClass: 'border-purple-500 bg-purple-50/20 dark:bg-purple-950/20 ring-2 ring-purple-500/20',
+                radioClass: 'text-purple-600 focus:ring-purple-600',
+                activeLabelColor: 'text-purple-600 dark:text-purple-400',
+                defaults: { bgPrimary: '#0f0c1b', bgSurface: '#18142a', accentPrimary: '#a855f7', accentSecondary: '#c084fc', textPrimary: '#faf5ff', borderColor: '#3b2d54' },
+                isActive: (settings.active_theme_palette === 'supernova-violet')
+              },
+              {
+                key: 'clean-light',
+                num: '6',
+                name: 'Clean Enterprise',
+                badge: 'Enterprise',
+                badgeClass: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300',
+                borderActiveClass: 'border-blue-600 bg-blue-50/20 dark:bg-blue-950/20 ring-2 ring-blue-500/20',
+                radioClass: 'text-blue-600 focus:ring-blue-600',
+                activeLabelColor: 'text-blue-600 dark:text-blue-400',
+                defaults: { bgPrimary: '#f8fafc', bgSurface: '#ffffff', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', textPrimary: '#0f172a', borderColor: '#e2e8f0' },
+                isActive: (settings.active_theme_palette === 'clean-light' || settings.active_theme_palette === 'clean-light-enterprise')
+              }
+            ];
+            %>
+
+            <% PALETTES_LIST.forEach(p => { 
+              const curBgP = settings['palette_override_' + p.key + '_bgPrimary'] || p.defaults.bgPrimary;
+              const curBgS = settings['palette_override_' + p.key + '_bgSurface'] || p.defaults.bgSurface;
+              const curAcP = settings['palette_override_' + p.key + '_accentPrimary'] || p.defaults.accentPrimary;
+              const curAcS = settings['palette_override_' + p.key + '_accentSecondary'] || p.defaults.accentSecondary;
+              const curTxP = settings['palette_override_' + p.key + '_textPrimary'] || p.defaults.textPrimary;
+            %>
+            <div data-palette-card="<%= p.key %>" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= p.isActive ? p.borderActiveClass : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('<%= p.key %>')">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
-                  <input type="radio" name="active_theme_palette" value="cyber-emerald" <%= isEmerald ? 'checked' : '' %> onchange="selectPalette('cyber-emerald')" class="w-4 h-4 text-brand-500 focus:ring-brand-500">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">1. Cyber Emerald</span>
+                  <input type="radio" name="active_theme_palette" value="<%= p.key %>" <%= p.isActive ? 'checked' : '' %> onchange="selectPalette('<%= p.key %>')" class="w-4 h-4 <%= p.radioClass %>">
+                  <span class="text-xs font-black text-slate-900 dark:text-white"><%= p.num %>. <%= p.name %></span>
                 </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">Default B2B</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold <%= p.badgeClass %>"><%= p.badge %></span>
               </div>
               <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
                 <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#0b1412" title="BG: #0b1412"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#13221e" title="Surface: #13221e"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#059669" title="Primary: #059669"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#55a630" title="Secondary: #55a630"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#f1f5f9" title="Text"></span>
+                  <span class="swatch-bg w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:<%= curBgP %>" title="BG: <%= curBgP %>"></span>
+                  <span class="swatch-surface w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:<%= curBgS %>" title="Surface: <%= curBgS %>"></span>
+                  <span class="swatch-primary w-5 h-5 rounded-md shadow-xs" style="background:<%= curAcP %>" title="Primary: <%= curAcP %>"></span>
+                  <span class="swatch-secondary w-5 h-5 rounded-md shadow-xs" style="background:<%= curAcS %>" title="Secondary: <%= curAcS %>"></span>
+                  <span class="swatch-text w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:<%= curTxP %>" title="Text: <%= curTxP %>"></span>
                 </div>
                 <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-brand-600 dark:text-accent <%= isEmerald ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); editPaletteHexes('cyber-emerald');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition">
-                    ✏️ Edit
+                  <span class="palette-active-label text-[10px] font-bold <%= p.activeLabelColor %> <%= p.isActive ? '' : 'hidden' %>">✓ Active</span>
+                  <button type="button" onclick="event.stopPropagation(); togglePaletteDrawer('<%= p.key %>');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition flex items-center space-x-1">
+                    <span>✏️</span> <span>Edit</span>
                   </button>
                 </div>
               </div>
-            </div>
 
-            <!-- 2. Quantum Cyan -->
-            <% const isCyan = (settings.active_theme_palette === 'quantum-cyan' || settings.active_theme_palette === 'cyan' || settings.active_theme_palette === 'silicon-dark-blue'); %>
-            <div data-palette-card="quantum-cyan" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isCyan ? 'border-sky-500 bg-sky-50/20 dark:bg-sky-950/20 ring-2 ring-sky-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('quantum-cyan')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" name="active_theme_palette" value="quantum-cyan" <%= isCyan ? 'checked' : '' %> onchange="selectPalette('quantum-cyan')" class="w-4 h-4 text-sky-500 focus:ring-sky-500">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">2. Quantum Cyan</span>
+              <!-- Inline Expandable Palette Color Drawer -->
+              <div id="drawer-<%= p.key %>" class="palette-drawer hidden mt-3 p-4 rounded-2xl bg-slate-900/95 border border-slate-700/80 text-white space-y-3.5 shadow-xl animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation();">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs font-black uppercase tracking-wider text-sky-400">
+                      🎨 Edit <%= p.name %> Colors
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-mono">Live Binding</span>
+                  </div>
+                  <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="text-xs text-slate-400 hover:text-white p-1 rounded-lg">✕</button>
                 </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">Quantum</span>
-              </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#08101a" title="BG: #08101a"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#0f1d2e" title="Surface: #0f1d2e"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#0ea5e9" title="Primary: #0ea5e9"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#06b6d4" title="Secondary: #06b6d4"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#f8fafc" title="Text"></span>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Canvas BG</label>
+                    <div class="flex items-center space-x-1">
+                      <input type="color" id="picker_<%= p.key %>_bgPrimary" value="<%= curBgP %>" onchange="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
+                      <input type="text" id="hex_<%= p.key %>_bgPrimary" value="<%= curBgP %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Surface</label>
+                    <div class="flex items-center space-x-1">
+                      <input type="color" id="picker_<%= p.key %>_bgSurface" value="<%= curBgS %>" onchange="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
+                      <input type="text" id="hex_<%= p.key %>_bgSurface" value="<%= curBgS %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Primary Accent</label>
+                    <div class="flex items-center space-x-1">
+                      <input type="color" id="picker_<%= p.key %>_accentPrimary" value="<%= curAcP %>" onchange="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
+                      <input type="text" id="hex_<%= p.key %>_accentPrimary" value="<%= curAcP %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Secondary Accent</label>
+                    <div class="flex items-center space-x-1">
+                      <input type="color" id="picker_<%= p.key %>_accentSecondary" value="<%= curAcS %>" onchange="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
+                      <input type="text" id="hex_<%= p.key %>_accentSecondary" value="<%= curAcS %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                    </div>
+                  </div>
+
+                  <div class="sm:col-span-2">
+                    <label class="block font-semibold text-slate-300 mb-1">Text Primary</label>
+                    <div class="flex items-center space-x-1">
+                      <input type="color" id="picker_<%= p.key %>_textPrimary" value="<%= curTxP %>" onchange="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
+                      <input type="text" id="hex_<%= p.key %>_textPrimary" value="<%= curTxP %>" oninput="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                    </div>
+                  </div>
                 </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-sky-600 dark:text-sky-400 <%= isCyan ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); editPaletteHexes('quantum-cyan');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition">
-                    ✏️ Edit
+
+                <div class="flex items-center justify-between pt-2.5 border-t border-slate-800">
+                  <button type="button" onclick="deleteOrResetPalette('<%= p.key %>')" class="px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs font-bold transition flex items-center space-x-1 border border-red-500/30" title="Reset this palette back to system defaults">
+                    <span>🗑️ Delete / Reset</span>
                   </button>
+                  <div class="flex items-center space-x-2">
+                    <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
+                      Cancel
+                    </button>
+                    <button type="button" onclick="savePaletteChanges('<%= p.key %>')" class="px-4 py-1.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition shadow-sm active:scale-95 flex items-center space-x-1">
+                      <span>💾 Save</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <!-- 3. Titanium Slate -->
-            <% const isSlate = (settings.active_theme_palette === 'titanium-slate' || settings.active_theme_palette === 'titanium'); %>
-            <div data-palette-card="titanium-slate" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isSlate ? 'border-slate-500 bg-slate-100/50 dark:bg-slate-800/40 ring-2 ring-slate-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('titanium-slate')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" name="active_theme_palette" value="titanium-slate" <%= isSlate ? 'checked' : '' %> onchange="selectPalette('titanium-slate')" class="w-4 h-4 text-slate-500 focus:ring-slate-500">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">3. Titanium Slate</span>
-                </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200">Precision</span>
-              </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#090d16" title="BG: #090d16"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#0f172a" title="Surface: #0f172a"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#475569" title="Primary: #475569"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#38bdf8" title="Secondary: #38bdf8"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#f8fafc" title="Text"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-slate-600 dark:text-slate-300 <%= isSlate ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); editPaletteHexes('titanium-slate');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition">
-                    ✏️ Edit
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. Solar Amber -->
-            <% const isAmber = (settings.active_theme_palette === 'solar-amber' || settings.active_theme_palette === 'amber'); %>
-            <div data-palette-card="solar-amber" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isAmber ? 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/20 ring-2 ring-amber-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('solar-amber')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" name="active_theme_palette" value="solar-amber" <%= isAmber ? 'checked' : '' %> onchange="selectPalette('solar-amber')" class="w-4 h-4 text-amber-500 focus:ring-amber-500">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">4. Solar Amber</span>
-                </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">Industrial</span>
-              </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#18181b" title="BG: #18181b"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#27272a" title="Surface: #27272a"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#f59e0b" title="Primary: #f59e0b"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#fbbf24" title="Secondary: #fbbf24"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#fafafa" title="Text"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-amber-600 dark:text-amber-400 <%= isAmber ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); editPaletteHexes('solar-amber');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition">
-                    ✏️ Edit
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 5. Supernova Violet -->
-            <% const isViolet = (settings.active_theme_palette === 'supernova-violet' || settings.active_theme_palette === 'violet'); %>
-            <div data-palette-card="supernova-violet" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isViolet ? 'border-purple-500 bg-purple-50/20 dark:bg-purple-950/20 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('supernova-violet')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" name="active_theme_palette" value="supernova-violet" <%= isViolet ? 'checked' : '' %> onchange="selectPalette('supernova-violet')" class="w-4 h-4 text-purple-500 focus:ring-purple-500">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">5. Supernova Violet</span>
-                </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300">Deep Space</span>
-              </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#0f0c1b" title="BG: #0f0c1b"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:#18142a" title="Surface: #18142a"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#a855f7" title="Primary: #a855f7"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#c084fc" title="Secondary: #c084fc"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#faf5ff" title="Text"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-purple-600 dark:text-purple-400 <%= isViolet ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); editPaletteHexes('supernova-violet');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition">
-                    ✏️ Edit
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 6. Clean Light Enterprise -->
-            <% const isCleanLight = (settings.active_theme_palette === 'clean-light' || settings.active_theme_palette === 'clean-light-enterprise'); %>
-            <div data-palette-card="clean-light" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isCleanLight ? 'border-blue-600 bg-blue-50/20 ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('clean-light')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" name="active_theme_palette" value="clean-light" <%= isCleanLight ? 'checked' : '' %> onchange="selectPalette('clean-light')" class="w-4 h-4 text-blue-600 focus:ring-blue-600">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">6. Clean Enterprise</span>
-                </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">Enterprise</span>
-              </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#f8fafc" title="BG: #f8fafc"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:#ffffff" title="Surface: #ffffff"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#2563eb" title="Primary: #2563eb"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#3b82f6" title="Secondary: #3b82f6"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs" style="background:#0f172a" title="Text: #0f172a"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-blue-600 dark:text-blue-400 <%= isCleanLight ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); editPaletteHexes('clean-light');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition">
-                    ✏️ Edit
-                  </button>
-                </div>
-              </div>
-            </div>
-
+            <% }); %>
             <!-- 7. Custom Hex Engine Card -->
             <% const isCustom = (settings.active_theme_palette === 'custom'); %>
             <div data-palette-card="custom" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isCustom ? 'border-purple-600 bg-purple-50/20 dark:bg-purple-950/20 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('custom')">
@@ -1410,6 +1548,7 @@
       </div>
     </section>
 
+    </div>
   </div>
 </div>
 
@@ -1423,61 +1562,61 @@
   const PALETTE_DEFINITIONS = {
     'cyber-emerald': {
       name: 'Cyber Emerald',
-      bgPrimary: '#0b1412',
-      bgSurface: '#13221e',
-      accentPrimary: '#059669',
-      accentSecondary: '#55a630',
-      textPrimary: '#f1f5f9',
+      bgPrimary: '<%= settings["palette_override_cyber-emerald_bgPrimary"] || "#0b1412" %>',
+      bgSurface: '<%= settings["palette_override_cyber-emerald_bgSurface"] || "#13221e" %>',
+      accentPrimary: '<%= settings["palette_override_cyber-emerald_accentPrimary"] || "#059669" %>',
+      accentSecondary: '<%= settings["palette_override_cyber-emerald_accentSecondary"] || "#55a630" %>',
+      textPrimary: '<%= settings["palette_override_cyber-emerald_textPrimary"] || "#f1f5f9" %>',
       textMuted: '#94a3b8',
       borderColor: '#1e3831'
     },
     'quantum-cyan': {
       name: 'Quantum Cyan',
-      bgPrimary: '#08101a',
-      bgSurface: '#0f1d2e',
-      accentPrimary: '#0ea5e9',
-      accentSecondary: '#06b6d4',
-      textPrimary: '#f8fafc',
+      bgPrimary: '<%= settings["palette_override_quantum-cyan_bgPrimary"] || "#08101a" %>',
+      bgSurface: '<%= settings["palette_override_quantum-cyan_bgSurface"] || "#0f1d2e" %>',
+      accentPrimary: '<%= settings["palette_override_quantum-cyan_accentPrimary"] || "#0ea5e9" %>',
+      accentSecondary: '<%= settings["palette_override_quantum-cyan_accentSecondary"] || "#06b6d4" %>',
+      textPrimary: '<%= settings["palette_override_quantum-cyan_textPrimary"] || "#f8fafc" %>',
       textMuted: '#94a3b8',
       borderColor: '#172a42'
     },
     'titanium-slate': {
       name: 'Titanium Slate',
-      bgPrimary: '#090d16',
-      bgSurface: '#0f172a',
-      accentPrimary: '#475569',
-      accentSecondary: '#38bdf8',
-      textPrimary: '#f8fafc',
+      bgPrimary: '<%= settings["palette_override_titanium-slate_bgPrimary"] || "#090d16" %>',
+      bgSurface: '<%= settings["palette_override_titanium-slate_bgSurface"] || "#0f172a" %>',
+      accentPrimary: '<%= settings["palette_override_titanium-slate_accentPrimary"] || "#38bdf8" %>',
+      accentSecondary: '<%= settings["palette_override_titanium-slate_accentSecondary"] || "#64748b" %>',
+      textPrimary: '<%= settings["palette_override_titanium-slate_textPrimary"] || "#f8fafc" %>',
       textMuted: '#94a3b8',
       borderColor: '#334155'
     },
     'solar-amber': {
       name: 'Solar Amber',
-      bgPrimary: '#18181b',
-      bgSurface: '#27272a',
-      accentPrimary: '#f59e0b',
-      accentSecondary: '#fbbf24',
-      textPrimary: '#fafafa',
+      bgPrimary: '<%= settings["palette_override_solar-amber_bgPrimary"] || "#18181b" %>',
+      bgSurface: '<%= settings["palette_override_solar-amber_bgSurface"] || "#27272a" %>',
+      accentPrimary: '<%= settings["palette_override_solar-amber_accentPrimary"] || "#f59e0b" %>',
+      accentSecondary: '<%= settings["palette_override_solar-amber_accentSecondary"] || "#fbbf24" %>',
+      textPrimary: '<%= settings["palette_override_solar-amber_textPrimary"] || "#fafafa" %>',
       textMuted: '#a1a1aa',
       borderColor: '#3f3f46'
     },
     'supernova-violet': {
       name: 'Supernova Violet',
-      bgPrimary: '#0f0c1b',
-      bgSurface: '#18142a',
-      accentPrimary: '#a855f7',
-      accentSecondary: '#c084fc',
-      textPrimary: '#faf5ff',
+      bgPrimary: '<%= settings["palette_override_supernova-violet_bgPrimary"] || "#0f0c1b" %>',
+      bgSurface: '<%= settings["palette_override_supernova-violet_bgSurface"] || "#18142a" %>',
+      accentPrimary: '<%= settings["palette_override_supernova-violet_accentPrimary"] || "#a855f7" %>',
+      accentSecondary: '<%= settings["palette_override_supernova-violet_accentSecondary"] || "#c084fc" %>',
+      textPrimary: '<%= settings["palette_override_supernova-violet_textPrimary"] || "#faf5ff" %>',
       textMuted: '#c084fc',
       borderColor: '#3b2d54'
     },
     'clean-light': {
       name: 'Clean Enterprise',
-      bgPrimary: '#f8fafc',
-      bgSurface: '#ffffff',
-      accentPrimary: '#2563eb',
-      accentSecondary: '#3b82f6',
-      textPrimary: '#0f172a',
+      bgPrimary: '<%= settings["palette_override_clean-light_bgPrimary"] || "#f8fafc" %>',
+      bgSurface: '<%= settings["palette_override_clean-light_bgSurface"] || "#ffffff" %>',
+      accentPrimary: '<%= settings["palette_override_clean-light_accentPrimary"] || "#2563eb" %>',
+      accentSecondary: '<%= settings["palette_override_clean-light_accentSecondary"] || "#3b82f6" %>',
+      textPrimary: '<%= settings["palette_override_clean-light_textPrimary"] || "#0f172a" %>',
       textMuted: '#64748b',
       borderColor: '#e2e8f0'
     }
@@ -1530,9 +1669,184 @@
   // ====================================================================
   // 2. SETTINGS MODE SECTION / PAGE SWITCHER
   // ====================================================================
-  function switchSettingsSection(sectionId) {
+  
+  // ====================================================================
+  // SIDEBAR COLLAPSE TOGGLE (w-60 <-> w-20)
+  // ====================================================================
+  function toggleSidebarCollapse() {
+    const sidebar = document.getElementById('settingsLeftSidebar');
+    const chevron = document.getElementById('collapseChevronIcon');
+    if (!sidebar) return;
+
+    const isCollapsed = sidebar.classList.contains('w-20');
+    if (isCollapsed) {
+      // Expand
+      sidebar.classList.remove('w-20', 'p-2');
+      sidebar.classList.add('w-60', 'p-4');
+      sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.remove('hidden'));
+      if (chevron) chevron.style.transform = 'rotate(0deg)';
+      localStorage.setItem('sidebar-collapsed', 'false');
+    } else {
+      // Collapse
+      sidebar.classList.remove('w-60', 'p-4');
+      sidebar.classList.add('w-20', 'p-2');
+      sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+      localStorage.setItem('sidebar-collapsed', 'true');
+    }
+  }
+
+  // Restore sidebar collapse preference
+  document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('sidebar-collapsed') === 'true') {
+      const sidebar = document.getElementById('settingsLeftSidebar');
+      const chevron = document.getElementById('collapseChevronIcon');
+      if (sidebar) {
+        sidebar.classList.remove('w-60', 'p-4');
+        sidebar.classList.add('w-20', 'p-2');
+        sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      }
+    }
+  });
+
+  // ====================================================================
+  // INLINE PALETTE DRAWER CONTROLLERS (EXPAND, EDIT, SAVE, DELETE)
+  // ====================================================================
+  function togglePaletteDrawer(key) {
+    const drawer = document.getElementById('drawer-' + key);
+    if (!drawer) return;
+
+    const isHidden = drawer.classList.contains('hidden');
+    // Close other drawers
+    document.querySelectorAll('.palette-drawer').forEach(d => d.classList.add('hidden'));
+
+    if (isHidden) {
+      // Sync drawer color inputs with current PALETTE_DEFINITIONS
+      const p = PALETTE_DEFINITIONS[key];
+      if (p) {
+        syncDrawerInput(key, 'bgPrimary', p.bgPrimary);
+        syncDrawerInput(key, 'bgSurface', p.bgSurface);
+        syncDrawerInput(key, 'accentPrimary', p.accentPrimary);
+        syncDrawerInput(key, 'accentSecondary', p.accentSecondary);
+        syncDrawerInput(key, 'textPrimary', p.textPrimary);
+      }
+      drawer.classList.remove('hidden');
+      selectPalette(key);
+    }
+  }
+
+  function closePaletteDrawer(key) {
+    const drawer = document.getElementById('drawer-' + key);
+    if (drawer) drawer.classList.add('hidden');
+  }
+
+  function syncDrawerInput(key, prop, value) {
+    const picker = document.getElementById('picker_' + key + '_' + prop);
+    const hex = document.getElementById('hex_' + key + '_' + prop);
+    if (picker) picker.value = value;
+    if (hex) hex.value = value;
+  }
+
+    function onDrawerColorChange(key, prop, value) {
+    if (!PALETTE_DEFINITIONS[key]) return;
+    PALETTE_DEFINITIONS[key][prop] = value;
+    syncDrawerInput(key, prop, value);
+
+    // Update card swatches directly using classes
+    const card = document.querySelector(`[data-palette-card="${key}"]`);
+    if (card) {
+      if (prop === 'bgPrimary') {
+        const el = card.querySelector('.swatch-bg');
+        if (el) el.style.background = value;
+      } else if (prop === 'bgSurface') {
+        const el = card.querySelector('.swatch-surface');
+        if (el) el.style.background = value;
+      } else if (prop === 'accentPrimary') {
+        const el = card.querySelector('.swatch-primary');
+        if (el) el.style.background = value;
+      } else if (prop === 'accentSecondary') {
+        const el = card.querySelector('.swatch-secondary');
+        if (el) el.style.background = value;
+      } else if (prop === 'textPrimary') {
+        const el = card.querySelector('.swatch-text');
+        if (el) el.style.background = value;
+      }
+    }
+
+    // Select palette and re-render preview canvas
+    selectPalette(key);
+  }
+
+  async function savePaletteChanges(key) {
+    const p = PALETTE_DEFINITIONS[key];
+    if (!p) return;
+
+    const payload = {
+      active_theme_palette: key,
+      _active_tab: 'theme-engine'
+    };
+    payload['palette_override_' + key + '_bgPrimary'] = p.bgPrimary;
+    payload['palette_override_' + key + '_bgSurface'] = p.bgSurface;
+    payload['palette_override_' + key + '_accentPrimary'] = p.accentPrimary;
+    payload['palette_override_' + key + '_accentSecondary'] = p.accentSecondary;
+    payload['palette_override_' + key + '_textPrimary'] = p.textPrimary;
+
+    try {
+      const res = await fetch('/admin/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      showToast('✅ Saved custom hexes for ' + p.name + '!');
+      closePaletteDrawer(key);
+    } catch(err) {
+      alert('Error saving palette: ' + err.message);
+    }
+  }
+
+  async function deleteOrResetPalette(key) {
+    const p = PALETTE_DEFINITIONS[key];
+    if (!p) return;
+    if (!confirm('Are you sure you want to delete custom overrides and reset ' + p.name + ' to factory defaults?')) return;
+
+    // Factory defaults table
+    const DEFAULTS = {
+      'cyber-emerald': { bgPrimary: '#0b1412', bgSurface: '#13221e', accentPrimary: '#059669', accentSecondary: '#55a630', textPrimary: '#f1f5f9' },
+      'quantum-cyan': { bgPrimary: '#08101a', bgSurface: '#0f1d2e', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', textPrimary: '#f8fafc' },
+      'titanium-slate': { bgPrimary: '#090d16', bgSurface: '#0f172a', accentPrimary: '#475569', accentSecondary: '#38bdf8', textPrimary: '#f8fafc' },
+      'solar-amber': { bgPrimary: '#18181b', bgSurface: '#27272a', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', textPrimary: '#fafafa' },
+      'supernova-violet': { bgPrimary: '#0f0c1b', bgSurface: '#18142a', accentPrimary: '#a855f7', accentSecondary: '#c084fc', textPrimary: '#faf5ff' },
+      'clean-light': { bgPrimary: '#f8fafc', bgSurface: '#ffffff', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', textPrimary: '#0f172a' }
+    };
+
+    const def = DEFAULTS[key] || DEFAULTS['cyber-emerald'];
+    Object.assign(p, def);
+
+    // Sync drawer
+    syncDrawerInput(key, 'bgPrimary', def.bgPrimary);
+    syncDrawerInput(key, 'bgSurface', def.bgSurface);
+    syncDrawerInput(key, 'accentPrimary', def.accentPrimary);
+    syncDrawerInput(key, 'accentSecondary', def.accentSecondary);
+    syncDrawerInput(key, 'textPrimary', def.textPrimary);
+
+    // Save defaults to clear overrides
+    await savePaletteChanges(key);
+    selectPalette(key);
+    showToast('🔄 Reset ' + p.name + ' to factory defaults!');
+  }
+
+  window.switchSettingsSection = function(sectionId) {
     const targetSection = document.getElementById(sectionId);
-    if (!targetSection) return;
+    if (!targetSection) {
+      console.warn('Target section not found:', sectionId);
+      return;
+    }
 
     // 1. Hide all sections, show target
     document.querySelectorAll('.settings-section').forEach(sec => {
@@ -1551,13 +1865,25 @@
       if (crumb) crumb.innerText = meta.breadcrumb;
     }
 
-    // 3. Update active states on Top Header Nav Buttons
+    // 3. Update active states on Sidebar and Mobile Nav Buttons
     document.querySelectorAll('.settings-nav-btn').forEach(btn => {
-      const isTarget = btn.dataset.settingsTab === sectionId;
+      const tab = btn.getAttribute('data-settings-tab');
+      const isTarget = (tab === sectionId);
+      const indicator = btn.querySelector('.tab-indicator');
+      const isMobile = btn.closest('#settings-mobile-nav');
+      
       if (isTarget) {
-        btn.className = 'settings-nav-btn px-2.5 py-1.5 rounded-lg transition bg-brand-500 text-white font-extrabold shadow-sm flex items-center space-x-1';
+        if (isMobile) {
+          btn.className = 'settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-xs flex-shrink-0';
+        } else {
+          btn.className = 'settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition flex items-center space-x-3 bg-white text-slate-900 shadow-lg';
+        }
       } else {
-        btn.className = 'settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1';
+        if (isMobile) {
+          btn.className = 'settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white hover:bg-white/10 flex-shrink-0';
+        } else {
+          btn.className = 'settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10';
+        }
       }
     });
 
@@ -1568,7 +1894,8 @@
 
     // 5. Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  };
+  const switchSettingsSection = window.switchSettingsSection;
 
   // ====================================================================
   // 3. PALETTE SELECTION & PREVIEW RENDERING
@@ -1578,16 +1905,21 @@
     const radio = document.querySelector(`input[name="active_theme_palette"][value="${key}"]`);
     if (radio) radio.checked = true;
 
-    // 2. Update visual card borders and active badges
+    // 2. Update visual card borders, backgrounds and active badges
     document.querySelectorAll('.palette-card').forEach(card => {
       const isMatch = card.dataset.paletteCard === key;
       const activeLabel = card.querySelector('.palette-active-label');
       if (isMatch) {
-        card.classList.add('border-brand-500', 'ring-2', 'ring-brand-500/20');
         card.classList.remove('border-slate-200', 'dark:border-brand-border');
+        card.classList.add('border-brand-500', 'bg-brand-50/20', 'dark:bg-brand-900/20', 'ring-2', 'ring-brand-500/30');
         if (activeLabel) activeLabel.classList.remove('hidden');
       } else {
-        card.classList.remove('border-brand-500', 'border-sky-500', 'border-slate-500', 'border-amber-500', 'border-purple-500', 'border-purple-600', 'border-blue-600', 'ring-2', 'ring-brand-500/20', 'ring-sky-500/20');
+        card.classList.remove(
+          'border-brand-500', 'border-sky-500', 'border-slate-500', 'border-amber-500', 'border-purple-500', 'border-purple-600', 'border-blue-600',
+          'bg-brand-50/20', 'dark:bg-brand-900/20', 'bg-sky-50/20', 'dark:bg-sky-950/20', 'bg-slate-100/50', 'dark:bg-slate-800/40',
+          'bg-amber-50/20', 'dark:bg-amber-950/20', 'bg-purple-50/20', 'dark:bg-purple-950/20', 'bg-blue-50/20',
+          'ring-2', 'ring-brand-500/20', 'ring-brand-500/30', 'ring-sky-500/20', 'ring-slate-500/20', 'ring-amber-500/20', 'ring-purple-500/20', 'ring-blue-500/20'
+        );
         card.classList.add('border-slate-200', 'dark:border-brand-border');
         if (activeLabel) activeLabel.classList.add('hidden');
       }
@@ -1623,24 +1955,24 @@
       const chipAcP = document.getElementById('chip_accent_primary');
       const chipAcS = document.getElementById('chip_accent_secondary');
       const chipTx = document.getElementById('chip_text_primary');
-      if (chipBg) chipBg.style.background = bgP;
-      if (chipSurf) chipSurf.style.background = bgS;
-      if (chipAcP) chipAcP.style.background = acP;
-      if (chipAcS) chipAcS.style.background = acS;
-      if (chipTx) chipTx.style.background = txP;
+      if (chipBg) chipBg.style.backgroundColor = bgP;
+      if (chipSurf) chipSurf.style.backgroundColor = bgS;
+      if (chipAcP) chipAcP.style.backgroundColor = acP;
+      if (chipAcS) chipAcS.style.backgroundColor = acS;
+      if (chipTx) chipTx.style.backgroundColor = txP;
     }
 
     const box = document.getElementById('liveThemePreviewBox');
     if (!box) return;
 
-    box.style.background = p.bgPrimary;
+    box.style.backgroundColor = p.bgPrimary;
     box.style.borderColor = p.borderColor;
 
     const badge = document.getElementById('previewPaletteNameBadge');
     if (badge) badge.innerText = p.name;
 
     const brandIcon = document.getElementById('prevBrandIcon');
-    if (brandIcon) brandIcon.style.background = p.accentPrimary;
+    if (brandIcon) brandIcon.style.backgroundColor = p.accentPrimary;
 
     const brandAccent = document.getElementById('prevBrandAccent');
     if (brandAccent) brandAccent.style.color = p.accentPrimary;
@@ -1653,13 +1985,13 @@
 
     const subCard = document.getElementById('prevSubCard');
     if (subCard) {
-      subCard.style.background = p.bgSurface;
+      subCard.style.backgroundColor = p.bgSurface;
       subCard.style.borderColor = p.borderColor;
     }
 
     const pillTag = document.getElementById('prevPillTag');
     if (pillTag) {
-      pillTag.style.background = p.accentPrimary + '26';
+      pillTag.style.backgroundColor = p.accentPrimary + '26';
       pillTag.style.color = p.accentPrimary;
       pillTag.style.borderColor = p.accentPrimary + '4d';
     }
@@ -1674,7 +2006,7 @@
     if (desc) desc.style.color = p.textMuted;
 
     const btnPrimary = document.getElementById('prevBtnPrimary');
-    if (btnPrimary) btnPrimary.style.background = p.accentPrimary;
+    if (btnPrimary) btnPrimary.style.backgroundColor = p.accentPrimary;
 
     const btnSecondary = document.getElementById('prevBtnSecondary');
     if (btnSecondary) {
@@ -1990,7 +2322,7 @@
     resultBox.innerText = 'Compiling digest and dispatching to subscribers...';
 
     try {
-      const res = await fetch('/admin/cron/trigger', {
+      const res = await fetch('/admin/trigger-cron', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'send_digest' })
@@ -2114,9 +2446,31 @@
   // 11. INITIALIZATION & HASH NAVIGATION
   // ====================================================================
   document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initial palette preview render
+    // 1. Navigation Buttons click delegation (Sidebar & Mobile)
+    document.addEventListener('click', (e) => {
+      const navBtn = e.target.closest('.settings-nav-btn');
+      if (navBtn) {
+        e.preventDefault();
+        const tab = navBtn.getAttribute('data-settings-tab');
+        if (tab && window.switchSettingsSection) {
+          window.switchSettingsSection(tab);
+        }
+      }
+    });
+
+    // 2. Palette cards click delegation
+    document.querySelectorAll('.palette-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // If clicking on an edit button, let its handler handle it
+        if (e.target.closest('button')) return;
+        const key = card.dataset.paletteCard;
+        if (key) selectPalette(key);
+      });
+    });
+
+    // 2. Initial palette preview render
     const activePalette = '<%= settings.active_theme_palette || "cyber-emerald" %>';
-    renderPreviewCanvas(activePalette);
+    selectPalette(activePalette);
 
     // 2. Previews initializations
     updateEventPreview();
@@ -2231,7 +2585,7 @@
         }
 
         try {
-          const res = await fetch('/admin/users/create', {
+          const res = await fetch('/admin/settings/add-account', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, role, password: pass })
@@ -2259,7 +2613,7 @@
   async function deleteAccount(userId) {
     if (!confirm('Are you sure you want to delete this staff user account?')) return;
     try {
-      const res = await fetch(`/admin/users/${userId}/delete`, { method: 'POST' });
+      const res = await fetch('/admin/settings/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: userId }) });
       const data = await res.json();
       if (data.success) {
         window.location.reload();

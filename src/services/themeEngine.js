@@ -108,7 +108,22 @@ function resolveTheme(settings = {}) {
       swatchHex: settings.palette_accent_primary || '#059669'
     };
   } else {
-    palette = PREDEFINED_PALETTES[activeKey] || PREDEFINED_PALETTES['cyber-emerald'];
+    palette = { ...(PREDEFINED_PALETTES[activeKey] || PREDEFINED_PALETTES['cyber-emerald']) };
+    if (settings[`palette_override_${activeKey}_bgPrimary`]) {
+      palette.bgPrimary = settings[`palette_override_${activeKey}_bgPrimary`];
+    }
+    if (settings[`palette_override_${activeKey}_bgSurface`]) {
+      palette.bgSurface = settings[`palette_override_${activeKey}_bgSurface`];
+    }
+    if (settings[`palette_override_${activeKey}_accentPrimary`]) {
+      palette.accentPrimary = settings[`palette_override_${activeKey}_accentPrimary`];
+    }
+    if (settings[`palette_override_${activeKey}_accentSecondary`]) {
+      palette.accentSecondary = settings[`palette_override_${activeKey}_accentSecondary`];
+    }
+    if (settings[`palette_override_${activeKey}_textPrimary`]) {
+      palette.textPrimary = settings[`palette_override_${activeKey}_textPrimary`];
+    }
   }
 
   const headingFont = settings.heading_font || 'Inter';

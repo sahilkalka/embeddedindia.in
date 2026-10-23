@@ -49,6 +49,7 @@ app.use(helmet({
         "https://srv.carbonads.net",
         "https://fonts.googleapis.com"
       ],
+      scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: [
         "'self'",
         "'unsafe-inline'",

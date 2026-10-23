@@ -40,3 +40,4 @@ scratch/
 Thumbs.db
 .vscode/
 .idea/
+.playwright-mcp-profile
