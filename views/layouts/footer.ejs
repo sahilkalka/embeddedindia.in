@@ -146,7 +146,7 @@
             <li><a href="/about" class="hover:text-brand-500 dark:hover:text-accent transition">About Us</a></li>
             <li><a href="/projects" class="hover:text-brand-500 dark:hover:text-accent transition">Projects Portfolio</a></li>
             <li><a href="/blogs" class="hover:text-brand-500 dark:hover:text-accent transition">Engineering Blogs</a></li>
-            <li><a href="/contact" class="hover:text-brand-500 dark:hover:text-accent transition">Contact Us</a></li>
+            <li><a href="/contact" class="hover:text-brand-500 dark:hover:text-accent transition">Connect</a></li>
             <li><a href="/privacy-policy" class="hover:text-brand-500 dark:hover:text-accent transition">Privacy Policy</a></li>
             <li><a href="/sitemap.xml" class="hover:text-brand-500 dark:hover:text-accent transition">Sitemap (XML)</a></li>
             <li><a href="/admin/login" class="hover:text-brand-500 dark:hover:text-accent transition text-xs opacity-70">Staff Login</a></li>
@@ -242,15 +242,19 @@
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const themeToggleLabel = document.getElementById('theme-toggle-label');
 
     function updateIcons() {
-      if (document.documentElement.classList.contains('dark')) {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
         themeToggleLightIcon.classList.remove('hidden');
         themeToggleDarkIcon.classList.add('hidden');
       } else {
         themeToggleDarkIcon.classList.remove('hidden');
         themeToggleLightIcon.classList.add('hidden');
       }
+      if (themeToggleLabel) themeToggleLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+      if (themeToggleBtn) themeToggleBtn.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
     }
 
     updateIcons();
@@ -422,7 +426,12 @@
     THEME_PALETTES['clean-light-enterprise'] = THEME_PALETTES['clean-light'];
 
     function applyPalette(scheme) {
-      const safeScheme = THEME_PALETTES[scheme] ? scheme : 'cyber-emerald';
+      const canonicalScheme = {
+        emerald: 'cyber-emerald',
+        cyan: 'quantum-cyan',
+        spacegrey: 'titanium-slate'
+      }[scheme] || scheme;
+      const safeScheme = THEME_PALETTES[canonicalScheme] ? canonicalScheme : 'cyber-emerald';
       const paletteObj = THEME_PALETTES[safeScheme];
       document.documentElement.setAttribute('data-palette', safeScheme);
       localStorage.setItem('color-palette', safeScheme);

@@ -39,8 +39,9 @@ flowchart LR
 
    - Automatically detects and activates the cPanel Node.js virtual environment (`nodevenv`).
    - Backs up the SQLite database (`prisma/dev.db.bak_TIMESTAMP`).
-   - Installs production dependencies (`npm install --omit=dev --no-audit --no-fund`).
-   - Runs database table initialization (`node scripts/init-db.js`) and content seeding (`node scripts/seed-sqlite.js`).
+   - Installs production dependencies only when `package.json` or `package-lock.json` changes; otherwise skips npm install.
+   - Runs database table initialization (`node scripts/init-db.js`) and seeds initial content only for a new database.
+   - Relies on npm's Prisma postinstall generation when dependencies are installed; does not repeat `prisma generate`.
    - Compiles Tailwind CSS if necessary (`public/css/style.css`).
    - Sets safe file permissions (`chmod 777 tmp prisma`, `chmod 666 prisma/dev.db*`).
    - Verifies server loader syntax.
@@ -110,8 +111,8 @@ Add or verify these environment variables in cPanel Node.js App UI (**Environmen
 | `DATABASE_URL`           | `file:./prisma/dev.db`                         | Relative path to production SQLite database         |
 | `SESSION_SECRET`         | *(Random 32+ char secret string)*              | Session cookie cryptographic signature              |
 | `ADMIN_JWT_SECRET`       | *(Random 32+ char secret token)*               | Admin JWT session token                             |
-| `ADMIN_DEFAULT_EMAIL`    | `admin@embeddedindia.in`                       | Initial admin portal username                       |
-| `ADMIN_DEFAULT_PASSWORD` | `AdminEmbedded@2026!`                          | Initial admin portal password                       |
+| `ADMIN_DEFAULT_EMAIL`    | `admin@embeddedindia.in`                       | Email for the initial admin account; used only when no admin exists |
+| `ADMIN_DEFAULT_PASSWORD` | `AdminEmbedded@2026!`                          | Initial admin password; existing admin passwords are preserved during deployment |
 | `SMTP_HOST`              | `smtp.gmail.com` *(or cPanel mail)*          | Outgoing mail server for inquiries                  |
 | `SMTP_PORT`              | `587`                                          | `587` (STARTTLS) or `465` (SSL)                 |
 | `SMTP_SECURE`            | `false`                                        | `false` for 587, `true` for 465                 |

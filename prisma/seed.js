@@ -8,21 +8,24 @@ async function main() {
   console.log('Seeding Embedded India database...');
 
   // 1. Create Default Admin User
-  const adminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'admin@embeddedindia.in';
-  const rawPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'AdminEmbedded@2026!';
-  const passwordHash = await bcrypt.hash(rawPassword, 10);
+  const existingAdmin = await prisma.user.findFirst({ where: { role: 'admin' } });
+  if (!existingAdmin) {
+    const adminEmail = (process.env.ADMIN_DEFAULT_EMAIL || 'admin@embeddedindia.in').trim().toLowerCase();
+    const rawPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'AdminEmbedded@2026!';
+    const passwordHash = await bcrypt.hash(rawPassword, 10);
 
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: { passwordHash },
-    create: {
-      username: 'admin',
-      email: adminEmail,
-      passwordHash,
-      role: 'admin'
-    }
-  });
-  console.log(`[SEED] Admin user ready: ${admin.email}`);
+    const admin = await prisma.user.create({
+      data: {
+        username: 'admin',
+        email: adminEmail,
+        passwordHash,
+        role: 'admin'
+      }
+    });
+    console.log(`[SEED] Admin user created: ${admin.email}`);
+  } else {
+    console.log(`[SEED] Existing admin account preserved: ${existingAdmin.email}`);
+  }
 
   // 2. Default Site Settings
   const initialSettings = [

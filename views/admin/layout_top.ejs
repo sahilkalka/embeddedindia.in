@@ -4,15 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - Embedded India</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&amp;display=block" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <% if (theme && theme.cssString) { %>
+    <style id="dynamic-theme-vars"><%- theme.cssString %></style>
+  <% } %>
   <script>
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    const configuredThemeMode = '<%= settings.default_theme_mode === "light" ? "light" : "dark" %>';
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && configuredThemeMode === 'dark')) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-    const savedPalette = localStorage.getItem('color-palette') || 'emerald';
+    const savedPalette = localStorage.getItem('color-palette') || 'cyber-emerald';
     document.documentElement.setAttribute('data-palette', savedPalette);
   </script>
 </head>
@@ -77,7 +84,7 @@
 
         <!-- Compact Palette Switcher: Emerald, Cyan, Space Grey -->
         <div class="relative" id="admin-palette-dropdown-wrapper">
-          <button id="admin-palette-dropdown-btn" type="button" aria-label="Select accent color" aria-expanded="false" class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none transition shadow-sm active:scale-95 flex items-center space-x-1" title="Accent Color Scheme">
+          <button id="admin-palette-dropdown-btn" type="button" aria-label="Appearance settings" aria-expanded="false" class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none transition shadow-sm active:scale-95 flex items-center space-x-1" title="Appearance">
             <svg class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
               <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
@@ -89,40 +96,71 @@
           </button>
 
           <!-- Floating Dropdown Menu -->
-          <div id="admin-palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-44 rounded-xl shadow-2xl py-1 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150">
+          <div id="admin-palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-xl shadow-2xl py-1 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150">
             <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider palette-header-label">
-              Accent Scheme
+              Appearance
             </div>
-            <button type="button" data-scheme="emerald" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+            <button id="theme-toggle" type="button" aria-label="Switch to dark mode" class="w-full px-2.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+              <span class="flex items-center space-x-2">
+                <span id="theme-toggle-dark-icon" class="material-symbols-rounded text-base">dark_mode</span>
+                <span id="theme-toggle-light-icon" class="material-symbols-rounded text-base hidden">light_mode</span>
+                <span id="theme-toggle-label">Dark mode</span>
+              </span>
+              <span class="material-symbols-rounded text-sm" aria-hidden="true">toggle_on</span>
+            </button>
+            <div class="mx-2.5 my-1 border-t border-slate-200 dark:border-slate-700"></div>
+            <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider palette-header-label">Color palette</div>
+            <button type="button" data-scheme="cyber-emerald" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
               <span class="flex items-center space-x-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#007f5f]"></span>
                 <span>Cyber Emerald</span>
               </span>
               <span class="scheme-check hidden text-[#007f5f] font-bold text-xs">✓</span>
             </button>
-            <button type="button" data-scheme="cyan" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+            <button type="button" data-scheme="quantum-cyan" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
               <span class="flex items-center space-x-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#0284c7]"></span>
                 <span>Quantum Cyan</span>
               </span>
               <span class="scheme-check hidden text-[#0284c7] font-bold text-xs">✓</span>
             </button>
-            <button type="button" data-scheme="spacegrey" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+            <button type="button" data-scheme="titanium-slate" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
               <span class="flex items-center space-x-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-[#475569]"></span>
                 <span>Space Grey</span>
               </span>
               <span class="scheme-check hidden text-[#475569] font-bold text-xs">✓</span>
             </button>
+            <button type="button" data-scheme="solar-amber" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+              <span class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#d97706]"></span>
+                <span>Solar Amber</span>
+              </span>
+              <span class="scheme-check hidden text-[#d97706] font-bold text-xs">✓</span>
+            </button>
+            <button type="button" data-scheme="supernova-violet" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+              <span class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#9333ea]"></span>
+                <span>Supernova Violet</span>
+              </span>
+              <span class="scheme-check hidden text-[#9333ea] font-bold text-xs">✓</span>
+            </button>
+            <button type="button" data-scheme="clean-light" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
+              <span class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#2563eb]"></span>
+                <span>Clean Enterprise</span>
+              </span>
+              <span class="scheme-check hidden text-[#2563eb] font-bold text-xs">✓</span>
+            </button>
           </div>
         </div>
 
         <!-- Dark / Light Theme Toggle -->
-        <button id="theme-toggle" type="button" aria-label="Toggle theme" class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none transition shadow-sm active:scale-95">
-          <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+        <button id="legacy-theme-toggle" type="button" aria-label="Toggle theme" class="hidden">
+          <svg id="legacy-theme-toggle-dark-icon" class="hidden w-4 h-4 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
           </svg>
-          <svg id="theme-toggle-light-icon" class="hidden w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <svg id="legacy-theme-toggle-light-icon" class="hidden w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
           </svg>
         </button>

@@ -87,10 +87,24 @@ const PALETTE_ALIASES = {
   'clean-light-enterprise': 'clean-light'
 };
 
+function getAvailablePaletteKey(settings = {}, preferredKey = 'cyber-emerald', excludedKey = null) {
+  const preferred = PALETTE_ALIASES[preferredKey] || preferredKey;
+  const isAvailable = key =>
+    key !== excludedKey &&
+    Object.prototype.hasOwnProperty.call(PREDEFINED_PALETTES, key) &&
+    settings[`palette_deleted_${key}`] !== 'true';
+
+  if (isAvailable(preferred)) return preferred;
+  return Object.keys(PREDEFINED_PALETTES).find(isAvailable) || null;
+}
+
 function resolveTheme(settings = {}) {
   let activeKey = settings.active_theme_palette || 'cyber-emerald';
   if (PALETTE_ALIASES[activeKey]) {
     activeKey = PALETTE_ALIASES[activeKey];
+  }
+  if (settings[`palette_deleted_${activeKey}`] === 'true') {
+    activeKey = getAvailablePaletteKey(settings) || 'cyber-emerald';
   }
 
   let palette;
@@ -147,11 +161,15 @@ function resolveTheme(settings = {}) {
   const cssString = `
     :root {
       --bg-primary: ${palette.bgPrimary};
+      --bg-dark: ${palette.bgPrimary};
       --bg-surface: ${palette.bgSurface};
+      --surface-color: ${palette.bgSurface};
       --text-primary: ${palette.textPrimary};
       --text-muted: ${palette.textMuted};
       --accent-primary: ${palette.accentPrimary};
+      --primary-color: ${palette.accentPrimary};
       --accent-secondary: ${palette.accentSecondary};
+      --secondary-color: ${palette.accentSecondary};
       --border-color: ${palette.borderColor};
       --font-heading: '${headingFont}', system-ui, sans-serif;
       --font-body: '${bodyFont}', system-ui, sans-serif;
@@ -185,5 +203,6 @@ function resolveTheme(settings = {}) {
 module.exports = {
   PREDEFINED_PALETTES,
   PALETTE_ALIASES,
+  getAvailablePaletteKey,
   resolveTheme
 };

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const slugify = require('slugify');
 const router = express.Router();
 const prisma = require('../services/db');
-const { requireAuth, JWT_SECRET } = require('../middleware/auth');
+const { requireAuth, verifyToken, JWT_SECRET } = require('../middleware/auth');
 const { loginLimiter } = require('../middleware/rateLimiter');
 const { clearSettingsCache } = require('../middleware/seo');
 const { publishScheduledPosts, sendWeeklyNewsletterDigest } = require('../cron/jobs');
@@ -13,25 +13,36 @@ const aiGenerator = require('../services/aiGenerator');
 const aiScheduler = require('../services/aiScheduler');
 const { renderMarkdown } = require('../services/markdown');
 const mailer = require('../services/mailer');
-const { PREDEFINED_PALETTES, resolveTheme } = require('../services/themeEngine');
+const { PREDEFINED_PALETTES, PALETTE_ALIASES, getAvailablePaletteKey, resolveTheme } = require('../services/themeEngine');
+
+const PALETTE_OVERRIDE_FIELDS = ['bgPrimary', 'bgSurface', 'accentPrimary', 'accentSecondary', 'textPrimary'];
+
+async function saveSetting(key, value) {
+  return prisma.setting.upsert({
+    where: { key },
+    update: { value },
+    create: { key, value }
+  });
+}
 
 // GET /admin/login - Login Page
 router.get('/login', (req, res) => {
   if (req.cookies.admin_token) {
     try {
-      jwt.verify(req.cookies.admin_token, JWT_SECRET);
-      return res.redirect('/admin');
+      verifyToken(req.cookies.admin_token);
+      return res.redirect(req.query.redirect || '/admin');
     } catch (e) {}
   }
-  res.render('admin/login', { error: null });
+  res.render('admin/login', { error: null, redirect: req.query.redirect || '' });
 });
 
 // POST /admin/login - Authenticate Admin
 router.post('/login', loginLimiter, async (req, res) => {
+  const redirectTarget = req.body.redirect || req.query.redirect || '/admin';
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.render('admin/login', { error: 'Please enter your email and password.' });
+      return res.render('admin/login', { error: 'Please enter your email and password.', redirect: redirectTarget });
     }
 
     const user = await prisma.user.findFirst({
@@ -44,37 +55,39 @@ router.post('/login', loginLimiter, async (req, res) => {
     });
 
     if (!user) {
-      return res.render('admin/login', { error: 'Invalid email or password.' });
+      return res.render('admin/login', { error: 'Invalid email or password.', redirect: redirectTarget });
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
-      return res.render('admin/login', { error: 'Invalid email or password.' });
+      return res.render('admin/login', { error: 'Invalid email or password.', redirect: redirectTarget });
     }
 
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
+      { userId: user.id, email: user.email, username: user.username, role: user.role },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
 
+    const isSecureRequest = req.secure || req.headers['x-forwarded-proto'] === 'https' || process.env.COOKIE_SECURE === 'true';
     res.cookie('admin_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isSecureRequest && process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
-    return res.redirect(req.query.redirect || '/admin');
+    return res.redirect(redirectTarget);
   } catch (err) {
     console.error('[LOGIN ERROR]', err);
-    res.render('admin/login', { error: 'An unexpected authentication error occurred.' });
+    res.render('admin/login', { error: 'An unexpected authentication error occurred.', redirect: redirectTarget });
   }
 });
 
 // GET /admin/logout
 router.get('/logout', (req, res) => {
-  res.clearCookie('admin_token');
+  res.clearCookie('admin_token', { path: '/' });
   res.redirect('/admin/login');
 });
 
@@ -473,12 +486,18 @@ router.post('/settings', async (req, res) => {
     const activeTab = fields._active_tab || '';
     delete fields._active_tab;
 
+    if (Object.prototype.hasOwnProperty.call(fields, 'meta_pixel_id')) {
+      fields.meta_pixel_id = String(fields.meta_pixel_id).trim();
+      if (fields.meta_pixel_id && !/^\d{5,20}$/.test(fields.meta_pixel_id)) {
+        return res.status(400).json({ success: false, error: 'Meta Pixel ID must contain 5 to 20 digits.' });
+      }
+      if (fields.enable_meta_pixel === 'true' && !fields.meta_pixel_id) {
+        return res.status(400).json({ success: false, error: 'Enter a Meta Pixel ID before enabling the pixel.' });
+      }
+    }
+
     for (const key of Object.keys(fields)) {
-      await prisma.setting.upsert({
-        where: { key },
-        update: { value: String(fields[key]) },
-        create: { key, value: String(fields[key]) }
-      });
+      await saveSetting(key, String(fields[key]));
     }
     clearSettingsCache();
 
@@ -491,6 +510,69 @@ router.post('/settings', async (req, res) => {
       return res.status(500).json({ success: false, error: err.message || 'Error saving settings' });
     }
     res.status(500).send('Error saving settings');
+  }
+});
+
+router.post('/settings/palettes/:key/delete', async (req, res) => {
+  const { key } = req.params;
+  if (!Object.prototype.hasOwnProperty.call(PREDEFINED_PALETTES, key)) {
+    return res.status(400).json({ success: false, error: 'Unknown built-in palette.' });
+  }
+
+  try {
+    const rows = await prisma.setting.findMany();
+    const settings = rows.reduce((result, row) => {
+      result[row.key] = row.value;
+      return result;
+    }, {});
+    const fallbackKey = getAvailablePaletteKey(settings, 'cyber-emerald', key);
+    if (!fallbackKey) {
+      return res.status(409).json({ success: false, error: 'At least one built-in palette must remain available.' });
+    }
+
+    const activeKey = PALETTE_ALIASES[settings.active_theme_palette] || settings.active_theme_palette;
+    await saveSetting(`palette_deleted_${key}`, 'true');
+    await prisma.setting.deleteMany({
+      where: {
+        key: {
+          in: PALETTE_OVERRIDE_FIELDS.map(field => `palette_override_${key}_${field}`)
+        }
+      }
+    });
+    if (activeKey === key) {
+      await saveSetting('active_theme_palette', fallbackKey);
+    }
+
+    clearSettingsCache();
+    return res.json({ success: true, fallbackPalette: activeKey === key ? fallbackKey : null });
+  } catch (err) {
+    console.error('[PALETTE DELETE ERROR]', err);
+    return res.status(500).json({ success: false, error: 'Unable to delete palette.' });
+  }
+});
+
+router.post('/settings/palettes/:key/reset', async (req, res) => {
+  const { key } = req.params;
+  if (!Object.prototype.hasOwnProperty.call(PREDEFINED_PALETTES, key)) {
+    return res.status(400).json({ success: false, error: 'Unknown built-in palette.' });
+  }
+
+  try {
+    await prisma.setting.deleteMany({
+      where: {
+        key: {
+          in: [
+            `palette_deleted_${key}`,
+            ...PALETTE_OVERRIDE_FIELDS.map(field => `palette_override_${key}_${field}`)
+          ]
+        }
+      }
+    });
+    clearSettingsCache();
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('[PALETTE RESET ERROR]', err);
+    return res.status(500).json({ success: false, error: 'Unable to restore palette defaults.' });
   }
 });
 

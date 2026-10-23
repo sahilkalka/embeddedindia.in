@@ -45,7 +45,22 @@ output_zip = r"${zipOutput}"
 root_dir = r"${rootDir}"
 
 exclude_dirs = {
-    'node_modules', '.git', '.gemini', 'tests', '.vscode', '.idea', 'coverage', 'tmp', 'scratch'
+    'node_modules',
+    '.git',
+    '.github',
+    '.gemini',
+    '.agents',
+    'tests',
+    'playwright-report',
+    'test-results',
+    '.vscode',
+    '.idea',
+    'coverage',
+    'tmp',
+    'scratch',
+    '__pycache__',
+    '.cache',
+    '.pytest_cache'
 }
 
 exclude_files = {
@@ -54,31 +69,47 @@ exclude_files = {
     'embeddedindia-cpanel-deploy.zip',
     'embeddedindia-cpanel-deploy.tar.gz',
     '.env',
+    '.env.example',
+    '.gitattributes',
+    '.gitignore',
+    'playwright.config.js',
+    '.last-run.json',
     'dev.db-journal',
     'dev.db-wal',
     'dev.db-shm',
     'temp_bundle_script.py',
-    'temp_zip_script.py'
+    'temp_zip_script.py',
+    '.DS_Store',
+    'Thumbs.db'
 }
 
 exclude_extensions = {
     '.log',
-    '.bak'
+    '.bak',
+    '.tmp',
+    '.tsbuildinfo'
 }
 
 total_files = 0
 with zipfile.ZipFile(output_zip, 'w', zipfile.ZIP_DEFLATED) as zf:
     for foldername, subfolders, filenames in os.walk(root_dir):
-        # Exclude directories in-place
-        subfolders[:] = [d for d in subfolders if d not in exclude_dirs]
+        # Exclude directories in-place (case-insensitive check)
+        subfolders[:] = [
+            d for d in subfolders
+            if d.lower() not in {x.lower() for x in exclude_dirs}
+            and not d.startswith('.')
+        ]
         
         for filename in filenames:
-            if filename in exclude_files:
+            fl = filename.lower()
+            if fl in {x.lower() for x in exclude_files}:
                 continue
-            if filename.startswith('dev.db.bak'):
+            if fl.startswith('dev.db.bak') or fl.startswith('.last-run'):
+                continue
+            if fl.endswith('.spec.js') or fl.endswith('.test.js') or fl.endswith('.spec.ts') or fl.endswith('.test.ts'):
                 continue
             _, ext = os.path.splitext(filename)
-            if ext in exclude_extensions:
+            if ext.lower() in exclude_extensions:
                 continue
             
             filepath = os.path.join(foldername, filename)

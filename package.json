@@ -20,7 +20,11 @@
     "server:setup": "bash server-deploy.sh",
     "test": "jest --detectOpenHandles --forceExit",
     "test:ui": "playwright test",
-    "audit:ui": "playwright test"
+    "audit:ui": "playwright test --reporter=html,list",
+    "admin:reset": "node scripts/reset-admin.js",
+    "test:responsive": "playwright test tests/responsive.spec.js",
+    "test:themes": "playwright test tests/theme-modes.spec.js",
+    "test:links": "playwright test tests/links-crawler.spec.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/jiazxebj/embeddedindia.in
+    - cd $DEPLOYPATH && bash ./server-deploy.sh update || touch $DEPLOYPATH/tmp/restart.txt

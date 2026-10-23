@@ -6,6 +6,11 @@
 const fs = require('fs');
 const path = require('path');
 
+// 0. Ensure environment variables are loaded regardless of Phusion Passenger cwd
+try {
+  require('dotenv').config({ path: path.join(__dirname, '.env') });
+} catch (e) {}
+
 // 1. Ensure required runtime directories exist
 const prismaDir = path.join(__dirname, 'prisma');
 const dbFile = path.join(prismaDir, 'dev.db');
@@ -26,74 +31,40 @@ try {
   console.warn('[SELF-BOOTSTRAP NOTICE]', err.message);
 }
 
-// 2. Ensure Prisma client engine is generated for this Linux host
-const schemaPath = path.join(prismaDir, 'schema.prisma');
-const clientEngine = path.join(__dirname, 'node_modules/.prisma/client');
-const prismaCli = path.join(__dirname, 'node_modules/prisma/build/index.js');
-
-if (!fs.existsSync(clientEngine) && fs.existsSync(schemaPath)) {
-  try {
-    const { execSync } = require('child_process');
-    console.log('[SELF-BOOTSTRAP] Compiling Prisma Client engine for Linux host...');
-    if (fs.existsSync(prismaCli)) {
-      execSync(`"${process.execPath}" "${prismaCli}" generate --schema="${schemaPath}"`, {
-        cwd: __dirname,
-        env: process.env,
-        stdio: 'inherit'
-      });
-    } else {
-      execSync(`npx prisma generate --schema="${schemaPath}"`, {
-        cwd: __dirname,
-        env: process.env,
-        stdio: 'inherit'
-      });
-    }
-    console.log('[SELF-BOOTSTRAP] Prisma Client successfully compiled.');
-  } catch (e) {
-    console.warn('[SELF-BOOTSTRAP WARNING] Prisma generate note:', e.message);
-  }
-}
-
-// 3. Ensure SQLite database is initialized with tables
+// 2. Initialize a missing SQLite database using the native database scripts
+const initDbScript = path.join(__dirname, 'scripts/init-db.js');
+const seedSqliteScript = path.join(__dirname, 'scripts/seed-sqlite.js');
 try {
-  let needsPush = false;
+  let needsInitialization = false;
   if (!fs.existsSync(dbFile)) {
-    needsPush = true;
+    needsInitialization = true;
   } else {
     const stats = fs.statSync(dbFile);
-    if (stats.size === 0) needsPush = true;
+    if (stats.size === 0) needsInitialization = true;
   }
 
-  if (needsPush && fs.existsSync(schemaPath)) {
-    const { execSync } = require('child_process');
-    console.log('[SELF-BOOTSTRAP] Initializing database tables via prisma db push...');
-    const pushEnv = { ...process.env, DATABASE_URL: `file:${dbFile}` };
-    if (fs.existsSync(prismaCli)) {
-      execSync(`"${process.execPath}" "${prismaCli}" db push --schema="${schemaPath}" --skip-generate --accept-data-loss`, {
-        cwd: __dirname,
-        env: pushEnv,
-        stdio: 'inherit'
-      });
-    } else {
-      execSync(`npx prisma db push --schema="${schemaPath}" --skip-generate --accept-data-loss`, {
-        cwd: __dirname,
-        env: pushEnv,
-        stdio: 'inherit'
-      });
+  if (needsInitialization) {
+    if (!fs.existsSync(initDbScript) || !fs.existsSync(seedSqliteScript)) {
+      throw new Error('SQLite initialization scripts are missing.');
     }
-    // Also seed default admin & content
-    const seedScript = path.join(prismaDir, 'seed.js');
-    if (fs.existsSync(seedScript)) {
-      try {
-        const seedFn = require('./prisma/seed');
-        if (typeof seedFn === 'function') seedFn();
-      } catch (seedErr) {
-        console.warn('[SELF-BOOTSTRAP SEED NOTE]', seedErr.message);
-      }
-    }
+
+    const { execFileSync } = require('child_process');
+    console.log('[SELF-BOOTSTRAP] Initializing SQLite database tables...');
+    execFileSync(process.execPath, [initDbScript], {
+      cwd: __dirname,
+      env: process.env,
+      stdio: 'inherit'
+    });
+    console.log('[SELF-BOOTSTRAP] Seeding initial admin account and content...');
+    execFileSync(process.execPath, [seedSqliteScript], {
+      cwd: __dirname,
+      env: process.env,
+      stdio: 'inherit'
+    });
   }
 } catch (dbErr) {
-  console.warn('[SELF-BOOTSTRAP DB WARNING]', dbErr.message);
+  console.error('[SELF-BOOTSTRAP DB ERROR]', dbErr);
+  process.exit(1);
 }
 
 // 4. Delegate to express server

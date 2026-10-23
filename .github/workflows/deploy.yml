@@ -1,4 +1,14 @@
-- name: Trigger cPanel Git Pull & Deployment via UAPI
+name: Auto-Deploy to cPanel
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger cPanel Git Pull & Deployment via UAPI
         run: |
           echo "--- Pulling latest changes from GitHub into cPanel ---"
           PULL_RES=$(curl -s -k -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_API_TOKEN }}" \

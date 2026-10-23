@@ -7,7 +7,29 @@ const prismaDir = path.resolve(__dirname, '../prisma');
 if (!fs.existsSync(prismaDir)) fs.mkdirSync(prismaDir, { recursive: true });
 
 const dbPath = path.join(prismaDir, 'dev.db');
-const db = new Database(dbPath);
+
+let db;
+try {
+  db = new Database(dbPath);
+  // Verify database integrity - if corrupt, trigger auto-heal
+  const check = db.pragma('quick_check');
+  if (!check || !check[0] || check[0].quick_check !== 'ok') {
+    throw new Error('Database disk image is malformed (quick_check failed)');
+  }
+} catch (err) {
+  console.warn('[DB AUTO-HEAL] SQLite database file is corrupted (' + err.message + '). Auto-recovering...');
+  try { if (db) db.close(); } catch (e) {}
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  try {
+    if (fs.existsSync(dbPath)) fs.renameSync(dbPath, dbPath + '.corrupted_' + timestamp);
+    for (const ext of ['-wal', '-shm', '-journal']) {
+      if (fs.existsSync(dbPath + ext)) fs.unlinkSync(dbPath + ext);
+    }
+  } catch (healErr) {
+    console.error('[DB AUTO-HEAL WARNING]', healErr.message);
+  }
+  db = new Database(dbPath);
+}
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS User (

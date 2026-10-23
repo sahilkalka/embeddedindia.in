@@ -31,6 +31,7 @@
   <!-- Google Fonts Preconnect & Dynamic Font Families -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&amp;display=block" rel="stylesheet">
   <% 
     const hFont = (theme && theme.headingFont) ? theme.headingFont.replace(/\s+/g, '+') : 'Inter';
     const bFont = (theme && theme.bodyFont) ? theme.bodyFont.replace(/\s+/g, '+') : 'Inter';
@@ -78,7 +79,8 @@
   <% } %>
 
   <!-- Monetization: Meta Pixel Integration -->
-  <% if (settings.enable_meta_pixel === 'true' && settings.meta_pixel_id) { %>
+  <% const safeMetaPixelId = /^\d{5,20}$/.test(String(settings.meta_pixel_id || '')) ? String(settings.meta_pixel_id) : ''; %>
+  <% if (settings.enable_meta_pixel === 'true' && safeMetaPixelId) { %>
     <script>
       !function(f,b,e,v,n,t,s)
       {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -88,10 +90,10 @@
       t.src=v;s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '<%= settings.meta_pixel_id %>');
+      fbq('init', '<%= safeMetaPixelId %>');
       fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<%= settings.meta_pixel_id %>&ev=PageView&noscript=1"/></noscript>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=<%= safeMetaPixelId %>&amp;ev=PageView&amp;noscript=1"/></noscript>
   <% } %>
 
   <!-- Admin Dynamic Head Script Injection -->
@@ -173,12 +175,12 @@
         <a href="/services" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/services') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Services</a>
         <a href="/projects" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/projects') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Projects</a>
         <a href="/tools" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 flex items-center <%= currentPath.startsWith('/tools') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">
-          <span>Engineering Tools</span>
+          <span>Tools</span>
           <span class="ml-1.5 px-1.5 py-0.5 text-[10px] bg-accent/20 text-accent dark:bg-accent/30 rounded font-bold uppercase tracking-wider animate-float-subtle">Hub</span>
         </a>
         <a href="/blogs" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/blogs') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Blogs</a>
         <a href="/about" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/about' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">About</a>
-        <a href="/contact" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/contact' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Contact Us</a>
+        <a href="/contact" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/contact' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Connect</a>
       </nav>
 
       <!-- Right Controls: Search, Accent Dropdown, Theme Toggle & CTA -->
@@ -186,22 +188,13 @@
         
         <!-- Header Quick Search Button -->
         <button id="header-search-btn" type="button" aria-label="Search services, calculators, articles" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95 flex items-center justify-center" title="Search (Ctrl+K)">
-          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
+          <span class="material-symbols-rounded text-[18px] sm:text-xl" aria-hidden="true">search</span>
         </button>
 
         <!-- Modern Compact Accent Color Dropdown -->
         <div class="relative" id="palette-dropdown-wrapper">
-          <button id="palette-dropdown-btn" type="button" aria-label="Select accent color" aria-expanded="false" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95 flex items-center space-x-1 sm:space-x-1.5" title="Accent Color Scheme">
-            <!-- Palette Icon -->
-            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
-              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
-              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
-              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
-              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
-            </svg>
+          <button id="palette-dropdown-btn" type="button" aria-label="Appearance settings" aria-expanded="false" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95 flex items-center space-x-1 sm:space-x-1.5" title="Appearance">
+            <span class="material-symbols-rounded text-[18px] sm:text-xl" aria-hidden="true">palette</span>
             <span id="active-scheme-dot" class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 transition-colors shadow-xs" style="background-color: var(--accent-primary, #007f5f);"></span>
             <svg id="palette-chevron" class="w-3 h-3 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -210,9 +203,17 @@
 
           <!-- Floating Dropdown Menu -->
           <div id="palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-2xl py-2 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-            <div class="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
-              Select Theme Palette
-            </div>
+            <div class="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">Appearance</div>
+            <button id="theme-toggle" type="button" aria-label="Switch to dark mode" class="w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
+              <span class="flex items-center space-x-2.5">
+                <span id="theme-toggle-dark-icon" class="material-symbols-rounded text-base">dark_mode</span>
+                <span id="theme-toggle-light-icon" class="material-symbols-rounded text-base hidden">light_mode</span>
+                <span id="theme-toggle-label">Dark mode</span>
+              </span>
+              <span class="material-symbols-rounded text-sm" aria-hidden="true">toggle_on</span>
+            </button>
+            <div class="mx-3.5 my-1 border-t border-slate-100 dark:border-slate-700"></div>
+            <div class="px-3.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">Color palette</div>
             <button type="button" data-scheme="cyber-emerald" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
               <span class="flex items-center space-x-2.5">
                 <span class="w-3.5 h-3.5 rounded-full bg-[#007f5f] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
@@ -259,13 +260,13 @@
         </div>
 
         <!-- Dark / Light Mode Toggle Button -->
-        <button id="theme-toggle" type="button" aria-label="Toggle theme" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95">
+        <button id="legacy-theme-toggle" type="button" aria-label="Toggle theme" class="hidden">
           <!-- Moon Icon (for Dark) -->
-          <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+          <svg id="legacy-theme-toggle-dark-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
           </svg>
           <!-- Sun Icon (for Light) -->
-          <svg id="theme-toggle-light-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <svg id="legacy-theme-toggle-light-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
           </svg>
         </button>
@@ -283,9 +284,7 @@
 
         <!-- Mobile Menu Toggle Button -->
         <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-brand-surface rounded-lg sm:rounded-xl border border-slate-200 dark:border-[#1e3831] active:scale-95">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
+          <span class="material-symbols-rounded text-xl sm:text-2xl" aria-hidden="true">menu</span>
         </button>
       </div>
     </div>
@@ -312,10 +311,10 @@
       <a href="/" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath === '/' ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Home</a>
       <a href="/services" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/services') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Services</a>
       <a href="/projects" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/projects') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Projects</a>
-      <a href="/tools" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface text-accent font-bold">Engineering Tools (Calculators)</a>
+      <a href="/tools" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface text-accent font-bold">Tools</a>
       <a href="/blogs" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/blogs') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Blogs</a>
       <a href="/about" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath === '/about' ? 'text-brand-500 dark:text-accent font-bold' : '' %>">About</a>
-      <a href="/contact" class="block px-3 py-2 rounded-lg bg-brand-500 text-white text-center mt-2 font-bold btn-shimmer">Contact Us</a>
+      <a href="/contact" class="block px-3 py-2 rounded-lg bg-brand-500 text-white text-center mt-2 font-bold btn-shimmer">Connect</a>
     </nav>
   </header>
 

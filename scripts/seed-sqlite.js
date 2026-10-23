@@ -9,23 +9,22 @@ const db = new Database(dbPath);
 
 async function seed() {
   console.log('Seeding SQLite database directly...');
-
-  // 1. Admin user
-  const adminEmail = process.env.ADMIN_DEFAULT_EMAIL || 'admin@embeddedindia.in';
-  const rawPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'AdminEmbedded@2026!';
-  const passwordHash = await bcrypt.hash(rawPassword, 10);
   const now = new Date().toISOString();
 
-  const existingUser = db.prepare('SELECT id FROM User WHERE email = ?').get(adminEmail);
-  if (!existingUser) {
+  // 1. Admin user
+  const existingAdmin = db.prepare("SELECT id, email FROM User WHERE role = 'admin' LIMIT 1").get();
+  if (!existingAdmin) {
+    const adminEmail = (process.env.ADMIN_DEFAULT_EMAIL || 'admin@embeddedindia.in').trim().toLowerCase();
+    const rawPassword = process.env.ADMIN_DEFAULT_PASSWORD || 'AdminEmbedded@2026!';
+    const passwordHash = await bcrypt.hash(rawPassword, 10);
+
     db.prepare(`
       INSERT INTO User (id, username, email, passwordHash, role, createdAt, updatedAt)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(crypto.randomUUID(), 'admin', adminEmail, passwordHash, 'admin', now, now);
     console.log('[SEED] Admin user created');
   } else {
-    db.prepare('UPDATE User SET passwordHash = ?, updatedAt = ? WHERE id = ?').run(passwordHash, now, existingUser.id);
-    console.log('[SEED] Admin user password updated');
+    console.log(`[SEED] Existing admin account preserved: ${existingAdmin.email}`);
   }
 
   // 2. Default Site Settings
@@ -393,7 +392,17 @@ Transmitting raw high-frequency vibration streams over wireless networks consume
   }
 
   console.log('[SEED] Direct SQLite seed complete!');
-  try { db.close(); } catch (e) {}
 }
 
-seed().catch(console.error);
+if (require.main === module) {
+  seed()
+    .catch(err => {
+      console.error('[SEED ERROR]', err);
+      process.exitCode = 1;
+    })
+    .finally(() => {
+      db.close();
+    });
+}
+
+module.exports = seed;

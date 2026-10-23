@@ -27,16 +27,19 @@ const newsletterLimiter = rateLimit({
   }
 });
 
-// Admin Login Brute Force Protection: max 5 attempts per 15 minutes per IP
+// Admin Login Brute Force Protection: max 15 attempts per 15 minutes per IP
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 15,
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => process.env.NODE_ENV === 'test' || req.headers['x-qa-audit'] === 'true',
-  message: {
-    success: false,
-    message: 'Too many login attempts. Please wait 15 minutes before trying again.'
+  handler: (req, res) => {
+    const errorMsg = 'Too many login attempts. Please wait 15 minutes before trying again.';
+    if (req.xhr || req.headers.accept?.includes('json')) {
+      return res.status(429).json({ success: false, message: errorMsg });
+    }
+    return res.status(429).render('admin/login', { error: errorMsg });
   }
 });
 

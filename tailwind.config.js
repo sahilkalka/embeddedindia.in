@@ -15,13 +15,13 @@ module.exports = {
           200: 'var(--brand-200, #a3cdc3)',
           300: 'var(--brand-300, #72b0a3)',
           400: 'var(--brand-400, #489484)',
-          500: 'var(--primary-color, #007f5f)',
+          500: 'var(--accent-primary, var(--primary-color, #007f5f))',
           600: 'var(--primary-hover, #007255)',
           700: 'var(--primary-active, #00664c)',
           800: 'var(--brand-800, #00543e)',
           900: 'var(--brand-900, #192c27)',
-          dark: 'var(--bg-dark, #0d1715)',
-          surface: 'var(--surface-color, #182c27)',
+          dark: 'var(--bg-primary, var(--bg-dark, #0d1715))',
+          surface: 'var(--bg-surface, var(--surface-color, #182c27))',
           border: 'var(--border-color, #27443d)'
         },
         accent: {

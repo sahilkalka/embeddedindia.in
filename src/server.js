@@ -1,6 +1,8 @@
 // src/server.js
-require('dotenv').config();
 const path = require('path');
+try {
+  require('dotenv').config({ path: path.join(__dirname, '../.env') });
+} catch (e) {}
 const express = require('express');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
@@ -29,6 +31,9 @@ const PORT = process.env.PORT || 3000;
 // Security: Disable x-powered-by
 app.disable('x-powered-by');
 
+// Trust reverse proxy (cPanel Phusion Passenger, Nginx, Cloudflare)
+app.set('trust proxy', 1);
+
 // View engine setup
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
@@ -47,7 +52,8 @@ app.use(helmet({
         "https://connect.facebook.net",
         "https://cdn.carbonads.com",
         "https://srv.carbonads.net",
-        "https://fonts.googleapis.com"
+        "https://fonts.googleapis.com",
+        "https://static.cloudflareinsights.com"
       ],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: [
@@ -62,7 +68,8 @@ app.use(helmet({
         "'self'",
         "https://pagead2.googlesyndication.com",
         "https://www.facebook.com",
-        "https://srv.carbonads.net"
+        "https://srv.carbonads.net",
+        "https://cloudflareinsights.com"
       ],
       frameSrc: [
         "'self'",
@@ -159,6 +166,25 @@ app.use('/admin', adminRoutes);
 
 // Core Website Pages (Replicating Embedded India design & content)
 
+// Only the authenticated admin's same-origin homepage preview may be framed.
+app.use((req, res, next) => {
+  if (req.path === '/' && req.query.preview === '1') {
+    if (!req.user) {
+      return res.status(401).send('Sign in to the admin dashboard to view this preview.');
+    }
+
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    const contentSecurityPolicy = res.getHeader('Content-Security-Policy');
+    if (contentSecurityPolicy) {
+      res.setHeader(
+        'Content-Security-Policy',
+        String(contentSecurityPolicy).replace(/frame-ancestors\s+[^;]+/, "frame-ancestors 'self'")
+      );
+    }
+  }
+  next();
+});
+
 // 1. Homepage
 app.get('/', async (req, res) => {
   try {
@@ -215,7 +241,7 @@ app.get('/contact', (req, res) => {
 });
 
 // 6. Privacy Policy
-app.get('/privacy-policy', (req, res) => {
+app.get(['/privacy-policy', '/privacy'], (req, res) => {
   res.locals.seo.title = 'Privacy Policy - Embedded India';
   res.render('pages/privacy');
 });
@@ -278,7 +304,7 @@ if (process.env.NODE_ENV !== 'test') {
         const userCount = await prisma.user.count();
         if (userCount === 0) {
           console.log('[AUTO-INIT] Empty database detected. Running automatic initial seed...');
-          const seed = require('../prisma/seed');
+          const seed = require('../scripts/seed-sqlite');
           await seed();
         }
       } catch (seedErr) {

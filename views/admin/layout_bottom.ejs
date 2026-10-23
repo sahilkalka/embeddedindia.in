@@ -9,16 +9,20 @@
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+    const themeToggleLabel = document.getElementById('theme-toggle-label');
 
     function updateIcons() {
       if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
-      if (document.documentElement.classList.contains('dark')) {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
         themeToggleLightIcon.classList.remove('hidden');
         themeToggleDarkIcon.classList.add('hidden');
       } else {
         themeToggleDarkIcon.classList.remove('hidden');
         themeToggleLightIcon.classList.add('hidden');
       }
+      if (themeToggleLabel) themeToggleLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
+      if (themeToggleBtn) themeToggleBtn.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
     }
 
     updateIcons();
@@ -45,17 +49,28 @@
     const adminPaletteColorMap = {
       emerald: '#007f5f',
       cyan: '#0284c7',
-      spacegrey: '#475569'
+      spacegrey: '#475569',
+      'cyber-emerald': '#007f5f',
+      'quantum-cyan': '#0284c7',
+      'titanium-slate': '#475569',
+      'solar-amber': '#d97706',
+      'supernova-violet': '#9333ea',
+      'clean-light': '#2563eb'
     };
 
     function updatePaletteChecks(activeScheme) {
       if (adminActiveSchemeDot) {
         adminActiveSchemeDot.style.backgroundColor = adminPaletteColorMap[activeScheme] || '#007f5f';
       }
+      const matchingAdminScheme = {
+        emerald: 'cyber-emerald',
+        cyan: 'quantum-cyan',
+        spacegrey: 'titanium-slate'
+      }[activeScheme] || activeScheme;
 
       paletteButtons.forEach(btn => {
         const check = btn.querySelector('.scheme-check');
-        const isMatch = btn.dataset.scheme === activeScheme;
+        const isMatch = btn.dataset.scheme === matchingAdminScheme;
         if (isMatch) {
           if (check) check.classList.remove('hidden');
           btn.classList.add('active-palette-item', 'font-bold');

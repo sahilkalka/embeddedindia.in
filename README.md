@@ -141,7 +141,7 @@ Open your browser at:
 | **Email** | `admin@embeddedindia.in` |
 | **Default Password** | `AdminEmbedded@2026!` |
 
-*(Configurable via `.env` file)*
+These are first-install defaults only. `ADMIN_DEFAULT_EMAIL` and `ADMIN_DEFAULT_PASSWORD` in `.env` are used to create an admin when the database has none; deployments preserve existing admin accounts and passwords. If the password was changed in the dashboard, continue using that updated password.
 
 ---
 

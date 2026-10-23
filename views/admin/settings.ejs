@@ -1,5 +1,141 @@
 <%- include('layout_top') %>
 
+<style>
+  .settings-workspace {
+    overflow: hidden;
+    background: #fff;
+  }
+  .dark .settings-workspace { background: var(--bg-surface, #13221e); }
+  .settings-taskbar {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.75rem;
+  }
+  .dark .settings-taskbar { border-color: #334155; }
+  .settings-content { min-width: 0; }
+  .settings-section {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .settings-nav-btn {
+    display: flex;
+    min-height: 4rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    border-radius: 0.9rem;
+    padding: 0.55rem 0.25rem;
+    color: #64748b;
+    font-size: 0.625rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+  .dark .settings-nav-btn { color: #cbd5e1; }
+  .settings-nav-btn:hover { background: var(--bg-primary, #f1f5f9); color: var(--accent-primary, #059669); }
+  .settings-nav-btn.is-active {
+    background: var(--accent-primary, #059669);
+    color: #fff;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent-primary, #059669) 24%, transparent);
+  }
+  .settings-nav-btn:focus-visible {
+    outline: 2px solid var(--accent-primary, #059669);
+    outline-offset: 2px;
+  }
+  .settings-nav-icon { font-size: 1.35rem; line-height: 1; }
+  .settings-nav-label { max-width: 100%; }
+  .palette-picker-panel {
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 0.875rem;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .palette-picker-heading { color: #0f172a !important; }
+  .palette-picker-panel .palette-card {
+    background: #fff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+  }
+  .palette-picker-panel .palette-card-title { color: #0f172a !important; }
+  .palette-picker-panel .palette-card-divider { border-color: #e2e8f0; }
+  .palette-picker-panel .palette-card-edit {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .palette-picker-panel .palette-card-edit:hover { border-color: var(--accent-primary, #059669); }
+  .palette-picker-panel .palette-card-active {
+    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, #fff);
+  }
+  .palette-picker-panel .palette-drawer {
+    background: #fff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+  }
+  .palette-picker-panel .palette-drawer-heading { color: var(--accent-primary, #059669); }
+  .palette-picker-panel .palette-drawer-muted { color: #64748b; }
+  .palette-picker-panel .palette-drawer-divider { border-color: #e2e8f0; }
+  .palette-picker-panel .palette-drawer-input {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+  }
+  .dark .palette-picker-panel {
+    border-color: var(--border-color, #334155);
+    background: var(--bg-primary, #0f172a);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-heading,
+  .dark .palette-picker-panel .palette-card-title { color: var(--text-primary, #f8fafc) !important; }
+  .dark .palette-picker-panel .palette-card {
+    background: var(--bg-surface, #1e293b);
+    border-color: var(--border-color, #334155);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-panel .palette-card-divider,
+  .dark .palette-picker-panel .palette-drawer-divider { border-color: var(--border-color, #334155); }
+  .dark .palette-picker-panel .palette-card-edit,
+  .dark .palette-picker-panel .palette-drawer-input {
+    background: var(--bg-primary, #0f172a);
+    border-color: var(--border-color, #334155);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-panel .palette-card-active {
+    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, var(--bg-surface, #1e293b));
+  }
+  .dark .palette-picker-panel .palette-drawer {
+    background: var(--bg-surface, #1e293b);
+    border-color: var(--border-color, #334155);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-panel .palette-drawer-muted { color: var(--text-muted, #94a3b8); }
+  .dark .palette-picker-panel .palette-drawer-input { color: var(--text-primary, #f8fafc); }
+  .palette-card-active {
+    border-color: var(--palette-accent, var(--accent-primary, #059669)) !important;
+    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 20%, transparent);
+  }
+  @media (min-width: 1024px) {
+    .settings-workspace { min-height: 38rem; }
+    .settings-taskbar {
+      width: 7.5rem;
+      flex-shrink: 0;
+      border-bottom: 0;
+      border-right: 1px solid #e2e8f0;
+      padding: 1rem 0.75rem;
+    }
+    .dark .settings-taskbar { border-color: #334155; }
+    .settings-content { flex: 1; }
+    .settings-nav-btn { min-height: 4.25rem; }
+  }
+</style>
+
 <div class="max-w-7xl mx-auto space-y-6 pb-20">
   
   <!-- Top Settings Title & Controls Bar -->
@@ -10,8 +146,9 @@
         <span>/</span>
         <span id="settingsBreadcrumbModule">Themes &amp; Palettes</span>
       </div>
-      <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2.5">
-        <span id="settingsPageTitle">🎨 Dynamic Theme &amp; Color Palette Engine</span>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+        <span id="settingsPageIcon" class="material-symbols-rounded text-brand-600 dark:text-accent" aria-hidden="true">palette</span>
+        <span id="settingsPageTitle">Dynamic Theme &amp; Color Palette Engine</span>
       </h1>
       <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="settingsPageSubtitle">
         Live side-by-side color palette engine: select a unified scheme or customize hex values with real-time component updates.
@@ -42,130 +179,51 @@
     </div>
   <% } %>
 
-  <!-- MOBILE HORIZONTAL MODULE SWITCHER (< lg) -->
-  <div class="lg:hidden flex items-center space-x-2 pb-2 overflow-x-auto whitespace-nowrap" id="settings-mobile-nav">
-    <button type="button" onclick="switchSettingsSection('theme-engine')" data-settings-tab="theme-engine" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-brand-500 text-white shadow-xs">
-      🎨 Themes
-    </button>
-    <button type="button" onclick="switchSettingsSection('site-customizer')" data-settings-tab="site-customizer" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      🎛️ Customizer
-    </button>
-    <button type="button" onclick="switchSettingsSection('feature-flags')" data-settings-tab="feature-flags" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      🚩 Flags
-    </button>
-    <button type="button" onclick="switchSettingsSection('seo-scripts')" data-settings-tab="seo-scripts" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      🔍 SEO
-    </button>
-    <button type="button" onclick="switchSettingsSection('monetization-ads')" data-settings-tab="monetization-ads" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      💰 Monetization
-    </button>
-    <button type="button" onclick="switchSettingsSection('newsletter-config')" data-settings-tab="newsletter-config" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      📰 Newsletter
-    </button>
-    <button type="button" onclick="switchSettingsSection('smtp-settings')" data-settings-tab="smtp-settings" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      📧 SMTP
-    </button>
-    <button type="button" onclick="switchSettingsSection('team-accounts')" data-settings-tab="team-accounts" class="settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
-      👥 Staff
-    </button>
-  </div>
-
-  <!-- 2-COLUMN MAIN SETTINGS LAYOUT (TALL NARROW LEFT STRIP + RIGHT CONTENT) -->
-  <div class="flex flex-col lg:flex-row items-stretch gap-6">
-    
-    <!-- LEFT SIDEBAR: DARK FLOATING STRIP WITH EXPAND/COLLAPSE AS PER USER IMAGE -->
-    <aside id="settingsLeftSidebar" class="hidden lg:flex flex-col w-60 flex-shrink-0 sticky top-20 min-h-[calc(100vh-6.5rem)] bg-[#0f1422] dark:bg-[#0c101c] rounded-[28px] border border-slate-800 shadow-2xl p-4 justify-between transition-all duration-300 ease-in-out">
-      
-      <!-- Top Section: Brand Avatar & Collapse Toggle Button -->
-      <div>
-        <div class="flex items-center justify-between pb-5 mb-3 border-b border-slate-800/80">
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-sky-400 via-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-md ring-2 ring-blue-500/30 flex-shrink-0">
-              <span class="tracking-tighter">EI</span>
-            </div>
-            <div class="sidebar-text overflow-hidden transition-opacity duration-200">
-              <span class="text-xs font-black tracking-tight text-white block leading-tight">Settings Hub</span>
-              <span class="text-[10px] text-slate-400 font-mono">Embedded India</span>
-            </div>
-          </div>
-
-          <!-- Collapse / Expand Toggle Button (< / >) -->
-          <button id="sidebarCollapseToggle" type="button" onclick="toggleSidebarCollapse()" class="w-7 h-7 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-95 flex-shrink-0" title="Toggle Sidebar Width">
-            <svg id="collapseChevronIcon" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Navigation Items Stack -->
-        <nav class="space-y-1.5" id="settings-sidebar-nav">
-          
-          <!-- 1. Themes & Palettes -->
-          <button type="button" data-settings-tab="theme-engine" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition flex items-center space-x-3 bg-white text-slate-900 shadow-lg" title="Themes & Palettes">
-            <span class="text-base flex-shrink-0">🎨</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Themes</span>
-          </button>
-
-          <!-- 2. Site Customizer -->
-          <button type="button" data-settings-tab="site-customizer" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Site Customizer">
-            <span class="text-base flex-shrink-0">🎛️</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Customizer</span>
-          </button>
-
-          <!-- 3. Flags & Live Preview -->
-          <button type="button" data-settings-tab="feature-flags" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Feature Flags & Preview">
-            <span class="text-base flex-shrink-0">🚩</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Flags &amp; Live</span>
-          </button>
-
-          <!-- 4. Dynamic SEO -->
-          <button type="button" data-settings-tab="seo-scripts" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Dynamic SEO & AI">
-            <span class="text-base flex-shrink-0">🔍</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Dynamic SEO</span>
-          </button>
-
-          <!-- 5. Monetization Hub -->
-          <button type="button" data-settings-tab="monetization-ads" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Monetization & Ad Engine">
-            <span class="text-base flex-shrink-0">💰</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Monetization</span>
-          </button>
-
-          <!-- 6. Technical Newsletter -->
-          <button type="button" data-settings-tab="newsletter-config" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Newsletter Digest Engine">
-            <span class="text-base flex-shrink-0">📰</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Newsletter</span>
-          </button>
-
-          <!-- 7. SMTP & Mail -->
-          <button type="button" data-settings-tab="smtp-settings" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="SMTP & Recipient Routing">
-            <span class="text-base flex-shrink-0">📧</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">SMTP &amp; Routing</span>
-          </button>
-
-          <!-- 8. Staff Accounts -->
-          <button type="button" data-settings-tab="team-accounts" class="settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Staff Accounts & Access">
-            <span class="text-base flex-shrink-0">👥</span>
-            <span class="sidebar-text whitespace-nowrap overflow-hidden">Staff Accounts</span>
-          </button>
-
-        </nav>
+  <!-- Taskbar-style settings navigation -->
+  <div class="settings-workspace flex flex-col lg:flex-row rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+    <aside id="settingsLeftSidebar" class="settings-taskbar flex-shrink-0">
+      <div class="hidden lg:flex flex-col items-center gap-1 border-b border-slate-200 dark:border-slate-700 pb-3 mb-2">
+        <div class="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center font-black text-xs shadow-sm">EI</div>
+        <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400">SETTINGS</span>
       </div>
-
-      <!-- Bottom Pinned Section: Return to Dashboard & Exit Settings -->
-      <div class="pt-4 border-t border-slate-800/80 space-y-1.5">
-        <a href="/admin" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10" title="Return to Admin Dashboard">
-          <span class="text-base flex-shrink-0">⊞</span>
-          <span class="sidebar-text whitespace-nowrap overflow-hidden">Dashboard</span>
-        </a>
-        <a href="/admin/logout" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-red-400 hover:text-red-300 hover:bg-red-500/10" title="Sign Out">
-          <span class="text-base flex-shrink-0">⇥</span>
-          <span class="sidebar-text whitespace-nowrap overflow-hidden">Exit Settings</span>
-        </a>
-      </div>
+      <nav class="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-1 gap-1.5" id="settings-sidebar-nav" aria-label="Settings modules">
+        <button type="button" data-settings-tab="theme-engine" aria-label="Themes" title="Themes &amp; Palettes" aria-current="page" class="settings-nav-btn is-active">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">palette</span>
+          <span class="settings-nav-label">Themes</span>
+        </button>
+        <button type="button" data-settings-tab="site-customizer" aria-label="Customizer" title="Site Customizer" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">tune</span>
+          <span class="settings-nav-label">Customizer</span>
+        </button>
+        <button type="button" data-settings-tab="feature-flags" aria-label="Flags and preview" title="Feature Flags &amp; Preview" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">flag</span>
+          <span class="settings-nav-label">Flags &amp; Live</span>
+        </button>
+        <button type="button" data-settings-tab="seo-scripts" aria-label="Dynamic SEO" title="Dynamic SEO &amp; AI" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">query_stats</span>
+          <span class="settings-nav-label">SEO</span>
+        </button>
+        <button type="button" data-settings-tab="monetization-ads" aria-label="Monetization" title="Monetization &amp; Ads" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">payments</span>
+          <span class="settings-nav-label">Monetization</span>
+        </button>
+        <button type="button" data-settings-tab="newsletter-config" aria-label="Newsletter" title="Newsletter Configuration" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">mail</span>
+          <span class="settings-nav-label">Newsletter</span>
+        </button>
+        <button type="button" data-settings-tab="smtp-settings" aria-label="SMTP and routing" title="SMTP &amp; Recipient Routing" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">outgoing_mail</span>
+          <span class="settings-nav-label">SMTP</span>
+        </button>
+        <button type="button" data-settings-tab="team-accounts" aria-label="Staff accounts" title="Staff Accounts &amp; Access" class="settings-nav-btn">
+          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">group</span>
+          <span class="settings-nav-label">Staff</span>
+        </button>
+      </nav>
     </aside>
 
     <!-- RIGHT CONTENT AREA -->
-    <div class="flex-1 min-w-0 space-y-6">
+    <div class="settings-content flex-1 min-w-0">
 
     <!-- ============================================================== -->
     <!-- MODULE 1: DYNAMIC THEME & COLOR PALETTE ENGINE (SIDE-BY-SIDE) -->
@@ -180,7 +238,7 @@
             <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
               <span>🎨 Dynamic Theme &amp; Color Palette Engine</span>
             </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Select a unified palette on the left to immediately preview real-time component updates on the right.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Select a unified palette on the left to immediately preview real-time component updates on the right. Preview night mode is local and does not change the live site.</p>
           </div>
           <div class="flex items-center space-x-2 flex-shrink-0">
             <button type="submit" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-black transition shadow-sm active:scale-95 flex items-center space-x-1.5">
@@ -193,8 +251,8 @@
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
           
           <!-- LEFT COLUMN: VERTICAL LIST OF PALETTE CARDS -->
-          <div class="xl:col-span-5 space-y-3.5">
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+          <div class="palette-picker-panel xl:col-span-5 space-y-3.5">
+            <label class="palette-picker-heading block text-xs font-bold uppercase tracking-wider mb-2">
               Choose Active Public &amp; Admin Palette:
             </label>
 
@@ -275,22 +333,24 @@
             ];
             %>
 
-            <% PALETTES_LIST.forEach(p => { 
+            <% const AVAILABLE_PALETTES = PALETTES_LIST.filter(p => settings[`palette_deleted_${p.key}`] !== 'true'); %>
+            <% const DELETED_PALETTES = PALETTES_LIST.filter(p => settings[`palette_deleted_${p.key}`] === 'true'); %>
+            <% AVAILABLE_PALETTES.forEach(p => {
               const curBgP = settings['palette_override_' + p.key + '_bgPrimary'] || p.defaults.bgPrimary;
               const curBgS = settings['palette_override_' + p.key + '_bgSurface'] || p.defaults.bgSurface;
               const curAcP = settings['palette_override_' + p.key + '_accentPrimary'] || p.defaults.accentPrimary;
               const curAcS = settings['palette_override_' + p.key + '_accentSecondary'] || p.defaults.accentSecondary;
               const curTxP = settings['palette_override_' + p.key + '_textPrimary'] || p.defaults.textPrimary;
             %>
-            <div data-palette-card="<%= p.key %>" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= p.isActive ? p.borderActiveClass : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('<%= p.key %>')">
+            <div data-palette-card="<%= p.key %>" style="--palette-accent: <%= curAcP %>" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= p.isActive ? 'palette-card-active' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('<%= p.key %>')">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
                   <input type="radio" name="active_theme_palette" value="<%= p.key %>" <%= p.isActive ? 'checked' : '' %> onchange="selectPalette('<%= p.key %>')" class="w-4 h-4 <%= p.radioClass %>">
-                  <span class="text-xs font-black text-slate-900 dark:text-white"><%= p.num %>. <%= p.name %></span>
+                  <span class="palette-card-title text-xs font-black"><%= p.num %>. <%= p.name %></span>
                 </div>
                 <span class="text-[10px] px-2 py-0.5 rounded-full font-bold <%= p.badgeClass %>"><%= p.badge %></span>
               </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+              <div class="palette-card-divider flex items-center justify-between mt-3 pt-2 border-t">
                 <div class="flex items-center space-x-1.5">
                   <span class="swatch-bg w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:<%= curBgP %>" title="BG: <%= curBgP %>"></span>
                   <span class="swatch-surface w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:<%= curBgS %>" title="Surface: <%= curBgS %>"></span>
@@ -300,72 +360,79 @@
                 </div>
                 <div class="flex items-center space-x-2">
                   <span class="palette-active-label text-[10px] font-bold <%= p.activeLabelColor %> <%= p.isActive ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); togglePaletteDrawer('<%= p.key %>');" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition flex items-center space-x-1">
+                  <button type="button" onclick="event.stopPropagation(); togglePaletteDrawer('<%= p.key %>');" class="palette-card-edit text-[11px] px-2.5 py-1 rounded-lg font-bold transition flex items-center space-x-1">
                     <span>✏️</span> <span>Edit</span>
                   </button>
                 </div>
               </div>
 
               <!-- Inline Expandable Palette Color Drawer -->
-              <div id="drawer-<%= p.key %>" class="palette-drawer hidden mt-3 p-4 rounded-2xl bg-slate-900/95 border border-slate-700/80 text-white space-y-3.5 shadow-xl animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation();">
-                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div id="drawer-<%= p.key %>" class="palette-drawer hidden mt-3 p-4 rounded-2xl border space-y-3.5 shadow-xl animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation();">
+                <div class="palette-drawer-divider flex items-center justify-between border-b pb-2">
                   <div class="flex items-center space-x-2">
-                    <span class="text-xs font-black uppercase tracking-wider text-sky-400">
+                    <span class="palette-drawer-heading text-xs font-black uppercase tracking-wider">
                       🎨 Edit <%= p.name %> Colors
                     </span>
-                    <span class="text-[10px] text-slate-400 font-mono">Live Binding</span>
+                    <span class="palette-drawer-muted text-[10px] font-mono">Live Binding</span>
                   </div>
-                  <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="text-xs text-slate-400 hover:text-white p-1 rounded-lg">✕</button>
+                  <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="palette-drawer-muted text-xs hover:opacity-75 p-1 rounded-lg">✕</button>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                   <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Canvas BG</label>
+                    <label class="palette-drawer-muted block font-semibold mb-1">Canvas BG</label>
                     <div class="flex items-center space-x-1">
                       <input type="color" id="picker_<%= p.key %>_bgPrimary" value="<%= curBgP %>" onchange="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_bgPrimary" value="<%= curBgP %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                      <input type="text" id="hex_<%= p.key %>_bgPrimary" value="<%= curBgP %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
                     </div>
                   </div>
 
                   <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Surface</label>
+                    <label class="palette-drawer-muted block font-semibold mb-1">Surface</label>
                     <div class="flex items-center space-x-1">
                       <input type="color" id="picker_<%= p.key %>_bgSurface" value="<%= curBgS %>" onchange="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_bgSurface" value="<%= curBgS %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                      <input type="text" id="hex_<%= p.key %>_bgSurface" value="<%= curBgS %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
                     </div>
                   </div>
 
                   <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Primary Accent</label>
+                    <label class="palette-drawer-muted block font-semibold mb-1">Primary Accent</label>
                     <div class="flex items-center space-x-1">
                       <input type="color" id="picker_<%= p.key %>_accentPrimary" value="<%= curAcP %>" onchange="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_accentPrimary" value="<%= curAcP %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                      <input type="text" id="hex_<%= p.key %>_accentPrimary" value="<%= curAcP %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
                     </div>
                   </div>
 
                   <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Secondary Accent</label>
+                    <label class="palette-drawer-muted block font-semibold mb-1">Secondary Accent</label>
                     <div class="flex items-center space-x-1">
                       <input type="color" id="picker_<%= p.key %>_accentSecondary" value="<%= curAcS %>" onchange="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_accentSecondary" value="<%= curAcS %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                      <input type="text" id="hex_<%= p.key %>_accentSecondary" value="<%= curAcS %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
                     </div>
                   </div>
 
                   <div class="sm:col-span-2">
-                    <label class="block font-semibold text-slate-300 mb-1">Text Primary</label>
+                    <label class="palette-drawer-muted block font-semibold mb-1">Text Primary</label>
                     <div class="flex items-center space-x-1">
                       <input type="color" id="picker_<%= p.key %>_textPrimary" value="<%= curTxP %>" onchange="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_textPrimary" value="<%= curTxP %>" oninput="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 font-mono text-[11px] text-white">
+                      <input type="text" id="hex_<%= p.key %>_textPrimary" value="<%= curTxP %>" oninput="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
                     </div>
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between pt-2.5 border-t border-slate-800">
-                  <button type="button" onclick="deleteOrResetPalette('<%= p.key %>')" class="px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-400 text-xs font-bold transition flex items-center space-x-1 border border-red-500/30" title="Reset this palette back to system defaults">
-                    <span>🗑️ Delete / Reset</span>
-                  </button>
+                <div class="palette-drawer-divider flex items-center justify-between pt-2.5 border-t">
+                  <div class="flex items-center gap-2">
+                    <button type="button" onclick="event.stopPropagation(); resetPalette('<%= p.key %>')" class="palette-card-edit px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1" title="Restore original colors">
+                      <span class="material-symbols-rounded text-sm" aria-hidden="true">restart_alt</span>
+                      <span>Reset</span>
+                    </button>
+                    <button type="button" onclick="event.stopPropagation(); deletePalette('<%= p.key %>')" class="px-3 py-1.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold transition flex items-center gap-1 border border-red-500/30" title="Remove this palette from the picker">
+                      <span class="material-symbols-rounded text-sm" aria-hidden="true">delete</span>
+                      <span>Delete</span>
+                    </button>
+                  </div>
                   <div class="flex items-center space-x-2">
-                    <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition">
+                    <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="palette-card-edit px-3 py-1.5 rounded-xl text-xs font-bold transition">
                       Cancel
                     </button>
                     <button type="button" onclick="savePaletteChanges('<%= p.key %>')" class="px-4 py-1.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition shadow-sm active:scale-95 flex items-center space-x-1">
@@ -376,9 +443,26 @@
               </div>
             </div>
             <% }); %>
+            <% if (DELETED_PALETTES.length) { %>
+              <div class="p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-brand-dark">
+                <h3 class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <span class="material-symbols-rounded text-base" aria-hidden="true">palette</span>
+                  Removed palettes
+                </h3>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Restore a palette to bring back its original colors.</p>
+                <div class="flex flex-wrap gap-2 mt-3">
+                  <% DELETED_PALETTES.forEach(p => { %>
+                    <button type="button" onclick="resetPalette('<%= p.key %>')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-700 dark:text-slate-200 hover:border-brand-500 transition">
+                      <span class="material-symbols-rounded text-sm" aria-hidden="true">restore</span>
+                      Restore <%= p.name %>
+                    </button>
+                  <% }); %>
+                </div>
+              </div>
+            <% } %>
             <!-- 7. Custom Hex Engine Card -->
             <% const isCustom = (settings.active_theme_palette === 'custom'); %>
-            <div data-palette-card="custom" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isCustom ? 'border-purple-600 bg-purple-50/20 dark:bg-purple-950/20 ring-2 ring-purple-500/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('custom')">
+            <div data-palette-card="custom" style="--palette-accent: <%= settings.palette_accent_primary || '#059669' %>" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isCustom ? 'palette-card-active' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('custom')">
               <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-2.5">
                   <input type="radio" name="active_theme_palette" value="custom" <%= isCustom ? 'checked' : '' %> onchange="selectPalette('custom')" class="w-4 h-4 text-purple-600 focus:ring-purple-600">
@@ -473,14 +557,20 @@
                   <span>🖥️ Live Theme Preview Window</span>
                   <span id="previewPaletteNameBadge" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">Cyber Emerald</span>
                 </span>
-                <span class="text-[11px] text-slate-400 font-mono">Real-time binding</span>
+                <div class="flex items-center gap-2">
+                  <span id="previewModeLabel" class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Night preview</span>
+                  <button type="button" id="themePreviewModeToggle" aria-label="Turn off night mode for theme preview" aria-pressed="true" onclick="toggleThemePreviewMode()" class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-[10px] font-bold text-slate-700 dark:text-slate-200 hover:border-brand-500 transition">
+                    <span id="themePreviewModeIcon" class="material-symbols-rounded text-sm" aria-hidden="true">dark_mode</span>
+                    <span id="themePreviewModeText">Night on</span>
+                  </button>
+                </div>
               </div>
 
               <!-- Preview Canvas Mockup -->
               <div id="liveThemePreviewBox" class="p-6 rounded-2xl border transition-all duration-300 space-y-4 shadow-xl" style="background: #0b1412; border-color: #1e3831;">
                 
                 <!-- Mock Header Bar inside preview -->
-                <div class="flex items-center justify-between pb-3 border-b" style="border-color: rgba(255,255,255,0.1);">
+                <div class="preview-header flex items-center justify-between pb-3 border-b" style="border-color: rgba(255,255,255,0.1);">
                   <div class="flex items-center space-x-2">
                     <div class="w-6 h-6 rounded-md p-1 flex items-center justify-center font-black text-xs text-white" id="prevBrandIcon" style="background: #059669;">
                       ▲
@@ -489,7 +579,7 @@
                       Embedded <span id="prevBrandAccent" style="color: #059669;">India</span>
                     </span>
                   </div>
-                  <div class="flex items-center space-x-3 text-[11px] font-semibold" style="color: #94a3b8;">
+                  <div id="prevNav" class="flex items-center space-x-3 text-[11px] font-semibold" style="color: #94a3b8;">
                     <span id="prevNavLink" class="font-bold underline" style="color: #059669;">Home</span>
                     <span>Services</span>
                     <span>Projects</span>
@@ -529,23 +619,23 @@
 
                 <!-- Color Swatch Breakdown Matrix -->
                 <div class="grid grid-cols-5 gap-2 pt-1 text-[10px] font-mono text-center">
-                  <div class="p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
+                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
                     <span class="block font-bold">BG</span>
                     <span id="swatchBgText">#0b1412</span>
                   </div>
-                  <div class="p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
+                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
                     <span class="block font-bold">Surface</span>
                     <span id="swatchSurfaceText">#13221e</span>
                   </div>
-                  <div class="p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
+                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
                     <span class="block font-bold">Primary</span>
                     <span id="swatchPrimaryText">#059669</span>
                   </div>
-                  <div class="p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
+                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
                     <span class="block font-bold">Secondary</span>
                     <span id="swatchSecondaryText">#55a630</span>
                   </div>
-                  <div class="p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
+                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
                     <span class="block font-bold">Text</span>
                     <span id="swatchTextText">#f1f5f9</span>
                   </div>
@@ -642,36 +732,36 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Site Brand Name</label>
-            <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-bold">
+            <input type="text" name="site_name" value="<%= settings.site_name || 'Embedded India' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-bold">
           </div>
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Site Tagline</label>
-            <input type="text" name="site_tagline" value="<%= settings.site_tagline || 'Turnkey Hardware & Firmware Engineering Lab' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-medium">
+            <input type="text" name="site_tagline" value="<%= settings.site_tagline || 'Turnkey Hardware & Firmware Engineering Lab' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-medium">
           </div>
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Header Navigation Style</label>
-            <select name="nav_sticky" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-semibold">
+            <select name="nav_sticky" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-semibold">
               <option value="true" <%= settings.nav_sticky !== 'false' ? 'selected' : '' %>>Sticky Header (Stays on scroll)</option>
               <option value="false" <%= settings.nav_sticky === 'false' ? 'selected' : '' %>>Relative Header (Static)</option>
             </select>
           </div>
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Smooth Scrolling</label>
-            <select name="enable_smooth_scroll" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-semibold">
+            <select name="enable_smooth_scroll" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-semibold">
               <option value="true" <%= settings.enable_smooth_scroll !== 'false' ? 'selected' : '' %>>Enabled (scroll-smooth)</option>
               <option value="false" <%= settings.enable_smooth_scroll === 'false' ? 'selected' : '' %>>Disabled</option>
             </select>
           </div>
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Global Promo Announcement Bar</label>
-            <select name="promo_banner_active" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-semibold">
+            <select name="promo_banner_active" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-semibold">
               <option value="true" <%= settings.promo_banner_active === 'true' ? 'selected' : '' %>>Active (Show top bar)</option>
               <option value="false" <%= settings.promo_banner_active !== 'true' ? 'selected' : '' %>>Hidden</option>
             </select>
           </div>
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Footer Copyright Text</label>
-            <input type="text" name="footer_copyright" value="<%= settings.footer_copyright || 'Embedded India. Precision Electronics & Systems Engineering.' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700">
+            <input type="text" name="footer_copyright" value="<%= settings.footer_copyright || 'Embedded India. Precision Electronics & Systems Engineering.' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700">
           </div>
         </div>
 
@@ -955,35 +1045,35 @@
 
           <!-- Diagnostic Checkpoints Grid -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div id="chk_title" class="p-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
+            <div id="chk_title" class="p-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
               <span class="status-icon text-emerald-500 font-bold">✓</span>
               <div>
                 <span class="font-bold block text-slate-800 dark:text-slate-200">Title Length</span>
-                <span class="text-[10px] text-slate-400 font-mono" id="titleCount">Optimal</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono" id="titleCount">Optimal</span>
               </div>
             </div>
 
-            <div id="chk_desc" class="p-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
+            <div id="chk_desc" class="p-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
               <span class="status-icon text-emerald-500 font-bold">✓</span>
               <div>
                 <span class="font-bold block text-slate-800 dark:text-slate-200">Description</span>
-                <span class="text-[10px] text-slate-400 font-mono" id="descCount">Optimal</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono" id="descCount">Optimal</span>
               </div>
             </div>
 
-            <div id="chk_keywords" class="p-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
+            <div id="chk_keywords" class="p-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
               <span class="status-icon text-emerald-500 font-bold">✓</span>
               <div>
                 <span class="font-bold block text-slate-800 dark:text-slate-200">Focus Keywords</span>
-                <span class="text-[10px] text-slate-400 font-mono" id="keywordsCount">Configured</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono" id="keywordsCount">Configured</span>
               </div>
             </div>
 
-            <div id="chk_og" class="p-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
+            <div id="chk_og" class="p-2.5 rounded-xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 flex items-center space-x-2">
               <span class="status-icon text-emerald-500 font-bold">✓</span>
               <div>
                 <span class="font-bold block text-slate-800 dark:text-slate-200">OG Social Card</span>
-                <span class="text-[10px] text-slate-400 font-mono">Image specified</span>
+                <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Image specified</span>
               </div>
             </div>
           </div>
@@ -994,27 +1084,27 @@
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="font-semibold text-slate-700 dark:text-slate-300">Meta Title</label>
-              <span class="text-[10px] text-slate-400 font-mono" id="titleCounter">0 / 60 chars</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono" id="titleCounter">0 / 60 chars</span>
             </div>
-            <input type="text" id="seo_title" name="seo_title" value="<%= settings.seo_title || 'Embedded India - Turnkey Embedded Systems & Hardware Engineering Lab' %>" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-medium transition duration-200">
+            <input type="text" id="seo_title" name="seo_title" value="<%= settings.seo_title || 'Embedded India - Turnkey Embedded Systems & Hardware Engineering Lab' %>" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-medium transition duration-200">
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1">
               <label class="font-semibold text-slate-700 dark:text-slate-300">Meta Description</label>
-              <span class="text-[10px] text-slate-400 font-mono" id="descCounter">0 / 160 chars</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 font-mono" id="descCounter">0 / 160 chars</span>
             </div>
-            <textarea id="seo_description" name="seo_description" rows="3" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-medium transition duration-200"><%= settings.seo_description || 'India’s premier embedded hardware and firmware engineering lab. Turnkey PCB layout, high-speed routing, deterministic RTOS, and turnkey volume manufacturing.' %></textarea>
+            <textarea id="seo_description" name="seo_description" rows="3" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-medium transition duration-200"><%= settings.seo_description || 'India’s premier embedded hardware and firmware engineering lab. Turnkey PCB layout, high-speed routing, deterministic RTOS, and turnkey volume manufacturing.' %></textarea>
           </div>
 
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Target Keywords (Comma Separated)</label>
-            <input type="text" id="seo_keywords" name="seo_keywords" value="<%= settings.seo_keywords || 'embedded systems, hardware design, PCB layout, RTOS firmware, turnkey electronics, India engineering' %>" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs transition duration-200">
+            <input type="text" id="seo_keywords" name="seo_keywords" value="<%= settings.seo_keywords || 'embedded systems, hardware design, PCB layout, RTOS firmware, turnkey electronics, India engineering' %>" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-xs transition duration-200">
           </div>
 
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">OpenGraph Share Image URL</label>
-            <input type="text" id="seo_og_image" name="seo_og_image" value="<%= settings.seo_og_image || '/images/og-share-card.png' %>" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs">
+            <input type="text" id="seo_og_image" name="seo_og_image" value="<%= settings.seo_og_image || '/images/og-share-card.png' %>" oninput="calculateSeoScore()" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-xs">
           </div>
         </div>
 
@@ -1022,11 +1112,11 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs pt-2">
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Custom &lt;head&gt; Code (Analytics, Google Tag, Verification)</label>
-            <textarea name="custom_head_scripts" rows="4" placeholder="&lt;script async src=&quot;https://www.googletagmanager.com/...&quot;&gt;&lt;/script&gt;" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_head_scripts || '' %></textarea>
+            <textarea name="custom_head_scripts" rows="4" placeholder="&lt;script async src=&quot;https://www.googletagmanager.com/...&quot;&gt;&lt;/script&gt;" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_head_scripts || '' %></textarea>
           </div>
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Custom &lt;body&gt; Closing Code (Chatbots, Trackers)</label>
-            <textarea name="custom_body_scripts" rows="4" placeholder="&lt;script&gt;/* Live chat widget */&lt;/script&gt;" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_body_scripts || '' %></textarea>
+            <textarea name="custom_body_scripts" rows="4" placeholder="&lt;script&gt;/* Live chat widget */&lt;/script&gt;" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-[11px]"><%= settings.custom_body_scripts || '' %></textarea>
           </div>
         </div>
 
@@ -1120,6 +1210,28 @@
             <div class="p-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500">
               <span>Status: Direct B2B Sponsor units bypass ad-blockers</span>
               <span class="font-bold text-emerald-600 dark:text-accent">100% Fill Rate</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Meta Pixel -->
+          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-xl text-brand-600 dark:text-accent" aria-hidden="true">monitoring</span>
+                <div>
+                  <span class="font-bold text-slate-900 dark:text-white block">Meta Pixel</span>
+                  <span class="text-[10px] text-slate-400">Measure visits and conversion events from Meta ads</span>
+                </div>
+              </div>
+              <select name="enable_meta_pixel" id="enable_meta_pixel" class="px-3 py-1.5 rounded-xl bg-white dark:bg-brand-surface text-xs font-bold border border-slate-300 dark:border-slate-700">
+                <option value="false" <%= settings.enable_meta_pixel !== 'true' ? 'selected' : '' %>>Disabled</option>
+                <option value="true" <%= settings.enable_meta_pixel === 'true' ? 'selected' : '' %>>Enabled</option>
+              </select>
+            </div>
+            <div>
+              <label for="meta_pixel_id" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Meta Pixel ID</label>
+              <input type="text" inputmode="numeric" maxlength="20" id="meta_pixel_id" name="meta_pixel_id" value="<%= settings.meta_pixel_id || '' %>" placeholder="Enter your numeric Pixel ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+              <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5">The tracking script is injected on public pages only after this ID is saved and enabled.</p>
             </div>
           </div>
 
@@ -1270,7 +1382,7 @@
           <!-- Frequency -->
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Digest Dispatch Frequency</label>
-            <select name="newsletter_frequency" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-semibold">
+            <select name="newsletter_frequency" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-semibold">
               <option value="daily" <%= settings.newsletter_frequency === 'daily' ? 'selected' : '' %>>Daily Digest (Past 24h Posts)</option>
               <option value="weekly" <%= (!settings.newsletter_frequency || settings.newsletter_frequency === 'weekly') ? 'selected' : '' %>>Weekly Digest (Past 7 Days - Recommended)</option>
               <option value="bi-weekly" <%= settings.newsletter_frequency === 'bi-weekly' ? 'selected' : '' %>>Bi-Weekly Digest (Past 14 Days)</option>
@@ -1281,13 +1393,13 @@
           <!-- Topic Focus -->
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Primary Newsletter Topic / Subject Header</label>
-            <input type="text" name="newsletter_topic" value="<%= settings.newsletter_topic || 'Embedded Systems, RTOS & High-Speed Hardware Design' %>" placeholder="Embedded Systems & Hardware" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-medium">
+            <input type="text" name="newsletter_topic" value="<%= settings.newsletter_topic || 'Embedded Systems, RTOS & High-Speed Hardware Design' %>" placeholder="Embedded Systems & Hardware" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-medium">
           </div>
 
           <!-- Category Filter -->
           <div>
             <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Post Category Filter</label>
-            <select name="newsletter_category" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-semibold">
+            <select name="newsletter_category" class="w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-semibold">
               <option value="all" <%= (!settings.newsletter_category || settings.newsletter_category === 'all') ? 'selected' : '' %>>All Categories (Curated Highlights)</option>
               <option value="firmware" <%= settings.newsletter_category === 'firmware' ? 'selected' : '' %>>Firmware &amp; RTOS</option>
               <option value="hardware" <%= settings.newsletter_category === 'hardware' ? 'selected' : '' %>>High-Speed PCB Layout</option>
@@ -1299,16 +1411,16 @@
         <!-- Editorial Intro Content -->
         <div class="text-xs space-y-1">
           <label class="block font-semibold text-slate-700 dark:text-slate-300">Newsletter Editorial Intro Message</label>
-          <textarea name="newsletter_intro_content" rows="3" placeholder="Custom greeting and editor commentary sent above the curated articles list..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-medium"><%= settings.newsletter_intro_content || 'Here are the latest engineering guides, embedded firmware patterns, and hardware architectures curated by our engineering lab:' %></textarea>
+          <textarea name="newsletter_intro_content" rows="3" placeholder="Custom greeting and editor commentary sent above the curated articles list..." class="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-medium"><%= settings.newsletter_intro_content || 'Here are the latest engineering guides, embedded firmware patterns, and hardware architectures curated by our engineering lab:' %></textarea>
         </div>
 
         <div id="digestTriggerResult" class="hidden p-3 rounded-xl text-xs font-mono"></div>
 
         <!-- Link to subscriber management -->
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border flex items-center justify-between text-xs">
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
           <div>
             <span class="font-bold text-slate-900 dark:text-white block">Subscriber Audience Database</span>
-            <span class="text-slate-500">Manage, export, and review confirmed double opt-in subscribers</span>
+            <span class="text-slate-500 dark:text-slate-400">Manage, export, and review confirmed double opt-in subscribers</span>
           </div>
           <a href="/admin/subscribers" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl font-bold transition">
             Manage Subscribers &rarr;
@@ -1407,29 +1519,29 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div class="sm:col-span-2">
               <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Host</label>
-              <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs">
+              <input type="text" id="smtp_host" name="smtp_host" value="<%= settings.smtp_host || '' %>" placeholder="smtp.gmail.com" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-xs">
             </div>
             <div>
               <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Port</label>
-              <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs">
+              <input type="number" id="smtp_port" name="smtp_port" value="<%= settings.smtp_port || '587' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-xs">
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
               <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">TLS / SSL Mode</label>
-              <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-semibold">
+              <select id="smtp_secure" name="smtp_secure" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-semibold">
                 <option value="false" <%= settings.smtp_secure !== 'true' ? 'selected' : '' %>>STARTTLS (Port 587 - Default)</option>
                 <option value="true" <%= settings.smtp_secure === 'true' ? 'selected' : '' %>>SSL / TLS (Port 465)</option>
               </select>
             </div>
             <div>
               <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Username / Email</label>
-              <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="info@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs">
+              <input type="text" id="smtp_user" name="smtp_user" value="<%= settings.smtp_user || '' %>" placeholder="info@embeddedindia.in" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-xs">
             </div>
             <div>
               <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">SMTP Password / App Secret</label>
-              <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 font-mono text-xs">
+              <input type="password" id="smtp_pass" name="smtp_pass" value="<%= settings.smtp_pass || '' %>" placeholder="••••••••••••" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-mono text-xs">
             </div>
           </div>
         </div>
@@ -1625,42 +1737,50 @@
   // Map settings module metadata for titles and breadcrumbs
   const MODULE_METADATA = {
     'theme-engine': {
-      title: '🎨 Dynamic Theme & Color Palette Engine',
+      title: 'Dynamic Theme & Color Palette Engine',
+      icon: 'palette',
       breadcrumb: 'Themes & Palettes',
       subtitle: 'Live side-by-side color palette engine: select a unified scheme or customize hex values with real-time component updates.'
     },
     'site-customizer': {
-      title: '🎛️ No-Code Site Customizer & Lab Events',
+      title: 'No-Code Site Customizer & Lab Events',
+      icon: 'tune',
       breadcrumb: 'Site Customizer',
       subtitle: 'Control live hardware status pill, telemetry banner, typography, navigation behavior, and promo copy.'
     },
     'feature-flags': {
-      title: '🚩 Modular Section Feature Flags & Live Homepage Preview',
+      title: 'Modular Section Feature Flags & Live Homepage Preview',
+      icon: 'flag',
       breadcrumb: 'Feature Flags & Preview',
       subtitle: 'Toggle homepage sections on or off with real-time homepage iframe preview across Desktop, Tablet, and Mobile.'
     },
     'seo-scripts': {
-      title: '🔍 Dynamic SEO & AI Meta Optimizer',
+      title: 'Dynamic SEO & AI Meta Optimizer',
+      icon: 'query_stats',
       breadcrumb: 'SEO & Scripts',
       subtitle: 'Real-time SEO score meter, diagnostic checklist, and 1-click AI optimization for high click-through rates.'
     },
     'monetization-ads': {
-      title: '💰 Monetization & Multi-Provider Ad Engine',
+      title: 'Monetization & Multi-Provider Ad Engine',
+      icon: 'payments',
       breadcrumb: 'Monetization Hub',
       subtitle: 'Manage Google AdSense, direct B2B sponsored placements, ads.txt sync, and visual slot mapping.'
     },
     'newsletter-config': {
-      title: '📰 Technical Newsletter & Auto-Digest Configuration',
+      title: 'Technical Newsletter & Auto-Digest Configuration',
+      icon: 'mail',
       breadcrumb: 'Newsletter Engine',
       subtitle: 'Configure automated newsletter digest frequency, topic focus, category filtering, and subscriber notifications.'
     },
     'smtp-settings': {
-      title: '📧 Outgoing SMTP Mailer & Email Recipient Routing',
+      title: 'Outgoing SMTP Mailer & Email Recipient Routing',
+      icon: 'outgoing_mail',
       breadcrumb: 'SMTP & Routing',
       subtitle: 'Designate which staff/users receive customer inquiries and newsletter signups, plus SMTP socket credentials.'
     },
     'team-accounts': {
-      title: '👥 Team & Staff Account Access',
+      title: 'Team & Staff Account Access',
+      icon: 'group',
       breadcrumb: 'Staff Accounts',
       subtitle: 'Manage admin and editor staff accounts with bcrypt password hashing.'
     }
@@ -1670,46 +1790,6 @@
   // 2. SETTINGS MODE SECTION / PAGE SWITCHER
   // ====================================================================
   
-  // ====================================================================
-  // SIDEBAR COLLAPSE TOGGLE (w-60 <-> w-20)
-  // ====================================================================
-  function toggleSidebarCollapse() {
-    const sidebar = document.getElementById('settingsLeftSidebar');
-    const chevron = document.getElementById('collapseChevronIcon');
-    if (!sidebar) return;
-
-    const isCollapsed = sidebar.classList.contains('w-20');
-    if (isCollapsed) {
-      // Expand
-      sidebar.classList.remove('w-20', 'p-2');
-      sidebar.classList.add('w-60', 'p-4');
-      sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.remove('hidden'));
-      if (chevron) chevron.style.transform = 'rotate(0deg)';
-      localStorage.setItem('sidebar-collapsed', 'false');
-    } else {
-      // Collapse
-      sidebar.classList.remove('w-60', 'p-4');
-      sidebar.classList.add('w-20', 'p-2');
-      sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
-      if (chevron) chevron.style.transform = 'rotate(180deg)';
-      localStorage.setItem('sidebar-collapsed', 'true');
-    }
-  }
-
-  // Restore sidebar collapse preference
-  document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('sidebar-collapsed') === 'true') {
-      const sidebar = document.getElementById('settingsLeftSidebar');
-      const chevron = document.getElementById('collapseChevronIcon');
-      if (sidebar) {
-        sidebar.classList.remove('w-60', 'p-4');
-        sidebar.classList.add('w-20', 'p-2');
-        sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
-        if (chevron) chevron.style.transform = 'rotate(180deg)';
-      }
-    }
-  });
-
   // ====================================================================
   // INLINE PALETTE DRAWER CONTROLLERS (EXPAND, EDIT, SAVE, DELETE)
   // ====================================================================
@@ -1763,6 +1843,7 @@
         const el = card.querySelector('.swatch-surface');
         if (el) el.style.background = value;
       } else if (prop === 'accentPrimary') {
+        card.style.setProperty('--palette-accent', value);
         const el = card.querySelector('.swatch-primary');
         if (el) el.style.background = value;
       } else if (prop === 'accentSecondary') {
@@ -1803,6 +1884,7 @@
         body: JSON.stringify(payload)
       });
       const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Unable to save palette.');
       showToast('✅ Saved custom hexes for ' + p.name + '!');
       closePaletteDrawer(key);
     } catch(err) {
@@ -1810,35 +1892,41 @@
     }
   }
 
-  async function deleteOrResetPalette(key) {
+  async function updatePaletteState(key, action) {
+    const response = await fetch(`/admin/settings/palettes/${encodeURIComponent(key)}/${action}`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'Palette update failed.');
+  }
+
+  async function resetPalette(key) {
     const p = PALETTE_DEFINITIONS[key];
     if (!p) return;
-    if (!confirm('Are you sure you want to delete custom overrides and reset ' + p.name + ' to factory defaults?')) return;
+    if (!confirm(`Restore ${p.name} to its original colors and make it available again?`)) return;
+    try {
+      await updatePaletteState(key, 'reset');
+      window.location.hash = 'theme-engine';
+      window.location.reload();
+    } catch (err) {
+      alert('Unable to restore palette: ' + err.message);
+    }
+  }
 
-    // Factory defaults table
-    const DEFAULTS = {
-      'cyber-emerald': { bgPrimary: '#0b1412', bgSurface: '#13221e', accentPrimary: '#059669', accentSecondary: '#55a630', textPrimary: '#f1f5f9' },
-      'quantum-cyan': { bgPrimary: '#08101a', bgSurface: '#0f1d2e', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', textPrimary: '#f8fafc' },
-      'titanium-slate': { bgPrimary: '#090d16', bgSurface: '#0f172a', accentPrimary: '#475569', accentSecondary: '#38bdf8', textPrimary: '#f8fafc' },
-      'solar-amber': { bgPrimary: '#18181b', bgSurface: '#27272a', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', textPrimary: '#fafafa' },
-      'supernova-violet': { bgPrimary: '#0f0c1b', bgSurface: '#18142a', accentPrimary: '#a855f7', accentSecondary: '#c084fc', textPrimary: '#faf5ff' },
-      'clean-light': { bgPrimary: '#f8fafc', bgSurface: '#ffffff', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', textPrimary: '#0f172a' }
-    };
-
-    const def = DEFAULTS[key] || DEFAULTS['cyber-emerald'];
-    Object.assign(p, def);
-
-    // Sync drawer
-    syncDrawerInput(key, 'bgPrimary', def.bgPrimary);
-    syncDrawerInput(key, 'bgSurface', def.bgSurface);
-    syncDrawerInput(key, 'accentPrimary', def.accentPrimary);
-    syncDrawerInput(key, 'accentSecondary', def.accentSecondary);
-    syncDrawerInput(key, 'textPrimary', def.textPrimary);
-
-    // Save defaults to clear overrides
-    await savePaletteChanges(key);
-    selectPalette(key);
-    showToast('🔄 Reset ' + p.name + ' to factory defaults!');
+  async function deletePalette(key) {
+    const p = PALETTE_DEFINITIONS[key];
+    if (!p || !confirm(`Remove ${p.name} from the available palettes? You can restore it later.`)) return;
+    try {
+      await updatePaletteState(key, 'delete');
+      window.location.hash = 'theme-engine';
+      window.location.reload();
+    } catch (err) {
+      alert('Unable to delete palette: ' + err.message);
+    }
   }
 
   window.switchSettingsSection = function(sectionId) {
@@ -1858,33 +1946,22 @@
     const meta = MODULE_METADATA[sectionId];
     if (meta) {
       const pageTitle = document.getElementById('settingsPageTitle');
+      const pageIcon = document.getElementById('settingsPageIcon');
       const pageSub = document.getElementById('settingsPageSubtitle');
       const crumb = document.getElementById('settingsBreadcrumbModule');
-      if (pageTitle) pageTitle.innerText = meta.title;
+      if (pageTitle) pageTitle.textContent = meta.title;
+      if (pageIcon) pageIcon.textContent = meta.icon;
       if (pageSub) pageSub.innerText = meta.subtitle;
       if (crumb) crumb.innerText = meta.breadcrumb;
     }
 
-    // 3. Update active states on Sidebar and Mobile Nav Buttons
+    // 3. Update taskbar navigation state
     document.querySelectorAll('.settings-nav-btn').forEach(btn => {
       const tab = btn.getAttribute('data-settings-tab');
       const isTarget = (tab === sectionId);
-      const indicator = btn.querySelector('.tab-indicator');
-      const isMobile = btn.closest('#settings-mobile-nav');
-      
-      if (isTarget) {
-        if (isMobile) {
-          btn.className = 'settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-white text-slate-900 shadow-xs flex-shrink-0';
-        } else {
-          btn.className = 'settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-extrabold transition flex items-center space-x-3 bg-white text-slate-900 shadow-lg';
-        }
-      } else {
-        if (isMobile) {
-          btn.className = 'settings-nav-btn px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-400 hover:text-white hover:bg-white/10 flex-shrink-0';
-        } else {
-          btn.className = 'settings-nav-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition flex items-center space-x-3 text-slate-400 hover:text-white hover:bg-white/10';
-        }
-      }
+      btn.classList.toggle('is-active', isTarget);
+      if (isTarget) btn.setAttribute('aria-current', 'page');
+      else btn.removeAttribute('aria-current');
     });
 
     // 4. Update URL Hash seamlessly
@@ -1900,29 +1977,43 @@
   // ====================================================================
   // 3. PALETTE SELECTION & PREVIEW RENDERING
   // ====================================================================
+  let themePreviewNightMode = true;
+  let selectedPreviewPaletteKey = 'cyber-emerald';
+
+  function toggleThemePreviewMode() {
+    themePreviewNightMode = !themePreviewNightMode;
+    const toggle = document.getElementById('themePreviewModeToggle');
+    const label = document.getElementById('previewModeLabel');
+    const text = document.getElementById('themePreviewModeText');
+    const icon = document.getElementById('themePreviewModeIcon');
+    if (toggle) {
+      toggle.setAttribute('aria-pressed', String(themePreviewNightMode));
+      toggle.setAttribute(
+        'aria-label',
+        themePreviewNightMode ? 'Turn off night mode for theme preview' : 'Turn on night mode for theme preview'
+      );
+    }
+    if (label) label.textContent = themePreviewNightMode ? 'Night preview' : 'Day preview';
+    if (text) text.textContent = themePreviewNightMode ? 'Night on' : 'Night off';
+    if (icon) icon.textContent = themePreviewNightMode ? 'dark_mode' : 'light_mode';
+    renderPreviewCanvas(selectedPreviewPaletteKey);
+  }
+
   function selectPalette(key) {
+    selectedPreviewPaletteKey = key;
     // 1. Update radio input
     const radio = document.querySelector(`input[name="active_theme_palette"][value="${key}"]`);
     if (radio) radio.checked = true;
 
-    // 2. Update visual card borders, backgrounds and active badges
+    // 2. Update visual card accents and active badges
     document.querySelectorAll('.palette-card').forEach(card => {
       const isMatch = card.dataset.paletteCard === key;
       const activeLabel = card.querySelector('.palette-active-label');
-      if (isMatch) {
-        card.classList.remove('border-slate-200', 'dark:border-brand-border');
-        card.classList.add('border-brand-500', 'bg-brand-50/20', 'dark:bg-brand-900/20', 'ring-2', 'ring-brand-500/30');
-        if (activeLabel) activeLabel.classList.remove('hidden');
-      } else {
-        card.classList.remove(
-          'border-brand-500', 'border-sky-500', 'border-slate-500', 'border-amber-500', 'border-purple-500', 'border-purple-600', 'border-blue-600',
-          'bg-brand-50/20', 'dark:bg-brand-900/20', 'bg-sky-50/20', 'dark:bg-sky-950/20', 'bg-slate-100/50', 'dark:bg-slate-800/40',
-          'bg-amber-50/20', 'dark:bg-amber-950/20', 'bg-purple-50/20', 'dark:bg-purple-950/20', 'bg-blue-50/20',
-          'ring-2', 'ring-brand-500/20', 'ring-brand-500/30', 'ring-sky-500/20', 'ring-slate-500/20', 'ring-amber-500/20', 'ring-purple-500/20', 'ring-blue-500/20'
-        );
-        card.classList.add('border-slate-200', 'dark:border-brand-border');
-        if (activeLabel) activeLabel.classList.add('hidden');
-      }
+      card.classList.toggle('palette-card-active', isMatch);
+      card.classList.toggle('border-slate-200', !isMatch);
+      card.classList.toggle('dark:border-brand-border', !isMatch);
+      card.classList.toggle('hover:border-slate-300', !isMatch);
+      if (activeLabel) activeLabel.classList.toggle('hidden', !isMatch);
     });
 
     // 3. Render preview canvas
@@ -1930,6 +2021,7 @@
   }
 
   function renderPreviewCanvas(key) {
+    selectedPreviewPaletteKey = key;
     let p = PALETTE_DEFINITIONS[key];
     if (key === 'custom' || !p) {
       const bgP = document.getElementById('palette_bg_primary')?.value || '#0b1412';
@@ -1962,57 +2054,78 @@
       if (chipTx) chipTx.style.backgroundColor = txP;
     }
 
+    const previewPalette = themePreviewNightMode ? p : {
+      ...p,
+      bgPrimary: '#f8fafc',
+      bgSurface: '#ffffff',
+      textPrimary: '#0f172a',
+      textMuted: '#475569',
+      borderColor: '#e2e8f0'
+    };
     const box = document.getElementById('liveThemePreviewBox');
     if (!box) return;
 
-    box.style.backgroundColor = p.bgPrimary;
-    box.style.borderColor = p.borderColor;
+    box.style.backgroundColor = previewPalette.bgPrimary;
+    box.style.borderColor = previewPalette.borderColor;
 
     const badge = document.getElementById('previewPaletteNameBadge');
     if (badge) badge.innerText = p.name;
 
+    const previewHeader = box.querySelector('.preview-header');
+    if (previewHeader) previewHeader.style.borderColor = previewPalette.borderColor;
+    const nav = document.getElementById('prevNav');
+    if (nav) nav.style.color = previewPalette.textMuted;
+
     const brandIcon = document.getElementById('prevBrandIcon');
-    if (brandIcon) brandIcon.style.backgroundColor = p.accentPrimary;
+    if (brandIcon) brandIcon.style.backgroundColor = previewPalette.accentPrimary;
 
     const brandAccent = document.getElementById('prevBrandAccent');
-    if (brandAccent) brandAccent.style.color = p.accentPrimary;
+    if (brandAccent) brandAccent.style.color = previewPalette.accentPrimary;
 
     const brandName = document.getElementById('prevBrandName');
-    if (brandName) brandName.style.color = p.textPrimary;
+    if (brandName) brandName.style.color = previewPalette.textPrimary;
 
     const navLink = document.getElementById('prevNavLink');
-    if (navLink) navLink.style.color = p.accentPrimary;
+    if (navLink) navLink.style.color = previewPalette.accentPrimary;
 
     const subCard = document.getElementById('prevSubCard');
     if (subCard) {
-      subCard.style.backgroundColor = p.bgSurface;
-      subCard.style.borderColor = p.borderColor;
+      subCard.style.backgroundColor = previewPalette.bgSurface;
+      subCard.style.borderColor = previewPalette.borderColor;
     }
 
     const pillTag = document.getElementById('prevPillTag');
     if (pillTag) {
-      pillTag.style.backgroundColor = p.accentPrimary + '26';
-      pillTag.style.color = p.accentPrimary;
-      pillTag.style.borderColor = p.accentPrimary + '4d';
+      pillTag.style.backgroundColor = previewPalette.accentPrimary + '26';
+      pillTag.style.color = previewPalette.accentPrimary;
+      pillTag.style.borderColor = previewPalette.accentPrimary + '4d';
     }
 
+    const metaText = document.getElementById('prevMetaText');
+    if (metaText) metaText.style.color = previewPalette.textMuted;
     const title = document.getElementById('prevTitle');
-    if (title) title.style.color = p.textPrimary;
+    if (title) title.style.color = previewPalette.textPrimary;
 
     const titleAccent = document.getElementById('prevTitleAccent');
-    if (titleAccent) titleAccent.style.color = p.accentPrimary;
+    if (titleAccent) titleAccent.style.color = previewPalette.accentPrimary;
 
     const desc = document.getElementById('prevDesc');
-    if (desc) desc.style.color = p.textMuted;
+    if (desc) desc.style.color = previewPalette.textMuted;
 
     const btnPrimary = document.getElementById('prevBtnPrimary');
-    if (btnPrimary) btnPrimary.style.backgroundColor = p.accentPrimary;
+    if (btnPrimary) btnPrimary.style.backgroundColor = previewPalette.accentPrimary;
 
     const btnSecondary = document.getElementById('prevBtnSecondary');
     if (btnSecondary) {
-      btnSecondary.style.color = p.accentSecondary;
-      btnSecondary.style.borderColor = p.accentSecondary + '66';
+      btnSecondary.style.color = previewPalette.accentSecondary;
+      btnSecondary.style.borderColor = previewPalette.accentSecondary + '66';
     }
+
+    box.querySelectorAll('.preview-swatch').forEach(swatch => {
+      swatch.style.backgroundColor = themePreviewNightMode ? 'rgba(0, 0, 0, 0.4)' : '#f1f5f9';
+      swatch.style.color = themePreviewNightMode ? '#cbd5e1' : '#334155';
+      swatch.style.borderColor = themePreviewNightMode ? 'rgba(255, 255, 255, 0.05)' : '#e2e8f0';
+    });
 
     // Update Swatch text
     const sBg = document.getElementById('swatchBgText');
@@ -2411,6 +2524,9 @@
           body: JSON.stringify(data)
         });
         const result = await res.json();
+        if (!res.ok || !result.success) {
+          throw new Error(result.error || 'Unable to save settings.');
+        }
         const moduleName = form.dataset.module || 'Settings';
         showToast(`✅ ${moduleName} saved and applied live!`);
 
@@ -2419,8 +2535,7 @@
           reloadHomepagePreview();
         }
       } catch (err) {
-        // Fallback to standard submit if AJAX fetch fails
-        form.submit();
+        showToast(err.message || 'Unable to save settings.', true);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -2430,11 +2545,13 @@
     });
   });
 
-  function showToast(message) {
+  function showToast(message, isError = false) {
     const toast = document.getElementById('settingsToast');
     const msg = document.getElementById('settingsToastMsg');
     if (!toast || !msg) return;
     msg.innerText = message;
+    toast.classList.toggle('bg-red-600', isError);
+    toast.classList.toggle('bg-emerald-600', !isError);
     toast.classList.remove('hidden');
     clearTimeout(window._toastTimeout);
     window._toastTimeout = setTimeout(() => {

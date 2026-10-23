@@ -110,30 +110,202 @@ if [ -f "prisma/dev.db" ]; then
 fi
 
 if [ "$MODE" = "clean" ]; then
-  echo -e "\n${CLR_YELLOW}🧹 [Clean Mode] Removing old node_modules & lockfile...${CLR_RESET}"
-  rm -rf node_modules package-lock.json
+  echo -e "\n${CLR_YELLOW}🧹 [Clean Mode] Removing old node_modules while preserving the lockfile...${CLR_RESET}"
+  rm -rf node_modules
 fi
 
 # Step 3: Install Dependencies
 echo -e "\n${CLR_BLUE}📦 [Step 3/6] Installing Production Node Packages...${CLR_RESET}"
-if [ "$MODE" = "clean" ]; then
-  npm install --omit=dev
+if [ -z "$NPM_BIN" ]; then
+  echo -e "${CLR_RED}❌ Error: npm was not found in PATH.${CLR_RESET}"
+  exit 1
+fi
+
+# Ensure prisma/schema.prisma exists so postinstall (prisma generate) never fails
+mkdir -p prisma
+if [ ! -f "prisma/schema.prisma" ]; then
+  echo -e "${CLR_YELLOW}⚠️  prisma/schema.prisma missing; creating minimal schema for postinstall...${CLR_RESET}"
+  cat << 'EOF' > prisma/schema.prisma
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Post {
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  category        String    @default("Embedded Electronics")
+  tags            String    @default("embedded,firmware,hardware")
+  summary         String
+  contentMarkdown String
+  contentHtml     String
+  coverImage      String?
+  author          String    @default("Embedded India Team")
+  status          String    @default("published")
+  scheduledAt     DateTime?
+  publishedAt     DateTime? @default(now())
+  views           Int       @default(0)
+  readingTime     Int       @default(3)
+  seoTitle        String?
+  seoDescription  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Inquiry {
+  id              String   @id @default(uuid())
+  name            String
+  email           String
+  phone           String?
+  subject         String
+  serviceCategory String   @default("General")
+  message         String
+  status          String   @default("new")
+  ipAddress       String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Subscriber {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  status         String    @default("pending")
+  verifyToken    String?   @unique
+  verifiedAt     DateTime?
+  leadMagnetSent Boolean   @default(false)
+  source         String    @default("website")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Analytics {
+  id        String   @id @default(uuid())
+  path      String
+  referrer  String?
+  userAgent String?
+  ipHash    String?
+  timestamp DateTime @default(now())
+}
+
+model CalculatorStat {
+  id             String   @id @default(uuid())
+  toolName       String   @unique
+  executionCount Int      @default(0)
+  updatedAt      DateTime @updatedAt
+}
+
+model Project {
+  id                  String   @id @default(uuid())
+  title               String
+  slug                String   @unique
+  category            String   @default("Automotive")
+  industry            String   @default("Automotive Electronics")
+  client              String   @default("Tier-1 Automotive OEM")
+  summary             String
+  descriptionMarkdown String
+  descriptionHtml     String
+  coverImage          String?
+  gallery             String?
+  videoUrl            String?
+  techStack           String   @default("STM32, FreeRTOS, CAN-FD")
+  specs               String?
+  metrics             String?
+  featured            Boolean  @default(false)
+  order               Int      @default(0)
+  status              String   @default("completed")
+  liveUrl             String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+EOF
+fi
+
+DEPENDENCY_HASH="$("$NODE_BIN" -e '
+  const fs = require("fs");
+  const crypto = require("crypto");
+  const hash = crypto.createHash("sha256");
+  for (const file of process.argv.slice(1)) {
+    hash.update(file);
+    hash.update(fs.readFileSync(file));
+  }
+  process.stdout.write(hash.digest("hex"));
+' package.json package-lock.json)"
+DEPENDENCY_HASH_FILE="node_modules/.deploy-dependencies.sha256"
+
+if [ "$MODE" = "clean" ] || [ ! -d "node_modules" ] || [ ! -f "$DEPENDENCY_HASH_FILE" ] || [ "$(cat "$DEPENDENCY_HASH_FILE")" != "$DEPENDENCY_HASH" ]; then
+  echo -e "Dependency manifest changed or install cache missing; installing production packages..."
+  "$NPM_BIN" install --omit=dev --no-audit --no-fund --prefer-offline
+  printf '%s\n' "$DEPENDENCY_HASH" > "$DEPENDENCY_HASH_FILE"
 else
-  npm install --omit=dev --no-audit --no-fund
+  echo -e "${CLR_GREEN}✅ Dependencies unchanged; skipping npm install.${CLR_RESET}"
 fi
 echo -e "${CLR_GREEN}✅ NPM packages verified.${CLR_RESET}"
 
-# Step 4: Database Schema Initialization & Seeding
+# Step 4: Database Schema Initialization & Initial Seeding
 echo -e "\n${CLR_BLUE}⚙️  [Step 4/6] Initializing Database & Case Studies...${CLR_RESET}"
 
-# Compile Prisma client if binary engine can be generated
-npx prisma generate || true
+DATABASE_ALREADY_INITIALIZED=0
+if [ -s "prisma/dev.db" ]; then
+  # Test if dev.db is readable and not corrupt using quick_check
+  DB_CHECK="$("$NODE_BIN" -e '
+    try {
+      const Database = require("better-sqlite3");
+      const db = new Database("prisma/dev.db");
+      const r = db.pragma("quick_check");
+      if (r && r[0] && r[0].quick_check === "ok") {
+        process.stdout.write("ok");
+      } else {
+        process.stdout.write("corrupt");
+      }
+    } catch (e) {
+      process.stdout.write("corrupt");
+    }
+  ' 2>/dev/null || echo "corrupt")"
+
+  if [ "$DB_CHECK" = "ok" ]; then
+    DATABASE_ALREADY_INITIALIZED=1
+  else
+    echo -e "${CLR_YELLOW}⚠️  Detected corrupted or malformed database file. Auto-recovering...${CLR_RESET}"
+    TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
+    cp prisma/dev.db "prisma/dev.db.corrupt_${TIMESTAMP}" 2>/dev/null || true
+    rm -f prisma/dev.db prisma/dev.db-wal prisma/dev.db-shm prisma/dev.db-journal
+    DATABASE_ALREADY_INITIALIZED=0
+  fi
+fi
 
 # Initialize all database tables with native better-sqlite3 (Zero Network Failure)
 node scripts/init-db.js
 
-# Ensure initial default admin, case studies, blogs, and settings are seeded safely
-node scripts/seed-sqlite.js
+if [ "$DATABASE_ALREADY_INITIALIZED" -eq 0 ]; then
+  echo -e "Database is new or recovered; seeding initial admin credentials and site content..."
+  node scripts/seed-sqlite.js
+else
+  echo -e "${CLR_GREEN}✅ Existing database detected; skipping initial seed.${CLR_RESET}"
+fi
 
 # Compile Tailwind CSS if stylesheet is missing
 if [ ! -f "public/css/style.css" ] || [ ! -s "public/css/style.css" ] || [ "$MODE" = "clean" ]; then
