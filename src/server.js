@@ -19,6 +19,7 @@ const seoRoutes = require('./routes/seo');
 const apiRoutes = require('./routes/api');
 const toolsRoutes = require('./routes/tools');
 const blogsRoutes = require('./routes/blogs');
+const projectsRoutes = require('./routes/projects');
 const adminRoutes = require('./routes/admin');
 const servicesData = require('./data/servicesData');
 
@@ -202,12 +203,8 @@ app.get('/about', (req, res) => {
   res.render('pages/about');
 });
 
-// 4. Projects Page
-app.get('/projects', (req, res) => {
-  res.locals.seo.title = 'Projects - Embedded India';
-  res.locals.seo.description = 'Explore our portfolio of industrial embedded systems: Bus AC Controllers, Smart Water Dispensers, and IoT gateways.';
-  res.render('pages/projects');
-});
+// 4. Projects Hub & Case Studies
+app.use('/projects', projectsRoutes);
 
 // 5. Contact Page
 app.get('/contact', (req, res) => {

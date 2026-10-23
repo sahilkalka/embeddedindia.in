@@ -91,7 +91,34 @@ CREATE TABLE IF NOT EXISTS CalculatorStat (
   executionCount INTEGER DEFAULT 0,
   updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS Project (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  category TEXT DEFAULT 'Automotive',
+  industry TEXT DEFAULT 'Automotive HVAC',
+  summary TEXT NOT NULL,
+  client TEXT DEFAULT 'Tier-1 Automotive OEM',
+  descriptionMarkdown TEXT NOT NULL,
+  descriptionHtml TEXT NOT NULL,
+  coverImage TEXT,
+  gallery TEXT,
+  videoUrl TEXT,
+  techStack TEXT DEFAULT 'STM32, FreeRTOS, CAN-FD, Altium Designer',
+  specs TEXT,
+  metrics TEXT,
+  featured INTEGER DEFAULT 0,
+  \`order\` INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'completed',
+  liveUrl TEXT,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 `);
 
 console.log('Database initialized at:', dbPath);
+if (require.main === module) {
+  try { db.close(); } catch (e) {}
+}
 module.exports = db;

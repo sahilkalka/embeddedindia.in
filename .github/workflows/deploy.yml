@@ -1,0 +1,23 @@
+name: Auto-Deploy to cPanel
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull & Restart on cPanel via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.CPANEL_HOST }}
+          username: ${{ secrets.CPANEL_USER }}
+          key: ${{ secrets.CPANEL_SSH_KEY }}
+          port: ${{ secrets.CPANEL_PORT || 22 }}
+          script: |
+            cd /home/jiazxebj/embeddedindia.in
+            git fetch origin main
+            git reset --hard origin/main
+            uapi VersionControlDeployment create repository_root=/home/jiazxebj/embeddedindia.in
+            bash ./server-deploy.sh update

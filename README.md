@@ -1,94 +1,109 @@
-# Embedded India - Web Portal & Engineering Hub
+# Embedded India — Turnkey Embedded Hardware & Firmware Engineering Portal
 
-A complete, production-ready full-stack Node.js web application cloning and expanding [https://embeddedindia.in/](https://embeddedindia.in/) (strictly focused on the main domain). It replicates the official design, layout, typography (Roboto & Roboto Slab), and color palette (Emerald Green `#007f5f`, Leaf Green `#55a630`, Dark Slate `#192c27`) while enhancing the platform with interactive engineering calculators, an automated technical blog engine with code syntax highlighting, double opt-in lead magnets, automated SEO & sitemaps, and a comprehensive authenticated admin management dashboard.
+[![Node.js CI](https://img.shields.io/badge/Node.js-20.x%20LTS-green.svg)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/Database-SQLite%20(better--sqlite3)-blue.svg)](https://github.com/WiseLibs/better-sqlite3)
+[![Deployment](https://img.shields.io/badge/Deployment-cPanel%20%7C%20GitHub%20Actions-orange.svg)](https://github.com/)
+[![Tests](https://img.shields.io/badge/Tests-36%2F36%20Passing-brightgreen.svg)](tests/)
 
----
-
-## Key Features & Architecture
-
-```
-                    ┌───────────────────────────────────────────────┐
-                    │               Client Browser                  │
-                    │   (Responsive, Dark/Light Mode, Tailwind)     │
-                    └──────┬───────────────┬───────────────┬────────┘
-                           │               │               │
-                     Public Pages      /tools (Eng)    /admin CMS
-                           │               │               │
-    ┌──────────────────────▼───────────────▼───────────────▼────────┐
-    │                    Node.js + Express.js Core                  │
-    │  - Helmet & CORS Security       - Rate Limiting (express-lim) │
-    │  - Session / JWT Auth           - Dynamic Sitemap & Robots    │
-    │  - EJS View Engine + Tailwind   - Dynamic OG Social Images    │
-    └──────────────┬───────────────────────────────┬────────────────┘
-                   │                               │
-       ┌───────────▼───────────┐       ┌───────────▼───────────┐
-       │   Prisma ORM Database │       │ Background Cron Tasks │
-       │  (Users, Posts, Leads,│       │  - Auto-Publish Blog  │
-       │   Inquiries, Settings)│       │  - Weekly News Digest │
-       └───────────────────────┘       └───────────────────────┘
-```
-
-### 1. 100% Asset Localization (Zero External Dependencies)
-All SVGs (`download-2.svg` through `download-9-1.svg`, `mission1.svg` through `mission3.svg`, `contact-us.svg`), animations (`arrow.gif`, `puzzle.gif`, `coins.gif`), and the brand logo are downloaded directly from `embeddedindia.in` and served locally from `/public/assets/images/`.
-
-### 2. Global Light & Dark Theme Toggle
-Seamless dark and light theme toggle respecting system preferences (`prefers-color-scheme`) by default and persisting user preference in `localStorage`. Customized high-tech dark mode palette (`#0d1715`, `#182c27`, `#27443d`) with subtle circuit board grid textures.
-
-### 3. Contact Us Page & 3-Layer Anti-Spam Protection
-- **Layer 1: Hidden Honeypot Input:** Traps automated bot crawlers filling `website_url_trap` without alarming legitimate users.
-- **Layer 2: Server-Side Rate Limiter:** IP-based throttling limiting form submissions to 5 requests per 15 minutes.
-- **Layer 3: Automated Admin Notifications:** Dispatches branded alert emails directly to `info@embeddedindia.in` with full inquiry specifications.
-
-### 4. Dynamic Technical Blog Engine
-- Focuses on Embedded Electronics, Guides, Troubleshooting, and Industry Info.
-- Markdown rendering with syntax highlighting (`highlight.js`) for **C/C++, Python, Rust, Verilog, and Assembly**.
-- Filter by category, tags, and full-text keyword search.
-- Pre-populated with official articles from Embedded India (*Bridging the Divide*, *Hardware-in-the-Loop HIL*, *PCB Obsolescence*, *Securing the Boot Chain*, *The Edge Advantage*, *High-Speed PCB Layout Guidelines*).
-- Native mid-article promotional banners with UTM parameter tracking.
-
-### 5. Interactive Engineering Calculators (`/tools`)
-Client-side interactive calculators with immediate mathematical computation and dynamic diagrams:
-1. **IPC-2221 PCB Trace Width Calculator:** Calculates required width (mils & mm), resistance, voltage drop, and power loss for internal and external copper layers across copper weights (0.5 oz, 1 oz, 2 oz, 3 oz). Features an SVG cross-sectional profile.
-2. **555 Timer Circuit Calculator:** Astable and Monostable modes; calculates frequency ($f$), duty cycle ($D$), $T_{\text{high}}$, and $T_{\text{low}}$ times with live animated square waveform rendering and NE555 DIP-8 pinout diagram.
-3. **LED Series Resistor & Ohm's Law Calculator:** Calculates exact resistance, selects closest commercial E12/E24 resistor values, and recommends safety wattage ratings (1/8W, 1/4W, 1/2W, 1W) with 2x derating.
-4. **UART Baud Rate & Clock Error Calculator:** Computes MCU reload registers (STM32 BRR, AVR UBRR, 8051 TH1) and determines framing error percentage with color-coded safety classifications.
-5. **SMD Resistor Code Decoder:** Decodes 3-digit, 4-digit, and EIA-96 precision surface-mount resistor codes into ohms, tolerance, and multipliers.
-6. **IoT Battery Life Estimator:** Computes operating lifetime in days and years for wireless nodes based on sleep current, active transmit spikes, and duty cycles.
-7. **Microstrip Impedance (Zo) Calculator:** Calculates characteristic 50-ohm and 90-ohm transmission line geometries for high-speed digital and RF traces.
-8. **Interactive MCU Pinout Guide:** Reference cheat sheets for ESP32, STM32 Blue Pill, and Raspberry Pi Pico RP2040.
-- Each calculator features a native CTA banner: *"Need custom PCB or Firmware Design? Request an Engineering Consultation"*.
-
-### 6. Newsletter & Double Opt-in Lead Magnet
-- Lead capture boxes placed across the footer, blog sidebar, and calculator results: *"Subscribe for Daily Embedded Tips & Free PCB Design Checklist"*.
-- Secure double opt-in verification token workflow.
-- Automatically generates and delivers the branded PDF lead magnet (*The 2026 Embedded Hardware & Firmware Design Checklist*) hosted locally at `/public/downloads/embedded-design-checklist.pdf`.
-- Weekly newsletter digest cron job compiling newly published technical articles every Monday at 9:00 AM IST with a one-click unsubscribe mechanism.
-
-### 7. Automated SEO, Sitemaps & Dynamic OG Images
-- **Dynamic XML Sitemap (`/sitemap.xml`):** Programmatically generated with `<lastmod>`, `<changefreq>`, and `<priority>` for all static pages, tools, and blog articles. Cached with invalidation.
-- **Dynamic `robots.txt` (`/robots.txt`):** Allows public crawler indexing while disallowing `/admin/`, `/api/`, and `/auth/`.
-- **Dynamic OpenGraph Images (`/api/og`):** Auto-generates branded 1200x630 social sharing preview SVG cards containing the article title and brand badge.
-- **Schema.org Structured Data:** Injects `Organization` schema on the homepage, `Article` schema on blog posts, and `WebApplication` schema on calculator pages.
-
-### 8. Comprehensive Admin Management Dashboard (`/admin`)
-- Protected by secure session/JWT authentication and bcrypt password hashing.
-- **Analytics & KPIs:** Real-time metrics for total page views, inquiry volume, active subscribers, and popular calculator runs.
-- **Inquiry Manager:** Filter inquiries by status (*New, In Progress, Resolved*), view messages, reply via email, or delete entries.
-- **Subscriber & Lead Management:** View all subscribers, export email list to CSV, and track delivery of the lead magnet PDF.
-- **Blog CMS:** Create, edit, and schedule articles with live SEO score analyzer (checking title length, meta summary, subheadings, and code snippets) and an AI Technical Draft outline generator.
-- **Site Configuration:** Configure company contact information, Google AdSense keys, Meta pixels, and native internal promotional banner copy directly from the dashboard.
+A modern, tactile, and live B2B embedded engineering platform for **Embedded India** ([https://embeddedindia.in/](https://embeddedindia.in/)). Built with high-performance Node.js, Express, Tailwind CSS with spring physics, SQLite persistence, dynamic project case studies, an offline-capable technical AI Copilot, no-code live site customization, and an automated GitHub Actions CI/CD deployment pipeline to cPanel.
 
 ---
 
-## Quick Start & Installation
+## 🌟 Key Features & Architecture
+
+```mermaid
+flowchart TD
+  subgraph Public ["Public B2B Engineering Portal"]
+    A["Interactive Circuit Canvas & Ambient Hero"] --> B["Live Lab Telemetry Banner"]
+    B --> C["Smart Cost & Turnaround Estimator"]
+    C --> D["Filterable Projects Portfolio (/projects)"]
+    D --> E["Deep-Dive Technical Case Studies (/projects/:slug)"]
+    E --> F["Ask EI Copilot Floating AI Widget"]
+    G["8 Engineering Calculators (/tools)"]
+    H["Technical Blog Engine (/blogs)"]
+  end
+
+  subgraph Admin ["Admin Command Center (/admin)"]
+    I["Dashboard Metrics & KPIs"] --> J["Projects CRUD & AI Drafting Studio"]
+    J --> K["Live No-Code Site Customizer"]
+    K --> L["6-Theme Unified Palette & Spring Studio"]
+    L --> M["AI Technical Article Engine"]
+    N["Inquiry & Anti-Spam Management"]
+  end
+
+  subgraph Deploy ["Continuous Deployment (CI/CD)"]
+    O["git push origin main"] --> P[".github/workflows/deploy.yml"]
+    P --> Q["SSH to cPanel Host"]
+    Q --> R["./server-deploy.sh update"]
+    R --> S["Phusion Passenger Live Reload"]
+  end
+```
+
+### 1. Modern, Bouncy & "Live" Aesthetics
+- **Tactile Spring Physics**: Custom spring cubic-bezier curve (`cubic-bezier(0.34, 1.56, 0.64, 1)`) applied across cards, buttons, and navigation pills with responsive press animations (`scale(0.96)`).
+- **60 FPS Circuit Canvas**: Interactive particle and trace mesh that illuminates and connects under the user's cursor.
+- **Real-Time Lab Telemetry Ticker**: High-contrast status banner broadcasting active Bangalore lab metrics (SMT lines 1–4 status, HIL automated loopback pass rates, first-pass yield, and average turnaround).
+- **Interactive Project Estimator**: Instant turnaround, budget, and engineering team estimator on the homepage responding live to project phase, complexity, and compliance requirements.
+
+### 2. 6 Unified Theme Palettes
+Unified the theme engine across the public navigation and admin studio:
+1. **Cyber Emerald** (`#0b1412`, `#059669`) — High-contrast default B2B hardware aesthetic.
+2. **Quantum Cyan** (`#08101a`, `#0ea5e9`) — Silicon & quantum computing aesthetic.
+3. **Titanium Slate** (`#090d16`, `#38bdf8`) — Precision automotive & avionics style.
+4. **Solar Amber** (`#18181b`, `#f59e0b`) — Industrial IIoT and factory automation theme.
+5. **Supernova Violet** (`#0f0c1b`, `#a855f7`) — Deep space, radar, and RF systems.
+6. **Clean Enterprise** (`#f8fafc`, `#2563eb`) — Ultra-clean crisp light mode for enterprise reviews.
+
+### 3. Dynamic Projects Portfolio & Case Studies
+- **Filterable Catalog (`/projects`)**: Browse projects by domain (Automotive, CleanTech, Industrial IoT, Edge AI) with live search and bouncy category pills.
+- **Deep-Dive Case Studies (`/projects/:slug`)**: Production case studies featuring technical specifications matrices, hardware architecture breakdowns, measurable engineering metrics, and instant RFQ prefill CTAs.
+- **Pre-Seeded Showcase Studies**:
+  - `bus-ac-controller`: Dual STM32 CAN-FD Automotive Climate Controller.
+  - `smart-water-dispenser`: CleanTech IoT Cloud Dispenser with Telemetry & Ultrasonic Sensing.
+  - `industrial-lorawan-gateway`: Solar-Powered Edge Gateway with SX1302 and RS485 Modbus.
+  - `tinyml-vibration-sensor`: RP2040 Edge AI Predictive Maintenance Vibration Node.
+
+### 4. "Ask EI Copilot" Floating AI Assistant
+- **Bouncy Floating Drawer**: Persistent bottom-right drawer with quick prompt chips (Trace Width, MCU Selection, HIL Testing, Turnkey RFQ).
+- **Embedded Domain Knowledge Engine**: Offline intelligence answering IPC-2221 PCB trace width calculations, MCU trade-offs (nRF52 vs ESP32 vs STM32), RTOS scheduling, and CAN-FD topologies.
+- **Seamless Cloud LLM Fallback**: Easily connects to NVIDIA NIM, Google Gemini, OpenAI, or Ollama when configured in Admin settings.
+- **1-Click RFQ Prefill**: Formats technical project briefs directly into `/contact` form queries.
+
+### 5. Upgraded Admin Dashboard (`/admin`)
+- **Executive Command Center**: Live KPI counters for total projects, featured studies, page views, inquiries, and newsletter subscribers.
+- **Projects CRUD Manager**: Create, edit, re-order, feature toggle, and delete case studies.
+- **AI Case Study Generator**: 1-click tool that converts raw engineering notes into formatted technical Markdown case studies.
+- **AI SEO Optimizer**: Generates high-CTR meta titles, descriptions, and keywords for projects and articles.
+- **Live No-Code Site Customizer (`/admin/customizer`)**: Edit hero copy, typewriter phrases, live lab status text, and toggle individual homepage sections on/off without touching code.
+- **Theme & Spring Studio (`/admin/settings`)**: Interactive palette switcher, custom CSS hex injector, and micro-interaction bounce intensity controller (`Modern Bouncy`, `Subtle Smooth`, `Minimalist`).
+
+### 6. Interactive Engineering Calculators (`/tools`)
+Client-side interactive engineering tools with dynamic calculation and SVG diagrams:
+1. **IPC-2221 PCB Trace Width Calculator**: Mils, mm, resistance, voltage drop, and power loss for internal and external layers across copper weights (0.5 oz to 3 oz).
+2. **555 Timer Simulator**: Astable and Monostable modes with live animated square waveforms and NE555 pinout diagrams.
+3. **LED Series Resistor Calculator**: Computes resistance, selects closest commercial E12/E24 values, and recommends safety wattage ratings with 2x derating.
+4. **UART Baud Rate & Clock Error Calculator**: Computes MCU reload registers (STM32 BRR, AVR UBRR, 8051 TH1) and determines framing error percentage.
+5. **SMD Resistor Code Decoder**: Decodes 3-digit, 4-digit, and EIA-96 precision surface-mount resistor codes.
+6. **IoT Battery Life Estimator**: Calculates operating lifetime in days and years for wireless nodes based on sleep current and active transmit spikes.
+7. **Microstrip Impedance (Zo) Calculator**: Computes 50-ohm and 90-ohm transmission line geometries for high-speed traces.
+8. **Interactive MCU Pinout Guide**: Pinout cheat sheets for ESP32, STM32 Blue Pill, and Raspberry Pi Pico RP2040.
+
+### 7. Security & Anti-Spam Architecture
+- **3-Layer Anti-Spam Protection**: Silent honeypot input (`website_url_trap`), IP rate limiting, and input sanitization against XSS.
+- **HTTP Hardening**: Strict Content Security Policy (`frame-ancestors 'none'`), `X-Content-Type-Options: nosniff`, and HSTS headers.
+- **100% Asset Localization**: All SVGs, animations, and typography are bundled locally with zero CDN external script dependencies.
+
+---
+
+## 🚀 Quick Start & Local Setup
 
 ### Prerequisites
-- Node.js >= 18.x (tested on v24)
+- Node.js >= 18.x (tested on v20 and v22 LTS)
 - npm >= 9.x
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone <repo-url>
+git clone https://github.com/your-org/embeddedindia.in.git
 cd embeddedindia.in
 npm install
 ```
@@ -97,17 +112,11 @@ npm install
 ```bash
 npm run db:init
 ```
-*This synchronizes the Prisma schema with SQLite (`dev.db`), seeds the default admin user, creates the 6 official Embedded India technical articles, initializes default site settings, and generates the lead magnet PDF.*
+*Creates the SQLite tables with `better-sqlite3`, seeds default admin credentials, 4 case studies, technical blog articles, and customizer settings.*
 
-### 3. Localize Static Assets
+### 3. Build Styles & Start Development Server
 ```bash
-npm run localize-assets
-```
-*Downloads all SVGs, logos, animations, and icons from `https://embeddedindia.in/` into `/public/assets/images/`.*
-
-### 4. Build Styles & Start Server
-```bash
-# Compile Tailwind CSS
+# Build Tailwind CSS
 npm run build:css
 
 # Start Application
@@ -115,7 +124,8 @@ npm start
 ```
 
 Open your browser at:
-- **Public Website:** `http://localhost:3000`
+- **Public Portal:** `http://localhost:3000`
+- **Projects Portfolio:** `http://localhost:3000/projects`
 - **Engineering Tools:** `http://localhost:3000/tools`
 - **Technical Blog:** `http://localhost:3000/blogs`
 - **Admin Dashboard:** `http://localhost:3000/admin`
@@ -123,10 +133,10 @@ Open your browser at:
 
 ---
 
-## Default Admin Credentials
+## 🔒 Default Admin Credentials
 
 | Parameter | Value |
-|---|---|
+| :--- | :--- |
 | **Admin Login URL** | `http://localhost:3000/admin/login` |
 | **Email** | `admin@embeddedindia.in` |
 | **Default Password** | `AdminEmbedded@2026!` |
@@ -135,17 +145,26 @@ Open your browser at:
 
 ---
 
-## Automated Tests
+## 🔄 Automated CI/CD & cPanel Deployment
 
-Run the comprehensive Jest test suite:
+This repository is linked to the live production server at `embeddedindia.in`:
+- Pushing to the `main` branch triggers [`.github/workflows/deploy.yml`](file:///.github/workflows/deploy.yml).
+- The action pulls changes via SSH, registers the commit in cPanel Version Control, runs `./server-deploy.sh update`, and triggers an instant Phusion Passenger reload (`tmp/restart.txt`).
+- For complete setup instructions and required GitHub secrets, see [DEPLOYMENT_CPANEL_GUIDE.md](file:///DEPLOYMENT_CPANEL_GUIDE.md).
+
+---
+
+## 🧪 Automated Test Suite
+
+Run the full automated test suite:
 ```bash
 npm test
 ```
-The test suite validates:
-- Public pages and branding replication
-- Engineering calculators HTTP endpoints
+The Jest suite validates:
+- Core public pages, services, and branding integrity
+- Engineering calculator endpoints
 - Technical blog slug routing and code highlighting
 - XML Sitemap and Robots.txt compliance
-- Anti-spam honeypot trapping and inquiry storage
+- Anti-spam honeypot trapping and XSS sanitization
 - Newsletter double opt-in registration
 - Admin login, bcrypt verification, and session authentication

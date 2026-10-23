@@ -12,7 +12,7 @@
     "dev": "nodemon src/server.js",
     "build:css": "tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify",
     "watch:css": "tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --watch",
-    "db:init": "prisma generate && prisma db push && node prisma/seed.js",
+    "db:init": "node scripts/init-db.js && node scripts/seed-sqlite.js",
     "localize-assets": "node scripts/localize-assets.js",
     "generate-lead-magnet": "node scripts/generate-lead-magnet.js",
     "pack": "node scripts/pack-bundle.js",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^13.0.3",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

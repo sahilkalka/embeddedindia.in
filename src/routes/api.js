@@ -6,6 +6,7 @@ const { JSDOM } = require('jsdom');
 const DOMPurify = require('dompurify');
 const prisma = require('../services/db');
 const mailer = require('../services/mailer');
+const aiCopilot = require('../services/aiCopilot');
 const { contactLimiter, newsletterLimiter } = require('../middleware/rateLimiter');
 
 const window = new JSDOM('').window;
@@ -24,7 +25,6 @@ const handleContact = async (req, res) => {
     // Layer 1: Honeypot trap check
     if (website_url_trap && String(website_url_trap).trim() !== '') {
       console.warn(`[SPAM DETECTED] Honeypot triggered by IP: ${req.ip}`);
-      // Pretend success so bot doesn't retry
       return res.json({ success: true, message: 'Thank you for your inquiry! Our engineering team will review it shortly.' });
     }
 
@@ -58,125 +58,119 @@ const handleContact = async (req, res) => {
         email: cleanEmail.slice(0, 150),
         phone: cleanPhone ? cleanPhone.slice(0, 30) : null,
         subject: cleanSubject.slice(0, 200),
-        serviceCategory: cleanServiceCategory.slice(0, 50),
-        message: formattedMessage.slice(0, 5000),
-        ipAddress: req.ip
+        serviceCategory: cleanServiceCategory,
+        message: formattedMessage,
+        ipAddress: req.ip || req.connection.remoteAddress
       }
     });
 
-    // Layer 3: Send immediate admin notification email to info@embeddedindia.in
-    mailer.sendInquiryNotification({
-      ...inquiry,
-      company: cleanCompany
-    }).catch(err => {
-      console.error('[MAILER ERROR] Failed to send admin inquiry notification:', err.message);
+    console.log(`[INQUIRY RECORDED] ID: ${inquiry.id} from ${cleanEmail}`);
+
+    // Layer 2: Send Email Notifications via Non-Blocking Async Mailer
+    mailer.sendInquiryNotification(inquiry).catch(err => {
+      console.error('[MAILER ASYNC INQUIRY ERROR]', err.message);
     });
 
     return res.json({
       success: true,
-      message: 'Thank you for reaching out! An Embedded India systems engineer will contact you within 24 hours.'
+      message: 'Thank you for contacting Embedded India! Our principal engineering team has received your project inquiry and will respond within 24 business hours.'
     });
+
   } catch (err) {
     console.error('[CONTACT API ERROR]', err);
-    return res.status(500).json({ success: false, message: 'An internal error occurred. Please try again or email info@embeddedindia.in directly.' });
+    return res.status(500).json({
+      success: false,
+      message: 'An unexpected internal error occurred. Please email info@embeddedindia.in directly.'
+    });
   }
 };
 
 router.post('/contact', contactLimiter, handleContact);
 
-// POST /api/newsletter & POST /api/newsletter/subscribe - Double Opt-in Newsletter Signup
-const handleNewsletterSubscribe = async (req, res) => {
+// POST /api/newsletter/subscribe
+router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
   try {
-    const { email, source, honeypot } = req.body;
+    const { email, honeypot, source } = req.body;
 
-    // Honeypot trap
     if (honeypot && String(honeypot).trim() !== '') {
-      return res.json({ success: true, message: 'Subscription request received.' });
+      return res.json({ success: true, message: 'Check your email to confirm your subscription!' });
     }
 
-    const emailClean = sanitizeText(email).toLowerCase();
-    if (!emailClean) {
-      return res.status(400).json({ success: false, message: 'Please provide an email address.' });
+    const cleanEmail = sanitizeText(email).toLowerCase();
+    const cleanSource = sanitizeText(source || 'website');
+
+    if (!cleanEmail) {
+      return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailClean)) {
-      return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json({ success: false, message: 'Please enter a valid email address format.' });
     }
 
     const verifyToken = crypto.randomBytes(32).toString('hex');
 
-    // Check if subscriber already exists
     const existing = await prisma.subscriber.findUnique({
-      where: { email: emailClean }
+      where: { email: cleanEmail }
     });
 
-    if (existing && existing.status === 'active') {
-      return res.json({
-        success: true,
-        message: 'You are already an active subscriber! Download your checklist directly from /downloads/embedded-design-checklist.pdf'
+    if (existing) {
+      if (existing.status === 'active') {
+        return res.json({
+          success: true,
+          message: 'You are already subscribed! We just emailed you a fresh link to download the 2026 Embedded Design Checklist PDF.'
+        });
+      }
+      await prisma.subscriber.update({
+        where: { id: existing.id },
+        data: { verifyToken, status: 'pending' }
+      });
+    } else {
+      await prisma.subscriber.create({
+        data: {
+          email: cleanEmail,
+          status: 'pending',
+          verifyToken,
+          source: cleanSource
+        }
       });
     }
 
-    const subscriber = await prisma.subscriber.upsert({
-      where: { email: emailClean },
-      update: {
-        verifyToken,
-        status: 'pending',
-        source: sanitizeText(source) || 'website'
-      },
-      create: {
-        email: emailClean,
-        verifyToken,
-        status: 'pending',
-        source: sanitizeText(source) || 'website'
-      }
-    });
-
-    // 1. Send immediate admin notification/approval request email to info@embeddedindia.in
-    mailer.sendNewsletterAdminNotification(subscriber).catch(err => {
-      console.error('[MAILER ERROR] Newsletter admin notification failed:', err.message);
-    });
-
-    // 2. Send double-opt-in verification email to subscriber
-    mailer.sendVerificationEmail(emailClean, verifyToken).catch(err => {
-      console.error('[MAILER ERROR] Verification mail failed:', err.message);
+    mailer.sendVerificationEmail(cleanEmail, verifyToken).catch(err => {
+      console.error('[NEWSLETTER VERIFICATION DISPATCH ERROR]', err.message);
     });
 
     return res.json({
       success: true,
-      message: 'Please check your inbox! A confirmation link has been sent to activate your subscription and receive your free PCB Design Checklist.'
+      message: 'Almost done! We sent a quick verification link to your email. Click it to immediately access your free PCB Checklist PDF.'
     });
+
   } catch (err) {
-    console.error('[NEWSLETTER SUBSCRIBE ERROR]', err);
-    return res.status(500).json({ success: false, message: 'Error processing subscription. Please try again.' });
+    console.error('[NEWSLETTER ERROR]', err);
+    res.status(500).json({ success: false, message: 'Server error processing subscription.' });
   }
-};
+});
 
-router.post('/newsletter/subscribe', newsletterLimiter, handleNewsletterSubscribe);
-router.post('/newsletter', newsletterLimiter, handleNewsletterSubscribe);
-
-// GET /api/newsletter/verify - Verify Double Opt-in Token
+// GET /api/newsletter/verify
 router.get('/newsletter/verify', async (req, res) => {
   try {
     const { token } = req.query;
     if (!token) {
-      return res.render('pages/message', {
-        title: 'Verification Failed',
-        heading: 'Invalid Verification Link',
-        message: 'The confirmation token is missing or has expired. Please subscribe again on our homepage.',
+      return res.status(400).render('pages/message', {
+        title: 'Invalid Verification Link',
+        heading: 'Verification Token Missing',
+        message: 'The link you clicked appears to be incomplete or expired.',
         buttonText: 'Return to Home',
         buttonLink: '/'
       });
     }
 
-    const cleanToken = sanitizeText(token);
     const subscriber = await prisma.subscriber.findUnique({
-      where: { verifyToken: cleanToken }
+      where: { verifyToken: String(token) }
     });
 
     if (!subscriber) {
-      return res.render('pages/message', {
+      return res.status(404).render('pages/message', {
         title: 'Verification Failed',
         heading: 'Token Not Found',
         message: 'This confirmation link is invalid or already used.',
@@ -185,7 +179,6 @@ router.get('/newsletter/verify', async (req, res) => {
       });
     }
 
-    // Activate subscriber
     await prisma.subscriber.update({
       where: { id: subscriber.id },
       data: {
@@ -196,7 +189,6 @@ router.get('/newsletter/verify', async (req, res) => {
       }
     });
 
-    // Automatically dispatch Lead Magnet PDF
     mailer.sendLeadMagnetEmail(subscriber.email).catch(e => console.error(e));
 
     return res.render('pages/message', {
@@ -234,6 +226,120 @@ router.get('/newsletter/unsubscribe', async (req, res) => {
   } catch (err) {
     console.error('[UNSUBSCRIBE ERROR]', err);
     res.status(500).send('Unsubscribe error');
+  }
+});
+
+// POST /api/copilot/chat - Public AI Engineering Copilot
+router.post('/copilot/chat', async (req, res) => {
+  try {
+    const { message, conversationHistory } = req.body;
+    const cleanMessage = sanitizeText(message);
+
+    if (!cleanMessage) {
+      return res.status(400).json({ success: false, message: 'Message cannot be empty.' });
+    }
+
+    const result = await aiCopilot.processQuery({
+      message: cleanMessage,
+      conversationHistory: Array.isArray(conversationHistory) ? conversationHistory : []
+    });
+
+    return res.json({
+      success: true,
+      reply: result.reply,
+      suggestedActions: result.suggestedActions || []
+    });
+  } catch (err) {
+    console.error('[COPILOT API ERROR]', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Our copilot service encountered a temporary error. Please try again or contact our engineers.'
+    });
+  }
+});
+
+// POST /api/estimator/calculate - Smart Turnaround & Architecture Estimator
+router.post('/estimator/calculate', (req, res) => {
+  try {
+    const { phase, complexity, protocols = [], compliance = 'none' } = req.body;
+
+    let baseWeeks = 3;
+    let complexityLabel = 'Standard MCU Architecture';
+    let deliverables = [];
+
+    // 1. Phase calculation
+    if (phase === 'prototype') {
+      baseWeeks = 3;
+      deliverables.push('Schematic Capture', 'Multi-Layer PCB Layout', 'First-Pass SMT Prototypes (5 pcs)');
+    } else if (phase === 'turnkey') {
+      baseWeeks = 7;
+      deliverables.push('Schematic & PCB Layout', 'Deterministic RTOS Firmware', 'Pre-Compliance EMC Verification', 'Pilot Run Manufacturing (25-100 pcs)');
+    } else if (phase === 'firmware') {
+      baseWeeks = 2;
+      deliverables.push('HAL & Peripheral Drivers', 'RTOS Task Architecture', 'Secure Bootloader & FOTA', 'Automated Regression Suite');
+    } else {
+      deliverables.push('Architecture Feasibility Study', 'BOM Cost Optimization', 'Thermal & Power Simulation');
+    }
+
+    // 2. Silicon Complexity
+    if (complexity === 'high') {
+      baseWeeks += 3;
+      complexityLabel = 'High-Speed MPU / Linux SoM (DDR4 / PCIe / MIPI)';
+      deliverables.push('Impedance Matching & Length Tuning', 'Custom U-Boot & Yocto Linux BSP');
+    } else if (complexity === 'medium') {
+      baseWeeks += 1.5;
+      complexityLabel = 'Dual-Core RTOS / Wireless RF (BLE / Wi-Fi / LoRa)';
+      deliverables.push('RF Matching Network & Antenna Tuning');
+    }
+
+    // 3. Protocol count
+    const pCount = Array.isArray(protocols) ? protocols.length : 1;
+    if (pCount > 2) {
+      baseWeeks += Math.ceil(pCount * 0.5);
+    }
+
+    // 4. Regulatory compliance
+    let complianceLabel = 'Standard Commercial';
+    if (compliance === 'automotive') {
+      baseWeeks += 2;
+      complianceLabel = 'Automotive ISO 26262 / AEC-Q100 / CISPR 25';
+      deliverables.push('Worst-Case Circuit Analysis (WCCA)', 'ISO 7637-2 Surge Bench Verification');
+    } else if (compliance === 'medical') {
+      baseWeeks += 2.5;
+      complianceLabel = 'Medical IEC 60601 / ISO 13485';
+      deliverables.push('Galvanic Isolation Testing', 'Risk Management File (ISO 14971)');
+    } else if (compliance === 'ce_fcc') {
+      baseWeeks += 1;
+      complianceLabel = 'CE / FCC Class B Radiated & Conducted EMC';
+    }
+
+    const estimatedWeeksMin = Math.round(baseWeeks);
+    const estimatedWeeksMax = Math.round(baseWeeks * 1.35);
+
+    return res.json({
+      success: true,
+      timeline: `${estimatedWeeksMin} - ${estimatedWeeksMax} Weeks Turnkey`,
+      complexityLabel,
+      complianceLabel,
+      deliverables,
+      recommendedTeam: '1 Principal Hardware Architect, 1 Senior Firmware Engineer, 1 DFM Specialist'
+    });
+  } catch (err) {
+    console.error('[ESTIMATOR ERROR]', err);
+    res.status(500).json({ success: false, message: 'Calculation error' });
+  }
+});
+
+// GET /api/projects - JSON feed of projects
+router.get('/projects', async (req, res) => {
+  try {
+    const projects = await prisma.project.findMany({
+      orderBy: [{ featured: 'desc' }, { order: 'asc' }],
+      take: 20
+    });
+    return res.json({ success: true, projects });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

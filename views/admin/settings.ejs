@@ -65,98 +65,114 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
-          <!-- 1. Silicon Dark Blue -->
-          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'silicon-dark-blue') ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
-            <input type="radio" name="active_theme_palette" value="silicon-dark-blue" <%= (settings.active_theme_palette === 'silicon-dark-blue') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('silicon-dark-blue')">
+          <!-- 1. Cyber Emerald -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (!settings.active_theme_palette || settings.active_theme_palette === 'cyber-emerald' || settings.active_theme_palette === 'emerald' || settings.active_theme_palette === 'pcb-emerald-green') ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="cyber-emerald" <%= (!settings.active_theme_palette || settings.active_theme_palette === 'cyber-emerald' || settings.active_theme_palette === 'emerald' || settings.active_theme_palette === 'pcb-emerald-green') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('cyber-emerald')">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-black text-slate-900 dark:text-white">1. Silicon Dark Blue</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">Semicon</span>
-            </div>
-            <div class="flex items-center space-x-1.5 mt-3">
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0a1128" title="Background"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#101f42" title="Surface"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0077b6" title="Accent 1"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#00b4d8" title="Accent 2"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Text"></span>
-            </div>
-          </label>
-
-          <!-- 2. PCB Emerald Green -->
-          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (!settings.active_theme_palette || settings.active_theme_palette === 'pcb-emerald-green') ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
-            <input type="radio" name="active_theme_palette" value="pcb-emerald-green" <%= (!settings.active_theme_palette || settings.active_theme_palette === 'pcb-emerald-green') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('pcb-emerald-green')">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-black text-slate-900 dark:text-white">2. PCB Emerald Green</span>
+              <span class="text-xs font-black text-slate-900 dark:text-white">1. Cyber Emerald</span>
               <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-800">Default B2B</span>
             </div>
             <div class="flex items-center space-x-1.5 mt-3">
               <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0b1412" title="Background"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#11221e" title="Surface"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#10b981" title="Accent 1"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#34d399" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#13221e" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#059669" title="Primary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#55a630" title="Secondary"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f1f5f9" title="Text"></span>
             </div>
           </label>
 
-          <!-- 3. Automotive Slate/Red -->
-          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'automotive-slate-red') ? 'border-red-500 bg-red-50/20 dark:bg-red-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
-            <input type="radio" name="active_theme_palette" value="automotive-slate-red" <%= (settings.active_theme_palette === 'automotive-slate-red') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('automotive-slate-red')">
+          <!-- 2. Quantum Cyan -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'quantum-cyan' || settings.active_theme_palette === 'cyan' || settings.active_theme_palette === 'silicon-dark-blue') ? 'border-sky-500 bg-sky-50/20 dark:bg-sky-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="quantum-cyan" <%= (settings.active_theme_palette === 'quantum-cyan' || settings.active_theme_palette === 'cyan' || settings.active_theme_palette === 'silicon-dark-blue') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('quantum-cyan')">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-black text-slate-900 dark:text-white">3. Automotive Slate/Red</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-red-100 text-red-800">CAN / ECU</span>
+              <span class="text-xs font-black text-slate-900 dark:text-white">2. Quantum Cyan</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-sky-100 text-sky-800">Quantum</span>
             </div>
             <div class="flex items-center space-x-1.5 mt-3">
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f172a" title="Background"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#1e293b" title="Surface"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#ef4444" title="Accent 1"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#f87171" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#08101a" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f1d2e" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0ea5e9" title="Primary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#06b6d4" title="Secondary"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Text"></span>
             </div>
           </label>
 
-          <!-- 4. Industrial Amber/Charcoal -->
-          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'industrial-amber-charcoal') ? 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
-            <input type="radio" name="active_theme_palette" value="industrial-amber-charcoal" <%= (settings.active_theme_palette === 'industrial-amber-charcoal') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('industrial-amber-charcoal')">
+          <!-- 3. Titanium Slate -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'titanium-slate' || settings.active_theme_palette === 'spacegrey') ? 'border-slate-500 bg-slate-100/50 dark:bg-slate-800/40' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="titanium-slate" <%= (settings.active_theme_palette === 'titanium-slate' || settings.active_theme_palette === 'spacegrey') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('titanium-slate')">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-black text-slate-900 dark:text-white">4. Industrial Amber</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">Factory IIoT</span>
+              <span class="text-xs font-black text-slate-900 dark:text-white">3. Titanium Slate</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-slate-200 text-slate-800">Precision</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#090d16" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f172a" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#38bdf8" title="Primary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#64748b" title="Secondary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 4. Solar Amber -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'solar-amber' || settings.active_theme_palette === 'industrial-amber-charcoal') ? 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="solar-amber" <%= (settings.active_theme_palette === 'solar-amber' || settings.active_theme_palette === 'industrial-amber-charcoal') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('solar-amber')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">4. Solar Amber</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800">Industrial</span>
             </div>
             <div class="flex items-center space-x-1.5 mt-3">
               <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#18181b" title="Background"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#27272a" title="Surface"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#f59e0b" title="Accent 1"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#fbbf24" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#f59e0b" title="Primary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#fbbf24" title="Secondary"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#fafafa" title="Text"></span>
             </div>
           </label>
 
-          <!-- 5. Clean Light Enterprise -->
-          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'clean-light-enterprise') ? 'border-blue-600 bg-blue-50/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
-            <input type="radio" name="active_theme_palette" value="clean-light-enterprise" <%= (settings.active_theme_palette === 'clean-light-enterprise') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('clean-light-enterprise')">
+          <!-- 5. Supernova Violet -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'supernova-violet') ? 'border-purple-500 bg-purple-50/20 dark:bg-purple-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="supernova-violet" <%= (settings.active_theme_palette === 'supernova-violet') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('supernova-violet')">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-black text-slate-900 dark:text-white">5. Clean Light Enterprise</span>
+              <span class="text-xs font-black text-slate-900 dark:text-white">5. Supernova Violet</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800">Deep Space</span>
+            </div>
+            <div class="flex items-center space-x-1.5 mt-3">
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f0c1b" title="Background"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#18142a" title="Surface"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#a855f7" title="Primary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#c084fc" title="Secondary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#faf5ff" title="Text"></span>
+            </div>
+          </label>
+
+          <!-- 6. Clean Light Enterprise -->
+          <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'clean-light' || settings.active_theme_palette === 'clean-light-enterprise') ? 'border-blue-600 bg-blue-50/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
+            <input type="radio" name="active_theme_palette" value="clean-light" <%= (settings.active_theme_palette === 'clean-light' || settings.active_theme_palette === 'clean-light-enterprise') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('clean-light')">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-slate-900 dark:text-white">6. Clean Enterprise</span>
               <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-800">High Contrast</span>
             </div>
             <div class="flex items-center space-x-1.5 mt-3">
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#f8fafc" title="Background"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-300" style="background:#ffffff" title="Surface"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#2563eb" title="Accent 1"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#3b82f6" title="Accent 2"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#2563eb" title="Primary"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#3b82f6" title="Secondary"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs" style="background:#0f172a" title="Text"></span>
             </div>
           </label>
 
-          <!-- 6. Custom Hex Palette -->
+          <!-- 7. Custom Hex Engine -->
           <label class="relative flex flex-col p-4 rounded-2xl border-2 cursor-pointer transition <%= (settings.active_theme_palette === 'custom') ? 'border-purple-500 bg-purple-50/20 dark:bg-purple-950/20' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>">
             <input type="radio" name="active_theme_palette" value="custom" <%= (settings.active_theme_palette === 'custom') ? 'checked' : '' %> class="sr-only" onchange="previewPalette('custom')">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-black text-slate-900 dark:text-white">6. Custom Hex Engine</span>
+              <span class="text-xs font-black text-slate-900 dark:text-white">7. Custom Hex Engine</span>
               <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 text-purple-800">User Defined</span>
             </div>
             <div class="flex items-center space-x-1.5 mt-3">
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_bg_primary" style="background:<%= settings.palette_bg_primary || '#0b1412' %>"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_bg_surface" style="background:<%= settings.palette_bg_surface || '#11221e' %>"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_accent_primary" style="background:<%= settings.palette_accent_primary || '#10b981' %>"></span>
-              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_accent_secondary" style="background:<%= settings.palette_accent_secondary || '#34d399' %>"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_accent_primary" style="background:<%= settings.palette_accent_primary || '#059669' %>"></span>
+              <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_accent_secondary" style="background:<%= settings.palette_accent_secondary || '#55a630' %>"></span>
               <span class="w-6 h-6 rounded-lg shadow-xs border border-slate-400" id="chip_text_primary" style="background:<%= settings.palette_text_primary || '#f1f5f9' %>"></span>
             </div>
           </label>
@@ -164,6 +180,24 @@
         </div>
       </div>
 
+      <!-- Spring Physics & Bounce Level Selector -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Micro-Interaction Bounce Level</label>
+          <select name="theme_bounce_intensity" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+            <option value="bouncy" <%= settings.theme_bounce_intensity === 'bouncy' || !settings.theme_bounce_intensity ? 'selected' : '' %>>Modern Bouncy (Spring Physics cubic-bezier)</option>
+            <option value="subtle" <%= settings.theme_bounce_intensity === 'subtle' ? 'selected' : '' %>>Subtle Smooth (Cubic Ease)</option>
+            <option value="none" <%= settings.theme_bounce_intensity === 'none' ? 'selected' : '' %>>Minimalist (Standard Transitions)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Default Theme Mode</label>
+          <select name="default_theme_mode" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
+            <option value="dark" <%= (!settings.default_theme_mode || settings.default_theme_mode === 'dark') ? 'selected' : '' %>>Dark Mode (Default)</option>
+            <option value="light" <%= settings.default_theme_mode === 'light' ? 'selected' : '' %>>Light Mode</option>
+          </select>
+        </div>
+      </div>
       <!-- Custom Palette Hex Color Inputs (CRUD) -->
       <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
         <div class="flex items-center justify-between">
@@ -1040,11 +1074,19 @@
 <script>
   // 1. Predefined Palettes Dictionary for Interactive Client-Side Preview
   const PALETTES = {
-    'silicon-dark-blue': { name: 'Silicon Dark Blue', bgPrimary: '#0a1128', bgSurface: '#101f42', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#0077b6', accentSecondary: '#00b4d8', borderColor: '#1e3a8a' },
-    'pcb-emerald-green': { name: 'PCB Emerald Green', bgPrimary: '#0b1412', bgSurface: '#11221e', textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: '#10b981', accentSecondary: '#34d399', borderColor: '#1e3831' },
-    'automotive-slate-red': { name: 'Automotive Slate/Red', bgPrimary: '#0f172a', bgSurface: '#1e293b', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#ef4444', accentSecondary: '#f87171', borderColor: '#334155' },
-    'industrial-amber-charcoal': { name: 'Industrial Amber', bgPrimary: '#18181b', bgSurface: '#27272a', textPrimary: '#fafafa', textMuted: '#a1a1aa', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', borderColor: '#3f3f46' },
-    'clean-light-enterprise': { name: 'Clean Light Enterprise', bgPrimary: '#f8fafc', bgSurface: '#ffffff', textPrimary: '#0f172a', textMuted: '#64748b', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', borderColor: '#e2e8f0' }
+    'cyber-emerald': { name: 'Cyber Emerald', bgPrimary: '#0b1412', bgSurface: '#13221e', textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: '#059669', accentSecondary: '#55a630', borderColor: '#1e3831' },
+    'quantum-cyan': { name: 'Quantum Cyan', bgPrimary: '#08101a', bgSurface: '#0f1d2e', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', borderColor: '#172a42' },
+    'titanium-slate': { name: 'Titanium Slate', bgPrimary: '#090d16', bgSurface: '#0f172a', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#38bdf8', accentSecondary: '#64748b', borderColor: '#334155' },
+    'solar-amber': { name: 'Solar Amber', bgPrimary: '#18181b', bgSurface: '#27272a', textPrimary: '#fafafa', textMuted: '#a1a1aa', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', borderColor: '#3f3f46' },
+    'supernova-violet': { name: 'Supernova Violet', bgPrimary: '#0f0c1b', bgSurface: '#18142a', textPrimary: '#faf5ff', textMuted: '#c084fc', accentPrimary: '#a855f7', accentSecondary: '#c084fc', borderColor: '#3b2d54' },
+    'clean-light': { name: 'Clean Enterprise', bgPrimary: '#f8fafc', bgSurface: '#ffffff', textPrimary: '#0f172a', textMuted: '#64748b', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', borderColor: '#e2e8f0' },
+    // Aliases
+    'emerald': { name: 'Cyber Emerald', bgPrimary: '#0b1412', bgSurface: '#13221e', textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: '#059669', accentSecondary: '#55a630', borderColor: '#1e3831' },
+    'pcb-emerald-green': { name: 'Cyber Emerald', bgPrimary: '#0b1412', bgSurface: '#13221e', textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: '#059669', accentSecondary: '#55a630', borderColor: '#1e3831' },
+    'cyan': { name: 'Quantum Cyan', bgPrimary: '#08101a', bgSurface: '#0f1d2e', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', borderColor: '#172a42' },
+    'silicon-dark-blue': { name: 'Quantum Cyan', bgPrimary: '#08101a', bgSurface: '#0f1d2e', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', borderColor: '#172a42' },
+    'spacegrey': { name: 'Titanium Slate', bgPrimary: '#090d16', bgSurface: '#0f172a', textPrimary: '#f8fafc', textMuted: '#94a3b8', accentPrimary: '#38bdf8', accentSecondary: '#64748b', borderColor: '#334155' },
+    'clean-light-enterprise': { name: 'Clean Enterprise', bgPrimary: '#f8fafc', bgSurface: '#ffffff', textPrimary: '#0f172a', textMuted: '#64748b', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', borderColor: '#e2e8f0' }
   };
 
   function previewPalette(key) {

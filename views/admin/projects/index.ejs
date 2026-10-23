@@ -1,0 +1,137 @@
+<%- include('../layout_top') %>
+
+<div class="space-y-6 text-left">
+  
+  <!-- Header & Actions -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 dark:text-white">Engineering Projects &amp; Case Studies</h1>
+      <p class="text-xs text-slate-500 mt-1">Manage portfolio hardware designs, technical specs, videos, and featured case studies</p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2.5">
+      <a href="/projects" target="_blank" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center space-x-1.5 active:scale-95">
+        <span>👁️ View Public Portfolio</span>
+      </a>
+      <a href="/admin/projects/new" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs transition shadow flex items-center space-x-2 active:scale-95">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span>+ Add New Project</span>
+      </a>
+    </div>
+  </div>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div class="p-4 bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center space-x-2">
+      <span>✓</span>
+      <span>Project successfully saved and synchronized with public portfolio.</span>
+    </div>
+  <% } %>
+
+  <!-- Category Filter Pills -->
+  <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+    <% (categories || ['All']).forEach(function(cat) { %>
+      <a 
+        href="/admin/projects?category=<%= encodeURIComponent(cat) %>" 
+        class="px-3 py-1.5 rounded-lg text-xs font-bold transition <%= selectedCategory === cat ? 'bg-brand-500 text-white shadow-sm' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-brand-500' %>"
+      >
+        <%= cat %>
+      </a>
+    <% }); %>
+  </div>
+
+  <!-- Table Container -->
+  <div class="rounded-2xl border overflow-hidden shadow-sm admin-table-container">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="admin-table-head uppercase font-bold text-[11px] tracking-wider">
+          <tr>
+            <th class="p-4">Project Title</th>
+            <th class="p-4">Category / Industry</th>
+            <th class="p-4">Tech Stack</th>
+            <th class="p-4 text-center">Featured</th>
+            <th class="p-4">Status</th>
+            <th class="p-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="admin-table-body divide-y">
+          <% if (projects && projects.length > 0) { %>
+            <% projects.forEach(function(p) { %>
+              <tr class="transition">
+                <td class="p-4 font-bold text-slate-900 dark:text-white max-w-xs">
+                  <a href="/admin/projects/<%= p.id %>/edit" class="hover:text-brand-500 transition block font-black">
+                    <%= p.title %>
+                  </a>
+                  <span class="text-[10px] text-slate-400 font-mono font-normal">/projects/<%= p.slug %></span>
+                </td>
+                <td class="p-4">
+                  <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold admin-badge-category block w-fit mb-1">
+                    <%= p.category %>
+                  </span>
+                  <span class="text-[11px] text-slate-500 truncate block"><%= p.industry %></span>
+                </td>
+                <td class="p-4 font-mono text-[11px] text-slate-700 dark:text-slate-300 max-w-xs truncate">
+                  <%= p.techStack || '—' %>
+                </td>
+                <td class="p-4 text-center">
+                  <button 
+                    type="button" 
+                    onclick="toggleFeatured('<%= p.id %>', this)" 
+                    class="px-2.5 py-1 rounded-full text-[10px] font-black transition <%= p.featured ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-500/30' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700' %>"
+                    title="Click to toggle featured status on homepage"
+                  >
+                    <%= p.featured ? '★ Featured' : '☆ Standard' %>
+                  </button>
+                </td>
+                <td class="p-4">
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase <%= p.status === 'completed' ? 'admin-badge-published' : 'admin-badge-draft' %>">
+                    <%= p.status %>
+                  </span>
+                </td>
+                <td class="p-4 text-right space-x-3 whitespace-nowrap">
+                  <a href="/projects/<%= p.slug %>" target="_blank" class="font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white">View</a>
+                  <a href="/admin/projects/<%= p.id %>/edit" class="font-bold text-brand-500 hover:underline">Edit</a>
+                  <form action="/admin/projects/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Delete this project permanently?')" class="inline">
+                    <button type="submit" class="font-bold text-red-600 dark:text-red-400 hover:underline">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="6" class="p-8 text-center text-slate-500">
+                No projects found. <a href="/admin/projects/new" class="text-brand-500 font-bold underline">Create your first engineering case study</a>.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  async function toggleFeatured(projectId, btn) {
+    try {
+      const res = await fetch(`/admin/projects/${projectId}/toggle-featured`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.featured) {
+          btn.textContent = '★ Featured';
+          btn.className = 'px-2.5 py-1 rounded-full text-[10px] font-black transition bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-500/30';
+        } else {
+          btn.textContent = '☆ Standard';
+          btn.className = 'px-2.5 py-1 rounded-full text-[10px] font-black transition bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border border-slate-300 dark:border-slate-700';
+        }
+      }
+    } catch (e) {
+      alert('Error updating featured status');
+    }
+  }
+</script>
+
+<%- include('../layout_bottom') %>
+

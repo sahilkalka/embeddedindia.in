@@ -11,6 +11,12 @@
 
     <!-- Quick Administrative Actions -->
     <div class="flex flex-wrap items-center gap-2 text-xs">
+      <a href="/admin/customizer" class="px-3.5 py-2 bg-gradient-to-r from-brand-600 to-accent text-white font-black rounded-xl shadow transition hover:opacity-90 flex items-center space-x-1.5">
+        <span>🎨 Live Customizer</span>
+      </a>
+      <a href="/admin/projects" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow transition flex items-center space-x-1.5">
+        <span>📁 Projects CRUD</span>
+      </a>
       <a href="/admin/ai" class="px-3.5 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl shadow transition hover:opacity-90 flex items-center space-x-1.5">
         <span>✨ AI Article Engine</span>
       </a>
@@ -29,7 +35,16 @@
   <div id="cron-toast" class="hidden p-4 rounded-xl text-xs font-bold"></div>
 
   <!-- Metric KPI Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+
+    <div class="bg-white dark:bg-brand-surface p-6 rounded-2xl border border-slate-200 dark:border-brand-border shadow-sm">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Portfolio Projects</span>
+      <div class="flex items-baseline space-x-2 mt-1">
+        <span class="text-3xl font-black text-slate-900 dark:text-white"><%= typeof totalProjects !== 'undefined' ? totalProjects : 0 %></span>
+        <span class="px-2 py-0.5 bg-brand-500/10 dark:bg-accent/20 text-brand-700 dark:text-accent text-[10px] font-black rounded-full"><%= typeof featuredProjects !== 'undefined' ? featuredProjects : 0 %> Featured</span>
+      </div>
+      <a href="/admin/projects" class="text-[11px] text-brand-500 hover:underline font-semibold mt-2 block">Manage projects &rarr;</a>
+    </div>
     
     <div class="bg-white dark:bg-brand-surface p-6 rounded-2xl border border-slate-200 dark:border-brand-border shadow-sm">
       <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Total Page Views</span>

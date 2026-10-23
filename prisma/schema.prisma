@@ -90,3 +90,27 @@ model CalculatorStat {
   executionCount Int      @default(0)
   updatedAt      DateTime @updatedAt
 }
+
+model Project {
+  id                  String   @id @default(uuid())
+  title               String
+  slug                String   @unique
+  category            String   @default("Automotive") // Automotive, IoT, Industrial, Healthcare, Robotics, Firmware
+  industry            String   @default("Automotive HVAC")
+  summary             String
+  client              String?  @default("Tier-1 Automotive OEM")
+  descriptionMarkdown String
+  descriptionHtml     String
+  coverImage          String?
+  gallery             String?  // JSON array of image URLs
+  videoUrl            String?  // YouTube embed URL or direct video
+  techStack           String   @default("STM32, FreeRTOS, CAN-FD, Altium Designer")
+  specs               String?  // JSON key-values: e.g. {"Supply Voltage": "9V - 36V DC", "Protocols": "CAN 2.0B / LIN 2.2"}
+  metrics             String?  // JSON array: e.g. [{"label": "Power Efficiency", "value": "45% gain"}]
+  featured            Boolean  @default(false)
+  order               Int      @default(0)
+  status              String   @default("completed") // completed, in-progress, prototype
+  liveUrl             String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}

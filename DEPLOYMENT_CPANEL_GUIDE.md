@@ -1,139 +1,148 @@
-# 🚀 cPanel Deployment Guide: 100% Terminal-Free Deployment (UI Only)
+# 🚀 Deployment Guide: GitHub Actions CI/CD & cPanel Automation
 
-This guide walks you through deploying **Embedded India** to your cPanel server **without requiring SSH or terminal access**. You will perform the entire setup using only the **cPanel web interface**:
-1. **cPanel File Manager** (Upload & Extract)
-2. **cPanel "Setup Node.js App" UI** (Configuration, NPM Install button & Restart)
+This guide covers deployment for **Embedded India (`embeddedindia.in`)**, supporting both **Automated Git Push Deployments via GitHub Actions** and **Terminal-Free Manual Deployment via the cPanel Web Interface**.
 
 ---
 
-## 📦 What Makes This Zero-Terminal Compatible?
+## 🔄 1. Automated CI/CD Deployment via GitHub Actions (Active)
 
-1. **Pre-Bundled SQLite Database:** `prisma/dev.db` is already pre-initialized, migrated, and seeded with default articles and the admin user inside the deployment archive. You do not need to run `prisma db push` or `seed.js`.
-2. **Self-Bootstrapping Entrypoint (`app.js`):** On startup, `app.js` automatically creates missing directories and self-heals file permissions (`chmod 0666` on `prisma/dev.db` and `0777` on `prisma/`), avoiding SQLite read-only permission issues without needing terminal commands.
-3. **Automated `postinstall`:** `prisma` is included in production dependencies, and `package.json` includes `"postinstall": "prisma generate"`. Clicking the **"Run NPM Install"** button directly in the cPanel UI automatically installs all packages and compiles the Prisma client engine for your hosting server.
+The repository includes a configured workflow at [`.github/workflows/deploy.yml`](file:///.github/workflows/deploy.yml) that automatically pulls changes and updates the production website on every push to the `main` branch.
+
+### How the Auto-Deploy Pipeline Works:
+```mermaid
+flowchart LR
+  A["Git Push to main"] --> B["GitHub Actions Triggered"]
+  B --> C["SSH to cPanel Host"]
+  C --> D["Git Fetch & Hard Reset"]
+  D --> E["uapi VersionControlDeployment"]
+  E --> F["./server-deploy.sh update"]
+  F --> G["Phusion Passenger Reload (tmp/restart.txt)"]
+```
+
+1. **Push Event**: Any commit merged into `main` triggers `.github/workflows/deploy.yml`.
+2. **Secure SSH Handshake**: The workflow securely authenticates with your cPanel server via `appleboy/ssh-action@v1.0.3`.
+3. **Repository Sync**:
+   ```bash
+   cd /home/jiazxebj/embeddedindia.in
+   git fetch origin main
+   git reset --hard origin/main
+   ```
+4. **cPanel Version Control Registration**:
+   ```bash
+   uapi VersionControlDeployment create repository_root=/home/jiazxebj/embeddedindia.in
+   ```
+5. **Zero-Downtime Deployment Script**:
+   ```bash
+   bash ./server-deploy.sh update
+   ```
+   - Automatically detects and activates the cPanel Node.js virtual environment (`nodevenv`).
+   - Backs up the SQLite database (`prisma/dev.db.bak_TIMESTAMP`).
+   - Installs production dependencies (`npm install --omit=dev --no-audit --no-fund`).
+   - Runs database table initialization (`node scripts/init-db.js`) and content seeding (`node scripts/seed-sqlite.js`).
+   - Compiles Tailwind CSS if necessary (`public/css/style.css`).
+   - Sets safe file permissions (`chmod 777 tmp prisma`, `chmod 666 prisma/dev.db*`).
+   - Verifies server loader syntax.
+   - Touches `tmp/restart.txt` to trigger an instant Phusion Passenger reload.
+
+### Required GitHub Repository Secrets
+
+Configure the following secrets in your GitHub repository (**Settings &rarr; Secrets and variables &rarr; Actions &rarr; Repository secrets**):
+
+| Secret Name | Description | Example Value |
+| :--- | :--- | :--- |
+| `CPANEL_HOST` | Hostname or IP address of your cPanel server | `embeddedindia.in` or server IP |
+| `CPANEL_USER` | Your cPanel Linux username | `jiazxebj` |
+| `CPANEL_SSH_KEY` | Private SSH Key (RSA / Ed25519) authorized on server | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
+| `CPANEL_PORT` | SSH Port (default: `22`) | `22` or hosting custom port |
+
+> [!TIP]
+> To generate and authorize an SSH key in cPanel:
+> 1. In cPanel, navigate to **SSH Access** &rarr; **Manage SSH Keys** &rarr; **Generate a New Key**.
+> 2. Click **Authorize** next to the generated public key.
+> 3. View/Download the **Private Key** and paste it into GitHub Secrets as `CPANEL_SSH_KEY`.
 
 ---
 
-## 🛠️ Step-by-Step UI Deployment Instructions
+## 📦 2. Terminal-Free Manual UI Deployment (cPanel Web Interface)
 
-### Step 1: Pack the Deployment Zip (On Your Computer)
-In your local project folder, run:
+If you ever need to perform a manual deployment without SSH or terminal access:
+
+### Step 1: Pack the Deployment Bundle (On Your Computer)
 ```bash
 npm run pack:cpanel
 ```
-This generates `embeddedindia-cpanel-deploy.zip` (~1.05 MB) in your project root directory.
-
----
+This generates a clean, optimized `embeddedindia.zip` excluding local caches, test suites, and temporary files.
 
 ### Step 2: Upload & Extract via cPanel File Manager
-
 1. Log into your **cPanel Account**.
-2. Under the **Files** section, click **File Manager**.
-3. In File Manager, stay in your home directory (e.g. `/home/yourusername/`).
-4. Click **+ Folder** in the top navigation bar and name it:
-   ```text
-   embeddedindia
-   ```
-   *(Keep it in your home directory, outside `public_html`, so source files remain protected).*
-5. Double-click the newly created `embeddedindia` folder to open it.
-6. Click **Upload** in the top menu and select `embeddedindia-cpanel-deploy.zip`.
-7. Once the progress bar reaches 100% (green), close the upload tab and click **Reload** in File Manager.
-8. Right-click `embeddedindia-cpanel-deploy.zip` and select **Extract** (extract to `/home/yourusername/embeddedindia`).
-9. Verify that files like `app.js`, `package.json`, `prisma/`, `public/`, `src/`, and `views/` are visible directly inside `/home/yourusername/embeddedindia/`.
-10. *(Optional cleanup)* Delete `embeddedindia-cpanel-deploy.zip` from File Manager to free up space.
+2. Open **File Manager** and navigate to your application root (e.g., `/home/jiazxebj/embeddedindia.in`).
+3. Click **Upload**, select `embeddedindia.zip`, and extract the files directly into the repository folder.
+
+### Step 3: Configure "Setup Node.js App" in cPanel
+1. In cPanel, navigate to **Software &rarr; Setup Node.js App**.
+2. If creating new, fill out:
+   - **Node.js version**: `20.x` *(or 22.x LTS)*
+   - **Application mode**: `Production`
+   - **Application root**: `embeddedindia.in`
+   - **Application URL**: `embeddedindia.in`
+   - **Application startup file**: `app.js`
+3. Click **Run NPM Install** under the detected `package.json`.
+4. Click **Restart** (circular arrow button) at the top of the interface.
 
 ---
 
-### Step 3: Create the Node.js Application in cPanel UI
+## ⚙️ 3. Production Environment Variables Reference (`.env`)
 
-1. Return to the main cPanel dashboard.
-2. In the **Software** section, click **Setup Node.js App**.
-3. Click the blue **Create Application** button in the top right corner.
-4. Fill out the application settings in the form:
+Add or verify these environment variables in cPanel Node.js App UI (**Environment variables** section) or in `/home/jiazxebj/embeddedindia.in/.env`:
 
-| Form Field | Value to Enter | Explanation |
+| Variable | Recommended Production Value | Description |
 | :--- | :--- | :--- |
-| **Node.js version** | `20.x` *(or 18.x)* | Select Node 20 LTS (recommended) |
-| **Application mode** | `Production` | Optimized caching & performance |
-| **Application root** | `embeddedindia` | The exact folder name you created in Step 2 |
-| **Application URL** | `embeddedindia.in` *(or your domain/subdomain)* | Select your target domain from the dropdown |
-| **Application startup file** | `app.js` | The self-healing root entrypoint |
-
----
-
-### Step 4: Add Environment Variables in the cPanel UI
-
-Scroll down to the **Environment variables** section on the same page. Click **Add Variable** for each of the following:
-
-| Variable Name | Value | Description |
-| :--- | :--- | :--- |
-| `NODE_ENV` | `production` | Enables production mode |
+| `NODE_ENV` | `production` | Enables caching, minification, and security headers |
 | `PORT` | `3000` | Port handled by Passenger |
-| `APP_URL` | `https://embeddedindia.in` | Your live site domain (with https://) |
-| `DATABASE_URL` | `file:./prisma/dev.db` | Relative path to the SQLite database |
-| `SESSION_SECRET` | `embeddedindia_secure_session_2026_xyz` | Any random secure string |
-| `ADMIN_JWT_SECRET` | `embeddedindia_jwt_secret_token_9999_xyz` | Any random secret token |
-| `ADMIN_DEFAULT_EMAIL` | `admin@embeddedindia.in` | Default admin email login |
-| `ADMIN_DEFAULT_PASSWORD` | `AdminEmbedded@2026!` | Initial admin password |
-| `SMTP_HOST` | `smtp.gmail.com` | Your mail server (or leave empty for test mode) |
-| `SMTP_PORT` | `587` | 587 or 465 |
+| `APP_URL` | `https://embeddedindia.in` | Canonical public URL (used in SEO & sitemaps) |
+| `DATABASE_URL` | `file:./prisma/dev.db` | Relative path to production SQLite database |
+| `SESSION_SECRET` | *(Random 32+ char secret string)* | Session cookie cryptographic signature |
+| `ADMIN_JWT_SECRET` | *(Random 32+ char secret token)* | Admin JWT session token |
+| `ADMIN_DEFAULT_EMAIL` | `admin@embeddedindia.in` | Initial admin portal username |
+| `ADMIN_DEFAULT_PASSWORD` | `AdminEmbedded@2026!` | Initial admin portal password |
+| `SMTP_HOST` | `smtp.gmail.com` *(or cPanel mail)* | Outgoing mail server for inquiries |
+| `SMTP_PORT` | `587` | `587` (STARTTLS) or `465` (SSL) |
 | `SMTP_SECURE` | `false` | `false` for 587, `true` for 465 |
-| `SMTP_USER` | `info@embeddedindia.in` | SMTP login account |
-| `SMTP_PASS` | `your-app-password` | SMTP app password |
-
-Click the blue **Create** button in the top right to save and create the application.
-
----
-
-### Step 5: Install Dependencies with the UI "Run NPM Install" Button
-
-Once the application is created, you will remain on (or be redirected to) the application details page in the **Setup Node.js App** UI:
-
-1. Scroll down to the **Detected configuration files** section.
-2. You will see `package.json` listed.
-3. Click the blue **Run NPM Install** button next to `package.json`.
-4. Wait 15–45 seconds while cPanel downloads the node packages and runs `"postinstall": "prisma generate"`.
-5. A green success notification will pop up in the top right corner indicating that NPM install completed successfully.
+| `SMTP_USER` | `info@embeddedindia.in` | Outgoing email address |
+| `SMTP_PASS` | *(Your email app password)* | Outgoing email password |
+| `AI_PROVIDER` | `nvidia` / `gemini` / `openai` / `local` | Active AI provider for blog/case-study generator |
+| `AI_API_KEY` | *(Your provider API key)* | API key for cloud LLM inference |
 
 ---
 
-### Step 6: Start / Restart the Application
+## 🛠️ 4. Database Architecture & Self-Healing
 
-1. At the top of the **Setup Node.js App** screen, click the **Restart** button (or **Start App** if stopped).
-2. Open your website in a new browser tab:
-   `https://embeddedindia.in`
-3. Your live engineering portal is now running!
-
----
-
-### Step 7: Log In to Admin Panel & Test Systems
-
-1. Open `https://embeddedindia.in/admin/login`
-2. Log in with:
-   - **Email:** `admin@embeddedindia.in` (or the email you set in `ADMIN_DEFAULT_EMAIL`)
-   - **Password:** `AdminEmbedded@2026!` (or the password you set in `ADMIN_DEFAULT_PASSWORD`)
-3. **Configure Settings (`/admin/settings`):**
-   - Verify your **Offices & Locations** (`Hyderabad, India` or your preferred cities).
-   - Test outgoing mail with **Test SMTP Connection**.
-   - Under **Team & Administrator Accounts**, use **Change Your Active Account Password** to update your password to a private passphrase.
-4. **Configure AI Engine & Scheduled Blog Generator (`/admin/ai`):**
-   - Connect your AI provider API key (NVIDIA NIM, Gemini, or OpenAI) or use the built-in local engine.
-   - In **Section 3**, set your desired blog generation frequency (e.g. `Daily`), review your topics queue, set your maximum allowed blog pages, and click **⚡ Run Auto-Generation Now** to generate a test article live!
+The application uses an ultra-reliable **hybrid SQLite persistence engine** in `src/services/db.js`:
+- **Dual-Mode Engine**: Operates with native `better-sqlite3` (guaranteeing 0% network or binary download failures on cPanel) and seamlessly interfaces with `@prisma/client` when binaries are present.
+- **Zero-Config Migrations**: All table structures (`Project`, `User`, `Post`, `Inquiry`, `Subscriber`, `Setting`, `Analytics`, `CalculatorStat`) are created and migrated via `node scripts/init-db.js`.
+- **Pre-Seeded Content**: `node scripts/seed-sqlite.js` automatically provisions the 4 rich case studies, technical articles, and default customizer settings if the database is newly initialized.
+- **Automatic Permission Healing**: `app.js` runs a self-healing permissions hook on startup that ensures `prisma/` and `prisma/dev.db` have read/write access.
 
 ---
 
-## ❓ Frequently Asked Questions (UI Edition)
+## 🔍 5. Troubleshooting & Maintenance Commands
 
-### Q: What if I update settings and want to restart without terminal?
-Go to cPanel &rarr; **Setup Node.js App** &rarr; find your app &rarr; click **Restart** (circular arrow button).
-Alternatively, in cPanel File Manager, create an empty file named `restart.txt` inside `/home/yourusername/embeddedindia/tmp/` to trigger an instant reload.
+### Instant Application Reload
+```bash
+touch tmp/restart.txt
+```
+Phusion Passenger detects this file touch and gracefully restarts worker processes without dropping traffic.
 
-### Q: Do I need to chmod files if I don't have terminal?
-No. `app.js` runs a self-healing permissions function on startup that grants write permissions to `prisma/dev.db` and `prisma/`. If you ever need to manually adjust permissions, you can simply right-click any file or folder in **cPanel File Manager** and click **Change Permissions**.
+### Run Manual Server Deployment / Fix
+If SSH'd into the cPanel server:
+```bash
+source /home/jiazxebj/nodevenv/embeddedindia.in/20/bin/activate
+cd /home/jiazxebj/embeddedindia.in
+bash ./server-deploy.sh update
+```
 
-### Q: How do I update the site in the future?
-1. Run `npm run pack:cpanel` on your computer.
-2. In cPanel File Manager, upload and extract `embeddedindia-cpanel-deploy.zip` over your existing folder.
-3. In cPanel Node.js App UI, click **Run NPM Install** and then click **Restart**.
-source /home/jiazxebj/nodevenv/embeddedindia/22/bin/activate && cd /home/jiazxebj/embeddedindia
-bash server-deploy.sh update
+### Run Test Suite
+```bash
+npm test
+```
+Validates all 36 core routes, calculators, APIs, SEO, and authentication mechanisms.

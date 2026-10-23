@@ -38,6 +38,9 @@ function normalizeRow(row) {
   if ('leadMagnetSent' in res) {
     res.leadMagnetSent = Boolean(res.leadMagnetSent);
   }
+  if ('featured' in res) {
+    res.featured = Boolean(res.featured);
+  }
   if (res.createdAt && typeof res.createdAt === 'string') {
     res.createdAt = new Date(res.createdAt);
   }
@@ -347,6 +350,7 @@ function createModelHandler(tableName) {
 const sqlitePrisma = {
   user: createModelHandler('User'),
   post: createModelHandler('Post'),
+  project: createModelHandler('Project'),
   inquiry: createModelHandler('Inquiry'),
   subscriber: createModelHandler('Subscriber'),
   setting: createModelHandler('Setting'),

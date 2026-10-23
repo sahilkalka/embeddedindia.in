@@ -45,7 +45,7 @@ output_zip = r"${zipOutput}"
 root_dir = r"${rootDir}"
 
 exclude_dirs = {
-    'node_modules', '.git', '.gemini', 'tests', '.vscode', '.idea', 'coverage', 'tmp'
+    'node_modules', '.git', '.gemini', 'tests', '.vscode', '.idea', 'coverage', 'tmp', 'scratch'
 }
 
 exclude_files = {
@@ -55,6 +55,8 @@ exclude_files = {
     'embeddedindia-cpanel-deploy.tar.gz',
     '.env',
     'dev.db-journal',
+    'dev.db-wal',
+    'dev.db-shm',
     'temp_bundle_script.py',
     'temp_zip_script.py'
 }
@@ -94,7 +96,11 @@ fs.writeFileSync(tempScriptPath, pythonScript, 'utf8');
 try {
   execSync(`python3 "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
 } catch (pyErr) {
-  execSync(`python "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
+  try {
+    execSync(`python "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
+  } catch (err2) {
+    console.error('⚠️ Could not run Python zip packaging:', err2.message);
+  }
 } finally {
   if (fs.existsSync(tempScriptPath)) {
     fs.unlinkSync(tempScriptPath);
@@ -103,13 +109,7 @@ try {
 
 if (fs.existsSync(zipOutput)) {
   const stats = fs.statSync(zipOutput);
-  const sizeMb = (stats.size / (1024 * 1024)).toFixed(2);
-  console.log(`\n============================================================`);
-  console.log(`✅ Single Deployment Archive Ready: embeddedindia.zip (${sizeMb} MB)`);
-  console.log(`📁 Files are placed at root for 1-click extraction.`);
-  console.log(`🚀 Startup file: app.js | Installer: bash server-deploy.sh`);
-  console.log(`============================================================\n`);
+  console.log(`\n🎉 Deployment bundle created: embeddedindia.zip (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
 } else {
-  console.error('❌ Failed to generate embeddedindia.zip');
-  process.exit(1);
+  console.log(`\n⚠️ embeddedindia.zip was not created.`);
 }

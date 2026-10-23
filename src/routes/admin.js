@@ -92,7 +92,9 @@ router.get('/', async (req, res) => {
       activeSubscribers,
       pageViews,
       topPosts,
-      calculatorStats
+      calculatorStats,
+      totalProjects,
+      featuredProjects
     ] = await Promise.all([
       prisma.post.count(),
       prisma.inquiry.count(),
@@ -107,7 +109,9 @@ router.get('/', async (req, res) => {
       prisma.calculatorStat.findMany({
         orderBy: { executionCount: 'desc' },
         take: 6
-      })
+      }),
+      prisma.project ? prisma.project.count().catch(() => 0) : 0,
+      prisma.project ? prisma.project.count({ where: { featured: true } }).catch(() => 0) : 0
     ]);
 
     res.render('admin/dashboard', {
@@ -118,7 +122,9 @@ router.get('/', async (req, res) => {
       activeSubscribers,
       pageViews,
       topPosts,
-      calculatorStats
+      calculatorStats,
+      totalProjects: totalProjects || 0,
+      featuredProjects: featuredProjects || 0
     });
   } catch (err) {
     console.error('[ADMIN DASHBOARD ERROR]', err);
@@ -803,6 +809,251 @@ router.post('/trigger-cron', async (req, res) => {
     res.json({ success: true, message: `Cron task '${action}' executed successfully.` });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+
+// ====================================================================
+// PROJECTS PORTFOLIO MANAGEMENT
+// ====================================================================
+
+// GET /admin/projects - List All Projects
+router.get('/projects', async (req, res) => {
+  try {
+    const { category, search } = req.query;
+    const where = {};
+    if (category && category !== 'All') where.category = category;
+    if (search && search.trim()) {
+      where.OR = [
+        { title: { contains: search.trim() } },
+        { summary: { contains: search.trim() } },
+        { industry: { contains: search.trim() } }
+      ];
+    }
+
+    const projects = await prisma.project.findMany({
+      where,
+      orderBy: [
+        { featured: 'desc' },
+        { order: 'asc' },
+        { createdAt: 'desc' }
+      ]
+    });
+
+    const allProjects = await prisma.project.findMany({ select: { category: true } });
+    const categories = ['All', ...new Set(allProjects.map(p => p.category).filter(Boolean))];
+
+    res.render('admin/projects/index', {
+      projects,
+      categories,
+      selectedCategory: category || 'All',
+      searchQuery: search || '',
+      success: req.query.saved === '1'
+    });
+  } catch (err) {
+    console.error('[ADMIN PROJECTS ERROR]', err);
+    res.status(500).send('Error loading projects');
+  }
+});
+
+// GET /admin/projects/new - Create Project Form
+router.get('/projects/new', (req, res) => {
+  res.render('admin/projects/edit', {
+    project: null,
+    categories: ['Automotive', 'IoT', 'Industrial', 'Edge AI', 'Healthcare', 'Firmware']
+  });
+});
+
+// POST /admin/projects/new - Save Project
+router.post('/projects/new', async (req, res) => {
+  try {
+    const {
+      title, category, industry, client, summary, contentMarkdown,
+      videoUrl, coverImage, techStack, specsJson, metricsJson, featured, order, status
+    } = req.body;
+
+    const cleanTitle = (title || 'Untitled Project').trim();
+    const slug = slugify(cleanTitle, { lower: true, strict: true }) || 'project-' + Date.now();
+    const descriptionHtml = renderMarkdown(contentMarkdown || '');
+
+    await prisma.project.create({
+      data: {
+        title: cleanTitle,
+        slug,
+        category: category || 'Automotive',
+        industry: industry || 'Engineering',
+        client: client || 'Confidential OEM',
+        summary: summary || '',
+        descriptionMarkdown: contentMarkdown || '',
+        descriptionHtml,
+        coverImage: coverImage || '/assets/images/mission1.svg',
+        videoUrl: videoUrl || null,
+        techStack: techStack || 'STM32, FreeRTOS',
+        specs: specsJson || null,
+        metrics: metricsJson || null,
+        featured: featured === 'true' || featured === 'on' || featured === 1,
+        order: parseInt(order) || 0,
+        status: status || 'completed'
+      }
+    });
+
+    res.redirect('/admin/projects?saved=1');
+  } catch (err) {
+    console.error('[PROJECT CREATE ERROR]', err);
+    res.status(500).send('Error creating project: ' + err.message);
+  }
+});
+
+// GET /admin/projects/:id/edit - Edit Project Form
+router.get('/projects/:id/edit', async (req, res) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!project) return res.status(404).send('Project not found');
+
+    res.render('admin/projects/edit', {
+      project,
+      categories: ['Automotive', 'IoT', 'Industrial', 'Edge AI', 'Healthcare', 'Firmware']
+    });
+  } catch (err) {
+    res.status(500).send('Error loading project');
+  }
+});
+
+// POST /admin/projects/:id/edit - Update Project
+router.post('/projects/:id/edit', async (req, res) => {
+  try {
+    const {
+      title, slug, category, industry, client, summary, contentMarkdown,
+      videoUrl, coverImage, techStack, specsJson, metricsJson, featured, order, status
+    } = req.body;
+
+    const cleanTitle = (title || 'Untitled Project').trim();
+    const cleanSlug = slugify(slug || cleanTitle, { lower: true, strict: true });
+    const descriptionHtml = renderMarkdown(contentMarkdown || '');
+
+    await prisma.project.update({
+      where: { id: req.params.id },
+      data: {
+        title: cleanTitle,
+        slug: cleanSlug,
+        category: category || 'Automotive',
+        industry: industry || 'Engineering',
+        client: client || 'Confidential OEM',
+        summary: summary || '',
+        descriptionMarkdown: contentMarkdown || '',
+        descriptionHtml,
+        coverImage: coverImage || null,
+        videoUrl: videoUrl || null,
+        techStack: techStack || 'STM32, FreeRTOS',
+        specs: specsJson || null,
+        metrics: metricsJson || null,
+        featured: featured === 'true' || featured === 'on' || featured === 1,
+        order: parseInt(order) || 0,
+        status: status || 'completed'
+      }
+    });
+
+    res.redirect('/admin/projects?saved=1');
+  } catch (err) {
+    console.error('[PROJECT UPDATE ERROR]', err);
+    res.status(500).send('Error updating project: ' + err.message);
+  }
+});
+
+// POST /admin/projects/:id/delete - Delete Project
+router.post('/projects/:id/delete', async (req, res) => {
+  try {
+    await prisma.project.delete({
+      where: { id: req.params.id }
+    });
+    res.redirect('/admin/projects?deleted=1');
+  } catch (err) {
+    res.status(500).send('Error deleting project');
+  }
+});
+
+// POST /admin/projects/:id/toggle-featured - Quick Toggle Featured Status
+router.post('/projects/:id/toggle-featured', async (req, res) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!project) return res.status(404).json({ success: false, message: 'Not found' });
+
+    const updated = await prisma.project.update({
+      where: { id: req.params.id },
+      data: { featured: !project.featured }
+    });
+    res.json({ success: true, featured: updated.featured });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ====================================================================
+// WEBSITE LIVE CUSTOMIZER
+// ====================================================================
+
+// GET /admin/customizer - Website Section & Copy Manager
+router.get('/customizer', async (req, res) => {
+  try {
+    const settings = await prisma.setting.findMany();
+    const map = settings.reduce((acc, curr) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {});
+
+    res.render('admin/customizer', {
+      settings: map,
+      success: req.query.saved === '1'
+    });
+  } catch (err) {
+    console.error('[CUSTOMIZER ERROR]', err);
+    res.status(500).send('Error loading customizer');
+  }
+});
+
+// POST /admin/customizer - Save Website Customizer Settings
+router.post('/customizer', async (req, res) => {
+  try {
+    const fields = req.body;
+    for (const key of Object.keys(fields)) {
+      await prisma.setting.upsert({
+        where: { key },
+        update: { value: fields[key] },
+        create: { key, value: fields[key] }
+      });
+    }
+    clearSettingsCache();
+    res.redirect('/admin/customizer?saved=1');
+  } catch (err) {
+    res.status(500).send('Error saving customizer');
+  }
+});
+
+// ====================================================================
+// AI CASE STUDY & SEO ENDPOINTS
+// ====================================================================
+
+// POST /admin/ai/project-draft - Generate Structured Case Study with AI
+router.post('/ai/project-draft', async (req, res) => {
+  try {
+    const result = await aiGenerator.generateProjectCaseStudy(req.body);
+    res.json(result);
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+});
+
+// POST /admin/ai/optimize-seo - Generate High CTR Meta Tags with AI
+router.post('/ai/optimize-seo', async (req, res) => {
+  try {
+    const result = await aiGenerator.optimizeSeo(req.body);
+    res.json(result);
+  } catch (err) {
+    res.json({ success: false, error: err.message });
   }
 });
 

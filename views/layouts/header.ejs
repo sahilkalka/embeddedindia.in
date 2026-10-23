@@ -159,6 +159,12 @@
         </div>
       </a>
 
+      <!-- Live Hardware Lab Status Pill -->
+      <div class="hidden xl:inline-flex items-center space-x-2 px-3 py-1 bg-brand-500/10 dark:bg-accent/15 border border-brand-500/20 rounded-full text-[11px] font-bold text-brand-700 dark:text-accent flex-shrink-0">
+        <span class="w-2 h-2 rounded-full bg-brand-500 dark:bg-accent live-radar"></span>
+        <span><%= settings.lab_status_text || 'Bangalore Lab: Online' %></span>
+      </div>
+
       <!-- Desktop Navigation Menu with Smooth Indicator Lines -->
       <nav aria-label="Primary Navigation" class="hidden md:flex items-center space-x-7 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
         <a href="/" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Home</a>
@@ -201,44 +207,51 @@
           </button>
 
           <!-- Floating Dropdown Menu -->
-          <div id="palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 rounded-xl shadow-2xl py-1.5 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Tech Palette
+          <div id="palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-2xl py-2 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <div class="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
+              Select Theme Palette
             </div>
-            <button type="button" data-scheme="silicon-dark-blue" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+            <button type="button" data-scheme="cyber-emerald" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
               <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#0077b6] shadow-xs flex-shrink-0"></span>
-                <span>Silicon Dark Blue</span>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#007f5f] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
+                <span>Cyber Emerald</span>
               </span>
-              <span class="scheme-check hidden text-[#0077b6] font-bold text-xs">✓</span>
+              <span class="scheme-check hidden text-[#007f5f] font-black text-xs">✓</span>
             </button>
-            <button type="button" data-scheme="pcb-emerald-green" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+            <button type="button" data-scheme="quantum-cyan" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
               <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#10b981] shadow-xs flex-shrink-0"></span>
-                <span>PCB Emerald Green</span>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#0284c7] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
+                <span>Quantum Cyan</span>
               </span>
-              <span class="scheme-check hidden text-[#10b981] font-bold text-xs">✓</span>
+              <span class="scheme-check hidden text-[#0284c7] font-black text-xs">✓</span>
             </button>
-            <button type="button" data-scheme="automotive-slate-red" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+            <button type="button" data-scheme="titanium-slate" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
               <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#ef4444] shadow-xs flex-shrink-0"></span>
-                <span>Automotive Slate/Red</span>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#475569] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
+                <span>Titanium Slate</span>
               </span>
-              <span class="scheme-check hidden text-[#ef4444] font-bold text-xs">✓</span>
+              <span class="scheme-check hidden text-[#475569] font-black text-xs">✓</span>
             </button>
-            <button type="button" data-scheme="industrial-amber-charcoal" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+            <button type="button" data-scheme="solar-amber" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
               <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#f59e0b] shadow-xs flex-shrink-0"></span>
-                <span>Industrial Amber</span>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#d97706] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
+                <span>Solar Amber</span>
               </span>
-              <span class="scheme-check hidden text-[#f59e0b] font-bold text-xs">✓</span>
+              <span class="scheme-check hidden text-[#d97706] font-black text-xs">✓</span>
             </button>
-            <button type="button" data-scheme="clean-light-enterprise" class="palette-btn w-full px-3 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+            <button type="button" data-scheme="supernova-violet" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
               <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#2563eb] shadow-xs flex-shrink-0"></span>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#9333ea] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
+                <span>Supernova Violet</span>
+              </span>
+              <span class="scheme-check hidden text-[#9333ea] font-black text-xs">✓</span>
+            </button>
+            <button type="button" data-scheme="clean-light" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
+              <span class="flex items-center space-x-2.5">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#2563eb] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
                 <span>Clean Enterprise</span>
               </span>
-              <span class="scheme-check hidden text-[#2563eb] font-bold text-xs">✓</span>
+              <span class="scheme-check hidden text-[#2563eb] font-black text-xs">✓</span>
             </button>
           </div>
         </div>
