@@ -278,22 +278,165 @@
     const paletteChevron = document.getElementById('palette-chevron');
     const activeSchemeDot = document.getElementById('active-scheme-dot');
 
-    const paletteColorMap = {
-      'silicon-dark-blue': '#0077b6',
-      'pcb-emerald-green': '#10b981',
-      'automotive-slate-red': '#ef4444',
-      'industrial-amber-charcoal': '#f59e0b',
-      'clean-light-enterprise': '#2563eb'
+    const THEME_PALETTES = {
+      'cyber-emerald': {
+        name: 'Cyber Emerald',
+        hex: '#007f5f',
+        light: {
+          '--primary-color': '#007f5f',
+          '--primary-hover': '#007255',
+          '--primary-active': '#00664c',
+          '--secondary-color': '#55a630',
+          '--accent-light': '#80b918',
+          '--accent-dark': '#387322',
+          '--glow-color': 'rgba(0, 127, 95, 0.22)'
+        },
+        dark: {
+          '--primary-color': '#059669',
+          '--primary-hover': '#047857',
+          '--primary-active': '#065f46',
+          '--secondary-color': '#80b918',
+          '--accent-light': '#a3e635',
+          '--accent-dark': '#65a30d',
+          '--glow-color': 'rgba(5, 150, 105, 0.35)'
+        }
+      },
+      'quantum-cyan': {
+        name: 'Quantum Cyan',
+        hex: '#0284c7',
+        light: {
+          '--primary-color': '#0284c7',
+          '--primary-hover': '#0369a1',
+          '--primary-active': '#075985',
+          '--secondary-color': '#06b6d4',
+          '--accent-light': '#38bdf8',
+          '--accent-dark': '#0891b2',
+          '--glow-color': 'rgba(2, 132, 199, 0.22)'
+        },
+        dark: {
+          '--primary-color': '#0ea5e9',
+          '--primary-hover': '#0284c7',
+          '--primary-active': '#0369a1',
+          '--secondary-color': '#06b6d4',
+          '--accent-light': '#38bdf8',
+          '--accent-dark': '#0891b2',
+          '--glow-color': 'rgba(14, 165, 233, 0.35)'
+        }
+      },
+      'titanium-slate': {
+        name: 'Titanium Slate',
+        hex: '#475569',
+        light: {
+          '--primary-color': '#334155',
+          '--primary-hover': '#1e293b',
+          '--primary-active': '#0f172a',
+          '--secondary-color': '#0284c7',
+          '--accent-light': '#38bdf8',
+          '--accent-dark': '#0f172a',
+          '--glow-color': 'rgba(56, 189, 248, 0.22)'
+        },
+        dark: {
+          '--primary-color': '#475569',
+          '--primary-hover': '#334155',
+          '--primary-active': '#1e293b',
+          '--secondary-color': '#38bdf8',
+          '--accent-light': '#7dd3fc',
+          '--accent-dark': '#0284c7',
+          '--glow-color': 'rgba(56, 189, 248, 0.35)'
+        }
+      },
+      'solar-amber': {
+        name: 'Solar Amber',
+        hex: '#d97706',
+        light: {
+          '--primary-color': '#d97706',
+          '--primary-hover': '#b45309',
+          '--primary-active': '#92400e',
+          '--secondary-color': '#f59e0b',
+          '--accent-light': '#fbbf24',
+          '--accent-dark': '#78350f',
+          '--glow-color': 'rgba(217, 119, 6, 0.22)'
+        },
+        dark: {
+          '--primary-color': '#f59e0b',
+          '--primary-hover': '#d97706',
+          '--primary-active': '#b45309',
+          '--secondary-color': '#fbbf24',
+          '--accent-light': '#fde68a',
+          '--accent-dark': '#92400e',
+          '--glow-color': 'rgba(245, 158, 11, 0.35)'
+        }
+      },
+      'supernova-violet': {
+        name: 'Supernova Violet',
+        hex: '#9333ea',
+        light: {
+          '--primary-color': '#9333ea',
+          '--primary-hover': '#7e22ce',
+          '--primary-active': '#6b21a8',
+          '--secondary-color': '#a855f7',
+          '--accent-light': '#c084fc',
+          '--accent-dark': '#581c87',
+          '--glow-color': 'rgba(147, 51, 234, 0.22)'
+        },
+        dark: {
+          '--primary-color': '#a855f7',
+          '--primary-hover': '#9333ea',
+          '--primary-active': '#7e22ce',
+          '--secondary-color': '#c084fc',
+          '--accent-light': '#e9d5ff',
+          '--accent-dark': '#6b21a8',
+          '--glow-color': 'rgba(168, 85, 247, 0.35)'
+        }
+      },
+      'clean-light': {
+        name: 'Clean Enterprise',
+        hex: '#2563eb',
+        light: {
+          '--primary-color': '#2563eb',
+          '--primary-hover': '#1d4ed8',
+          '--primary-active': '#1e40af',
+          '--secondary-color': '#3b82f6',
+          '--accent-light': '#60a5fa',
+          '--accent-dark': '#1e3a8a',
+          '--glow-color': 'rgba(37, 99, 235, 0.22)'
+        },
+        dark: {
+          '--primary-color': '#3b82f6',
+          '--primary-hover': '#2563eb',
+          '--primary-active': '#1d4ed8',
+          '--secondary-color': '#60a5fa',
+          '--accent-light': '#93c5fd',
+          '--accent-dark': '#1e40af',
+          '--glow-color': 'rgba(59, 130, 246, 0.35)'
+        }
+      }
     };
 
+    THEME_PALETTES['emerald'] = THEME_PALETTES['cyber-emerald'];
+    THEME_PALETTES['pcb-emerald-green'] = THEME_PALETTES['cyber-emerald'];
+    THEME_PALETTES['cyan'] = THEME_PALETTES['quantum-cyan'];
+    THEME_PALETTES['silicon-dark-blue'] = THEME_PALETTES['quantum-cyan'];
+    THEME_PALETTES['spacegrey'] = THEME_PALETTES['titanium-slate'];
+    THEME_PALETTES['industrial-amber-charcoal'] = THEME_PALETTES['solar-amber'];
+    THEME_PALETTES['clean-light-enterprise'] = THEME_PALETTES['clean-light'];
+
     function applyPalette(scheme) {
-      const safeScheme = paletteColorMap[scheme] ? scheme : 'cyber-emerald';
+      const safeScheme = THEME_PALETTES[scheme] ? scheme : 'cyber-emerald';
+      const paletteObj = THEME_PALETTES[safeScheme];
       document.documentElement.setAttribute('data-palette', safeScheme);
       localStorage.setItem('color-palette', safeScheme);
 
-      const colorHex = paletteColorMap[safeScheme] || '#10b981';
+      const isDark = document.documentElement.classList.contains('dark');
+      const vars = isDark ? (paletteObj.dark || paletteObj.light) : paletteObj.light;
+      if (vars) {
+        Object.entries(vars).forEach(([prop, val]) => {
+          document.documentElement.style.setProperty(prop, val);
+        });
+      }
+
       if (activeSchemeDot) {
-        activeSchemeDot.style.backgroundColor = colorHex;
+        activeSchemeDot.style.backgroundColor = paletteObj.hex || '#007f5f';
       }
 
       paletteButtons.forEach(btn => {

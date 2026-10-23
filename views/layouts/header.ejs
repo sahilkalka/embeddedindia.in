@@ -159,8 +159,8 @@
         </div>
       </a>
 
-      <!-- Live Hardware Lab Status Pill (Compact, Truncated & Configurable) -->
       <% if (settings.lab_event_enabled !== 'false') { %>
+      <!-- Live Hardware Lab Status Pill (Compact, Truncated & Configurable) -->
       <a href="<%= settings.lab_event_url || '/about#lab' %>" title="<%= settings.lab_status_text || 'Bangalore Lab: Online • 4 Active SMT Lines • HIL Station #2 Active' %>" class="hidden xl:inline-flex items-center space-x-2 px-3 py-1 bg-brand-500/10 dark:bg-accent/15 hover:bg-brand-500/20 dark:hover:bg-accent/25 border border-brand-500/20 rounded-full text-[11px] font-bold text-brand-700 dark:text-accent flex-shrink-0 transition max-w-[210px] 2xl:max-w-xs group cursor-pointer shadow-xs">
         <span class="w-2 h-2 rounded-full bg-brand-500 dark:bg-accent live-radar flex-shrink-0"></span>
         <span class="truncate"><%= settings.lab_event_label || (settings.lab_status_text ? settings.lab_status_text.split('•')[0].trim() : 'Bangalore Lab: Online') %></span>

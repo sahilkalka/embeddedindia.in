@@ -43,30 +43,73 @@
       </div>
 
       <!-- Navigation Tabs (Desktop) -->
-      <nav class="hidden lg:flex items-center space-x-1 text-xs font-bold">
-        <a href="/admin" class="px-3 py-1.5 rounded-lg transition <%= currentPath === '/admin' ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Overview
-        </a>
-        <a href="/admin/inquiries" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/inquiries') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Inquiries
-        </a>
-        <a href="/admin/subscribers" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/subscribers') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Subscribers
-        </a>
-        <a href="/admin/posts" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/posts') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Blog Posts
-        </a>
-        <a href="/admin/ai" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1 <%= currentPath.startsWith('/admin/ai') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-brand-600 dark:text-accent font-extrabold hover:bg-brand-50 dark:hover:bg-slate-800' %>">
-          <span>✨ AI Engine</span>
-        </a>
-        <a href="/admin/settings" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/settings') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Settings &amp; Accounts
-        </a>
-      </nav>
+      <% const isSettingsMode = currentPath.startsWith('/admin/settings'); %>
+      <% if (isSettingsMode) { %>
+        <!-- SETTINGS MODE HEADER NAVIGATION -->
+        <nav class="hidden lg:flex items-center space-x-1 text-xs font-bold" id="settings-header-nav">
+          <button type="button" onclick="switchSettingsSection('theme-engine')" data-settings-tab="theme-engine" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition bg-brand-500 text-white font-extrabold shadow-sm flex items-center space-x-1">
+            <span>🎨 Themes</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('site-customizer')" data-settings-tab="site-customizer" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>🎛️ Customizer</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('feature-flags')" data-settings-tab="feature-flags" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>🚩 Flags &amp; Live Preview</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('seo-scripts')" data-settings-tab="seo-scripts" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>🔍 Dynamic SEO</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('monetization-ads')" data-settings-tab="monetization-ads" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>💰 Monetization Hub</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('newsletter-config')" data-settings-tab="newsletter-config" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>📰 Newsletter</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('smtp-settings')" data-settings-tab="smtp-settings" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>📧 SMTP &amp; Mail</span>
+          </button>
+          <button type="button" onclick="switchSettingsSection('team-accounts')" data-settings-tab="team-accounts" class="settings-nav-btn px-2.5 py-1.5 rounded-lg transition text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center space-x-1">
+            <span>👥 Staff</span>
+          </button>
+          <a href="/admin" class="ml-2 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-extrabold transition flex items-center space-x-1 border border-red-500/20" title="Exit Settings Mode and return to Dashboard">
+            <span>✕ Exit Settings Mode</span>
+          </a>
+        </nav>
+      <% } else { %>
+        <!-- STANDARD DASHBOARD NAVIGATION -->
+        <nav class="hidden lg:flex items-center space-x-1 text-xs font-bold">
+          <a href="/admin" class="px-3 py-1.5 rounded-lg transition <%= currentPath === '/admin' ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+            Overview
+          </a>
+          <a href="/admin/inquiries" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/inquiries') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+            Inquiries
+          </a>
+          <a href="/admin/subscribers" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/subscribers') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+            Subscribers
+          </a>
+          <a href="/admin/posts" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/posts') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+            Blog Posts
+          </a>
+          <a href="/admin/projects" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/projects') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+            Projects
+          </a>
+          <a href="/admin/ai" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1 <%= currentPath.startsWith('/admin/ai') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-brand-600 dark:text-accent font-extrabold hover:bg-brand-50 dark:hover:bg-slate-800' %>">
+            <span>✨ AI Engine</span>
+          </a>
+        </nav>
+      <% } %>
 
-      <!-- Right Header Actions: Theme Toggle, Palette Switcher, View Site & Sign Out -->
+      <!-- Right Header Actions: Settings Gear Icon, Palette Switcher, Theme Toggle, View Site & Sign Out -->
       <div class="flex items-center space-x-2 sm:space-x-2.5 text-xs">
         
+        <!-- Borderless Settings Gear Icon Button (Turns on Settings Mode) -->
+        <a href="<%= isSettingsMode ? '/admin' : '/admin/settings' %>" id="admin-settings-gear" aria-label="Settings Mode" title="<%= isSettingsMode ? 'Exit Settings Mode' : 'Enter Settings Mode' %>" class="p-2 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition transform duration-300 hover:rotate-90 active:scale-95 <%= isSettingsMode ? 'text-brand-600 dark:text-accent bg-brand-50 dark:bg-brand-950/60 ring-2 ring-brand-500/30' : '' %>">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </a>
+
         <!-- Compact Palette Switcher: Emerald, Cyan, Space Grey -->
         <div class="relative" id="admin-palette-dropdown-wrapper">
           <button id="admin-palette-dropdown-btn" type="button" aria-label="Select accent color" aria-expanded="false" class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none transition shadow-sm active:scale-95 flex items-center space-x-1" title="Accent Color Scheme">
@@ -130,16 +173,31 @@
     </div>
 
     <!-- Mobile Sub-Navigation Bar for Small Screens -->
-    <div class="lg:hidden flex items-center space-x-2 px-4 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-[11px] font-bold overflow-x-auto whitespace-nowrap">
-      <a href="/admin" class="px-2.5 py-1 rounded-md transition <%= currentPath === '/admin' ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Overview</a>
-      <a href="/admin/inquiries" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/inquiries') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Inquiries</a>
-      <a href="/admin/subscribers" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/subscribers') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Subscribers</a>
-      <a href="/admin/posts" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/posts') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Posts</a>
-      <a href="/admin/ai" class="px-2.5 py-1 rounded-md transition flex items-center space-x-1 <%= currentPath.startsWith('/admin/ai') ? 'bg-brand-500 text-white' : 'text-brand-600 dark:text-accent hover:bg-slate-200 dark:hover:bg-slate-800' %>">
-        <span>✨ AI Engine</span>
-      </a>
-      <a href="/admin/settings" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/settings') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Settings</a>
-    </div>
+    <% if (isSettingsMode) { %>
+      <div class="lg:hidden flex items-center space-x-2 px-4 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-[11px] font-bold overflow-x-auto whitespace-nowrap">
+        <button type="button" onclick="switchSettingsSection('theme-engine')" class="settings-nav-btn px-2.5 py-1 rounded-md bg-brand-500 text-white" data-settings-tab="theme-engine">🎨 Themes</button>
+        <button type="button" onclick="switchSettingsSection('site-customizer')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="site-customizer">🎛️ Customizer</button>
+        <button type="button" onclick="switchSettingsSection('feature-flags')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="feature-flags">🚩 Flags</button>
+        <button type="button" onclick="switchSettingsSection('seo-scripts')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="seo-scripts">🔍 SEO</button>
+        <button type="button" onclick="switchSettingsSection('monetization-ads')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="monetization-ads">💰 Monetization</button>
+        <button type="button" onclick="switchSettingsSection('newsletter-config')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="newsletter-config">📰 Newsletter</button>
+        <button type="button" onclick="switchSettingsSection('smtp-settings')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="smtp-settings">📧 SMTP</button>
+        <button type="button" onclick="switchSettingsSection('team-accounts')" class="settings-nav-btn px-2.5 py-1 rounded-md text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800" data-settings-tab="team-accounts">👥 Staff</button>
+        <a href="/admin" class="px-2.5 py-1 rounded-md bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 font-bold border border-red-200 dark:border-red-800">✕ Exit</a>
+      </div>
+    <% } else { %>
+      <div class="lg:hidden flex items-center space-x-2 px-4 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-[11px] font-bold overflow-x-auto whitespace-nowrap">
+        <a href="/admin" class="px-2.5 py-1 rounded-md transition <%= currentPath === '/admin' ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Overview</a>
+        <a href="/admin/inquiries" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/inquiries') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Inquiries</a>
+        <a href="/admin/subscribers" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/subscribers') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Subscribers</a>
+        <a href="/admin/posts" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/posts') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Posts</a>
+        <a href="/admin/projects" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/projects') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Projects</a>
+        <a href="/admin/ai" class="px-2.5 py-1 rounded-md transition flex items-center space-x-1 <%= currentPath.startsWith('/admin/ai') ? 'bg-brand-500 text-white' : 'text-brand-600 dark:text-accent hover:bg-slate-200 dark:hover:bg-slate-800' %>">
+          <span>✨ AI Engine</span>
+        </a>
+        <a href="/admin/settings" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/settings') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">⚙️ Settings</a>
+      </div>
+    <% } %>
   </header>
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow">

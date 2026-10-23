@@ -220,7 +220,11 @@ const mailer = {
   async sendInquiryNotification(inquiry) {
     try {
       const smtpSender = process.env.SMTP_USER || 'info@embeddedindia.in';
-      const adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      let adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      try {
+        const _s = await prisma.setting.findUnique({ where: { key: 'inquiry_recipient_emails' } });
+        if (_s && _s.value && _s.value.trim()) adminEmail = _s.value.trim();
+      } catch (_) {}
       const appUrl = process.env.APP_URL || 'http://localhost:3000';
       const timestamp = inquiry.createdAt ? new Date(inquiry.createdAt).toISOString() : new Date().toISOString();
 
@@ -277,7 +281,11 @@ const mailer = {
   async sendNewsletterAdminNotification(subscriber) {
     try {
       const smtpSender = process.env.SMTP_USER || 'info@embeddedindia.in';
-      const adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      let adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      try {
+        const _s = await prisma.setting.findUnique({ where: { key: 'newsletter_recipient_emails' } });
+        if (_s && _s.value && _s.value.trim()) adminEmail = _s.value.trim();
+      } catch (_) {}
       const appUrl = process.env.APP_URL || 'http://localhost:3000';
       const timestamp = subscriber.createdAt ? new Date(subscriber.createdAt).toISOString() : new Date().toISOString();
 
@@ -331,7 +339,11 @@ const mailer = {
   async sendVerificationEmail(email, token) {
     try {
       const smtpSender = process.env.SMTP_USER || 'info@embeddedindia.in';
-      const adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      let adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      try {
+        const _s = await prisma.setting.findUnique({ where: { key: 'newsletter_recipient_emails' } });
+        if (_s && _s.value && _s.value.trim()) adminEmail = _s.value.trim();
+      } catch (_) {}
       const appUrl = process.env.APP_URL || 'http://localhost:3000';
       const verifyUrl = `${appUrl}/api/newsletter/verify?token=${token}`;
 
@@ -378,7 +390,11 @@ const mailer = {
   async sendLeadMagnetEmail(email) {
     try {
       const smtpSender = process.env.SMTP_USER || 'info@embeddedindia.in';
-      const adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      let adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
+      try {
+        const _s = await prisma.setting.findUnique({ where: { key: 'newsletter_recipient_emails' } });
+        if (_s && _s.value && _s.value.trim()) adminEmail = _s.value.trim();
+      } catch (_) {}
       const appUrl = process.env.APP_URL || 'http://localhost:3000';
       const pdfPath = path.join(__dirname, '../../public/downloads/embedded-design-checklist.pdf');
       const attachments = [];

@@ -274,6 +274,7 @@
 
 <!-- AJAX Submission Scripts & UI State Handlers -->
 <script>
+(() => {
   // 1. Service auto-selection from query parameter
   try {
     const urlParams = new URLSearchParams(window.location.search);
@@ -347,14 +348,14 @@
   }
 
   // 3. Interactive Newsletter Form Submission on /contact
-  const newsletterForm = document.getElementById('contact-newsletter-form');
-  const newsletterStatus = document.getElementById('newsletter-status-box');
+  const contactNewsletterForm = document.getElementById('contact-newsletter-form');
+  const contactNewsletterStatus = document.getElementById('newsletter-status-box');
   const newsletterSubmitBtn = document.getElementById('newsletter-submit-btn');
   const newsletterSpinner = document.getElementById('newsletter-spinner');
   const newsletterBtnText = document.getElementById('newsletter-btn-text');
 
-  if (newsletterForm) {
-    newsletterForm.addEventListener('submit', async (e) => {
+  if (contactNewsletterForm) {
+    contactNewsletterForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       newsletterSubmitBtn.disabled = true;
@@ -362,10 +363,10 @@
       newsletterSpinner.classList.remove('hidden');
       newsletterBtnText.textContent = 'Subscribing...';
 
-      newsletterStatus.className = 'p-3 rounded-xl text-xs bg-white/10 text-slate-200 font-semibold block';
-      newsletterStatus.textContent = 'Registering your subscription...';
+      contactNewsletterStatus.className = 'p-3 rounded-xl text-xs bg-white/10 text-slate-200 font-semibold block';
+      contactNewsletterStatus.textContent = 'Registering your subscription...';
 
-      const formData = new FormData(newsletterForm);
+      const formData = new FormData(contactNewsletterForm);
       const data = {
         email: formData.get('email'),
         source: 'contact-page'
@@ -381,16 +382,16 @@
         const result = await response.json();
 
         if (result.success) {
-          newsletterStatus.className = 'p-3 rounded-xl text-xs bg-emerald-500/20 text-emerald-300 font-semibold block border border-emerald-500/40';
-          newsletterStatus.textContent = result.message;
-          newsletterForm.reset();
+          contactNewsletterStatus.className = 'p-3 rounded-xl text-xs bg-emerald-500/20 text-emerald-300 font-semibold block border border-emerald-500/40';
+          contactNewsletterStatus.textContent = result.message;
+          contactNewsletterForm.reset();
         } else {
-          newsletterStatus.className = 'p-3 rounded-xl text-xs bg-red-500/20 text-red-300 font-semibold block border border-red-500/40';
-          newsletterStatus.textContent = result.message || 'Please provide a valid email address.';
+          contactNewsletterStatus.className = 'p-3 rounded-xl text-xs bg-red-500/20 text-red-300 font-semibold block border border-red-500/40';
+          contactNewsletterStatus.textContent = result.message || 'Please provide a valid email address.';
         }
       } catch (err) {
-        newsletterStatus.className = 'p-3 rounded-xl text-xs bg-red-500/20 text-red-300 font-semibold block border border-red-500/40';
-        newsletterStatus.textContent = 'Network error. Please try again or email info@embeddedindia.in.';
+        contactNewsletterStatus.className = 'p-3 rounded-xl text-xs bg-red-500/20 text-red-300 font-semibold block border border-red-500/40';
+        contactNewsletterStatus.textContent = 'Network error. Please try again or email info@embeddedindia.in.';
       } finally {
         newsletterSubmitBtn.disabled = false;
         newsletterSubmitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
@@ -399,6 +400,7 @@
       }
     });
   }
+})();
 </script>
 
 <%- include('../layouts/footer') %>

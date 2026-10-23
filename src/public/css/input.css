@@ -26,7 +26,7 @@
   --glow-accent: rgba(85, 166, 48, 0.18);
   --spring-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.dark, .dark[data-palette="emerald"], .dark[data-palette="cyber-emerald"] {
+.dark:not([data-palette]), .dark[data-palette="emerald"], .dark[data-palette="cyber-emerald"] {
   --primary-color: #059669;
   --primary-hover: #047857;
   --primary-active: #065f46;
@@ -509,4 +509,47 @@ textarea:focus {
 }
 .dark table tbody tr:hover td {
   color: #f8fafc !important;
+}
+
+/* ====================================================================
+   LIVELINESS, TACTILE HOVER, & MODERN MICRO-INTERACTIONS
+   ==================================================================== */
+.card-tactile {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease, border-color 0.2s ease;
+}
+.card-tactile:hover {
+  transform: translateY(-4px) scale(1.008);
+  box-shadow: 0 12px 28px -6px var(--glow-color, rgba(0, 127, 95, 0.25));
+}
+.hover-glow:hover {
+  box-shadow: 0 0 25px var(--glow-color, rgba(0, 127, 95, 0.3));
+}
+.btn-tactile {
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+.btn-tactile:hover {
+  transform: translateY(-1px);
+}
+.btn-tactile:active {
+  transform: scale(0.96);
+}
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--glow-color, rgba(0, 127, 95, 0.12)), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.spotlight-card:hover::before {
+  opacity: 1;
 }

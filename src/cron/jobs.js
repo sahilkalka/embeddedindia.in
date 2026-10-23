@@ -37,15 +37,44 @@ async function publishScheduledPosts() {
 async function sendWeeklyNewsletterDigest() {
   console.log('[CRON] Preparing weekly newsletter digest...');
   try {
-    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const recentPosts = await prisma.post.findMany({
-      where: {
-        status: 'published',
-        publishedAt: { gte: oneWeekAgo }
-      },
+    const settings = await prisma.setting.findMany();
+    const map = settings.reduce((acc, curr) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {});
+
+    // Compute time window based on frequency setting
+    let timeWindowDays = 7;
+    const freq = (map.newsletter_frequency || 'weekly').toLowerCase();
+    if (freq === 'daily') timeWindowDays = 1;
+    else if (freq === 'bi-weekly') timeWindowDays = 14;
+    else if (freq === 'monthly') timeWindowDays = 30;
+
+    const dateThreshold = new Date(Date.now() - timeWindowDays * 24 * 60 * 60 * 1000);
+
+    // Filter by category if specified
+    const postWhere = {
+      status: 'published',
+      publishedAt: { gte: dateThreshold }
+    };
+    if (map.newsletter_category && map.newsletter_category !== 'all') {
+      postWhere.category = { equals: map.newsletter_category, mode: 'insensitive' };
+    }
+
+    let recentPosts = await prisma.post.findMany({
+      where: postWhere,
       orderBy: { publishedAt: 'desc' },
       take: 5
     });
+
+    // Fallback: if no posts within the threshold, fetch the latest 3 published posts
+    if (recentPosts.length === 0) {
+      recentPosts = await prisma.post.findMany({
+        where: { status: 'published' },
+        orderBy: { publishedAt: 'desc' },
+        take: 3
+      });
+    }
 
     if (recentPosts.length === 0) {
       console.log('[CRON] No new posts this week. Skipping newsletter digest.');
@@ -69,11 +98,7 @@ async function sendWeeklyNewsletterDigest() {
       </li>
     `).join('');
 
-    const settings = await prisma.setting.findMany();
-    const map = settings.reduce((acc, curr) => {
-      acc[curr.key] = curr.value;
-      return acc;
-    }, {});
+
     const fromName = map.smtp_from_name || map.site_name || 'Embedded India';
     const fromEmail = map.smtp_from_email || map.contact_email || 'info@embeddedindia.in';
     const sender = `"${fromName}" <${fromEmail}>`;
@@ -83,7 +108,7 @@ async function sendWeeklyNewsletterDigest() {
       const mailOptions = {
         from: sender,
         to: sub.email,
-        subject: `Embedded India Weekly: ${recentPosts[0].title}`,
+        subject: map.newsletter_topic ? `[${map.newsletter_topic}] ${recentPosts[0].title}` : `Embedded India Engineering Digest: ${recentPosts[0].title}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
             <div style="background-color: #007f5f; padding: 20px; color: white;">
@@ -92,7 +117,7 @@ async function sendWeeklyNewsletterDigest() {
             </div>
             <div style="padding: 24px; color: #192c27;">
               <p>Hello,</p>
-              <p>Here are the latest engineering guides and technical updates published this week:</p>
+              <div style="margin-bottom: 16px; font-size: 14px; color: #334155;">${map.newsletter_intro_content ? map.newsletter_intro_content.replace(/\n/g, '<br>') : 'Here are the latest engineering guides, embedded firmware patterns, and hardware architectures curated for you:'}</div>
               <ul style="padding-left: 20px; margin: 20px 0;">
                 ${postItemsHtml}
               </ul>

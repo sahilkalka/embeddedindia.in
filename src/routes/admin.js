@@ -466,20 +466,30 @@ router.get('/settings', async (req, res) => {
   }
 });
 
-// POST /admin/settings - Update Site Settings
+// POST /admin/settings - Update Site Settings (Supports independent module AJAX saves)
 router.post('/settings', async (req, res) => {
   try {
-    const fields = req.body;
+    const fields = { ...req.body };
+    const activeTab = fields._active_tab || '';
+    delete fields._active_tab;
+
     for (const key of Object.keys(fields)) {
       await prisma.setting.upsert({
         where: { key },
-        update: { value: fields[key] },
-        create: { key, value: fields[key] }
+        update: { value: String(fields[key]) },
+        create: { key, value: String(fields[key]) }
       });
     }
     clearSettingsCache();
-    res.redirect('/admin/settings?saved=1');
+
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json')) || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.json({ success: true, message: 'Settings saved and applied live!', activeTab });
+    }
+    res.redirect(`/admin/settings?saved=1${activeTab ? '#' + activeTab : ''}`);
   } catch (err) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json')) || req.headers['x-requested-with'] === 'XMLHttpRequest') {
+      return res.status(500).json({ success: false, error: err.message || 'Error saving settings' });
+    }
     res.status(500).send('Error saving settings');
   }
 });
