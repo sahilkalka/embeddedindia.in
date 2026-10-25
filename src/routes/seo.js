@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../services/db');
+const toolsRegistry = require('../data/toolsRegistry');
 
 let cachedSitemap = null;
 let sitemapTimestamp = 0;
@@ -37,14 +38,52 @@ router.get('/sitemap.xml', async (req, res) => {
       { path: '/contact', priority: '0.8', changefreq: 'monthly' },
       { path: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
       { path: '/tools', priority: '0.9', changefreq: 'weekly' },
-      { path: '/tools/pcb-trace', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/555-timer', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/led-resistor', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/uart-baud', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/smd-code', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/battery-life', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/trace-impedance', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/mcu-pinout', priority: '0.8', changefreq: 'weekly' }
+      { path: '/tools/engineering-hardware', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/developer-formatters', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/financial-calculators', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/media-file-tools', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/generators-security', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/text-content-tools', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/unit-converters', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/seo-webmaster-tools', priority: '0.85', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/pcb-trace', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/voltage-divider', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/smd-code', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/battery-life', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/led-resistor', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/555-timer', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/uart-baud', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/trace-impedance', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/engineering-hardware/mcu-pinout', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/developer-formatters/json-formatter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/developer-formatters/base64-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/developer-formatters/regex-tester', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/developer-formatters/jwt-decoder', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/developer-formatters/sql-formatter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/financial-calculators/compound-interest-sip', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/financial-calculators/emi-loan-calculator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/financial-calculators/gst-calculator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/financial-calculators/freelance-rate-calculator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/media-file-tools/image-compressor', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/media-file-tools/image-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/media-file-tools/svg-optimizer', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/media-file-tools/pdf-tools', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/generators-security/qr-generator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/generators-security/password-generator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/generators-security/uuid-generator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/generators-security/meta-tag-generator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/text-content-tools/word-counter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/text-content-tools/case-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/text-content-tools/text-diff', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/text-content-tools/markdown-previewer', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/unit-converters/data-storage-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/unit-converters/electrical-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/unit-converters/temp-pressure-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/unit-converters/length-area-converter', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/seo-webmaster-tools/open-graph-previewer', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/seo-webmaster-tools/schema-generator', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/seo-webmaster-tools/http-status-codes', priority: '0.8', changefreq: 'weekly' },
+      { path: '/tools/seo-webmaster-tools/robots-sitemap-builder', priority: '0.8', changefreq: 'weekly' },
     ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;

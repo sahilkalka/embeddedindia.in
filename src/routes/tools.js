@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../services/db');
+const toolsRegistry = require('../data/toolsRegistry');
 
 // Helper to track tool usage
 async function incrementToolStat(toolName) {
@@ -14,91 +15,119 @@ async function incrementToolStat(toolName) {
     } else {
       await prisma.calculatorStat.create({ data: { toolName: normalizedName, executionCount: 1 } });
     }
-  } catch (err) {}
+  } catch (err) {
+    // Fail-open for stat logging
+  }
 }
 
-// Main Tools Directory
+// Helper to configure SEO and JSON-LD schema
+function applyToolSeo(res, category, tool) {
+  const canonicalUrl = `https://embeddedindia.in/tools/${category.slug}/${tool.slug}`;
+  res.locals.seo = res.locals.seo || {};
+  res.locals.seo.title = tool.metaTitle || `${tool.title} | ${category.title} | Embedded India`;
+  res.locals.seo.description = tool.metaDescription || tool.description;
+  res.locals.seo.canonical = canonicalUrl;
+  res.locals.seo.keywords = (tool.keywords || []).join(', ');
+  
+  res.locals.seo.structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: tool.title,
+    description: tool.description,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript. Requires HTML5.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    },
+    url: canonicalUrl
+  };
+}
+
+// 1. Landing Page: Displays 8 Dedicated Category Hub Tiles
 router.get('/', (req, res) => {
-  res.locals.seo.title = 'Interactive Embedded Engineering Calculators & Design Tools | Embedded India';
-  res.locals.seo.description = 'Free online engineering calculators for hardware & firmware designers: IPC-2221 PCB trace width, 555 timer, LED resistor, UART baud rate error, and SMD codes.';
-  res.render('pages/tools/index');
+  const categories = toolsRegistry.getAllCategories();
+  res.locals.seo = res.locals.seo || {};
+  res.locals.seo.title = 'Interactive Engineering & Developer Tools Suite (8 Hubs) | Embedded India';
+  res.locals.seo.description = 'Explore 38+ precision client-side calculators, circuit analyzers, data formatters, and webmaster diagnostics engineered for hardware and firmware designers.';
+  res.locals.seo.canonical = 'https://embeddedindia.in/tools';
+
+  res.render('pages/tools/index', {
+    categories
+  });
 });
 
-// 1. PCB Trace Width Calculator
-router.get('/pcb-trace', (req, res) => {
-  incrementToolStat('pcb-trace');
-  res.locals.seo.title = 'IPC-2221 PCB Trace Width Calculator | Embedded India';
-  res.locals.seo.description = 'Calculate required PCB trace width, cross-sectional area, resistance, and voltage drop according to IPC-2221 standards for internal and external layers.';
-  res.locals.seo.structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'IPC-2221 PCB Trace Width Calculator',
-    applicationCategory: 'EngineeringCalculator',
-    operatingSystem: 'Any'
-  };
-  res.render('pages/tools/pcb-trace');
+// 2. Category Hub & Single Parameter Route (handles /:groupSlug, legacy redirects, and ?tool=)
+router.get('/:groupSlug', (req, res, next) => {
+  const param = req.params.groupSlug;
+
+  // Check 1: Backward compatibility for legacy flat tool URLs (e.g. /tools/pcb-trace -> 301)
+  const legacyRedirect = toolsRegistry.getLegacyRedirect(param);
+  if (legacyRedirect) {
+    const redirectUrl = typeof legacyRedirect === 'string' 
+      ? legacyRedirect 
+      : `/tools/${legacyRedirect.groupSlug}/${legacyRedirect.toolSlug}`;
+    return res.redirect(301, redirectUrl);
+  }
+
+  // Check 2: Verify if param is a valid category slug
+  const category = toolsRegistry.getCategoryBySlug(param);
+  if (!category) {
+    return next();
+  }
+
+  // Support ?tool=toolSlug deep linking or default to first tool in category
+  const requestedToolSlug = req.query.tool;
+  let activeTool = category.tools[0] || null;
+  if (requestedToolSlug) {
+    const match = category.tools.find(t => t.slug === requestedToolSlug);
+    if (match) activeTool = match;
+  }
+
+  if (activeTool) {
+    incrementToolStat(activeTool.slug);
+    applyToolSeo(res, category, activeTool);
+  } else {
+    res.locals.seo = res.locals.seo || {};
+    res.locals.seo.title = `${category.title} | Embedded India Tools`;
+    res.locals.seo.description = category.description;
+    res.locals.seo.canonical = `https://embeddedindia.in/tools/${category.slug}`;
+  }
+
+  res.render('pages/tools/category', {
+    category,
+    activeTool
+  });
 });
 
-// 2. 555 Timer Calculator
-router.get('/555-timer', (req, res) => {
-  incrementToolStat('555-timer');
-  res.locals.seo.title = '555 Timer Calculator (Astable & Monostable Modes) | Embedded India';
-  res.locals.seo.description = 'Calculate 555 timer output frequency, duty cycle, high/low times with interactive circuit diagram and live waveform rendering.';
-  res.locals.seo.structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: '555 Timer Circuit Calculator',
-    applicationCategory: 'EngineeringCalculator'
-  };
-  res.render('pages/tools/555-timer');
-});
+// 3. Deep-linked Canonical Tool URL: /tools/:groupSlug/:toolSlug
+router.get('/:groupSlug/:toolSlug', (req, res, next) => {
+  const { groupSlug, toolSlug } = req.params;
 
-// 3. LED Resistor & Ohm's Law
-router.get('/led-resistor', (req, res) => {
-  incrementToolStat('led-resistor');
-  res.locals.seo.title = 'LED Series Resistor & Ohm\'s Law Calculator | Embedded India';
-  res.locals.seo.description = 'Calculate exact and standard E12/E24 series resistor values, power dissipation, and safety wattage ratings for any LED circuit.';
-  res.render('pages/tools/led-resistor');
-});
+  const category = toolsRegistry.getCategoryBySlug(groupSlug);
+  if (!category) {
+    return next();
+  }
 
-// 4. UART Baud Rate & Timer Register Calculator
-router.get('/uart-baud', (req, res) => {
-  incrementToolStat('uart-baud');
-  res.locals.seo.title = 'UART Baud Rate & Clock Error Calculator | Embedded India';
-  res.locals.seo.description = 'Compute microcontroller timer reload registers, actual baud rate, and framing error percentage across STM32, AVR, and 8051 architectures.';
-  res.render('pages/tools/uart-baud');
-});
+  const activeTool = category.tools.find(t => t.slug === toolSlug);
+  if (!activeTool) {
+    // If the tool belongs to another category, 301 redirect to correct category
+    const anyTool = toolsRegistry.getToolBySlug(toolSlug);
+    if (anyTool) {
+      return res.redirect(301, `/tools/${anyTool.groupSlug}/${anyTool.slug}`);
+    }
+    return next();
+  }
 
-// 5. SMD Code Decoder
-router.get('/smd-code', (req, res) => {
-  incrementToolStat('smd-code');
-  res.locals.seo.title = 'SMD Resistor & Capacitor Code Decoder | Embedded India';
-  res.locals.seo.description = 'Decode 3-digit, 4-digit, and EIA-96 precision SMD resistor marking codes instantly with tolerance and resistance specifications.';
-  res.render('pages/tools/smd-code');
-});
+  incrementToolStat(activeTool.slug);
+  applyToolSeo(res, category, activeTool);
 
-// 6. IoT Battery Life Calculator
-router.get('/battery-life', (req, res) => {
-  incrementToolStat('battery-life');
-  res.locals.seo.title = 'IoT Device Battery Life & Power Budget Calculator | Embedded India';
-  res.locals.seo.description = 'Calculate battery operating life for connected IoT nodes based on active/sleep current draw, duty cycles, and self-discharge rates.';
-  res.render('pages/tools/battery-life');
-});
-
-// 7. Trace Impedance Calculator
-router.get('/trace-impedance', (req, res) => {
-  incrementToolStat('trace-impedance');
-  res.locals.seo.title = 'Microstrip PCB Trace Impedance Calculator | Embedded India';
-  res.locals.seo.description = 'Calculate characteristic impedance (Zo) for high-speed microstrip traces on FR-4 substrates based on dielectric thickness and trace width.';
-  res.render('pages/tools/trace-impedance');
-});
-
-// 8. MCU Pinout Guide
-router.get('/mcu-pinout', (req, res) => {
-  incrementToolStat('mcu-pinout');
-  res.locals.seo.title = 'Interactive Microcontroller Pinout Reference (ESP32, STM32, RP2040) | Embedded India';
-  res.locals.seo.description = 'Quick interactive pinout cheat sheets for popular embedded microcontrollers: ESP32-WROOM-32, STM32F103 Blue Pill, and Raspberry Pi Pico.';
-  res.render('pages/tools/mcu-pinout');
+  res.render('pages/tools/category', {
+    category,
+    activeTool
+  });
 });
 
 module.exports = router;
