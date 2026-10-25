@@ -353,11 +353,7 @@
     applyPalette(activeKey);
   }
 
-  let lastPaletteToggleTime = 0;
   function togglePaletteDropdown(triggerBtn) {
-    const now = Date.now();
-    if (now - lastPaletteToggleTime < 250) return;
-    lastPaletteToggleTime = now;
 
     const btn = triggerBtn || document.getElementById('palette-dropdown-btn') || document.querySelector('.theme-dropdown-btn');
     if (!btn) return;

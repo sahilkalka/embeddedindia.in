@@ -92,7 +92,7 @@
 
   <!-- Top Admin Bar (Sticky with Dynamic Transparency and Max Width matching Public Header) -->
   <header class="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 shadow-xs">
-    <div class="admin-header-inner mx-auto px-2 min-[360px]:px-3 sm:px-6 lg:px-8 min-h-[76px] sm:min-h-[88px] py-2 sm:py-2.5 flex items-center justify-between flex-nowrap gap-2 sm:gap-4" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>); margin: 0 auto; width: 100%;">
+    <div class="admin-header-inner mx-auto px-2 min-[360px]:px-3 sm:px-4 lg:px-6 h-16 flex items-center justify-between flex-nowrap gap-2 sm:gap-3" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>); margin: 0 auto; width: 100%;">
       
       <!-- Brand & Admin Badge -->
       <a href="/admin" aria-label="Embedded India Admin" class="flex items-center min-h-[44px] py-1.5 space-x-2 sm:space-x-3 group flex-shrink-0">
@@ -110,7 +110,7 @@
         <% } %>
 
         <!-- Semantic Brand Typography -->
-        <div class="flex flex-col">
+        <div class="hidden sm:flex flex-col">
           <div class="text-xs min-[360px]:text-sm sm:text-xl lg:text-2xl font-black tracking-tight leading-none text-slate-900 dark:text-white flex items-center whitespace-nowrap">
             <% const adminBrandParts = (settings.site_name || 'Embedded India').split(' '); %>
             <span><%= adminBrandParts[0] %></span>
@@ -127,9 +127,9 @@
       </a>
 
       <!-- Large Icon Button Navigation Bar (Matching Home Header) -->
-      <nav aria-label="Admin navigation" class="hidden md:flex items-center justify-center gap-1 sm:gap-1.5 lg:gap-2 text-slate-700 dark:text-slate-200 min-w-0 flex-1 whitespace-nowrap [&>a]:shrink-0">
+      <nav aria-label="Admin navigation" class="hidden md:flex items-center justify-center gap-1 lg:gap-1.5 text-slate-700 dark:text-slate-200 min-w-0 flex-1 whitespace-nowrap [&>a]:shrink-0">
         <!-- Overview -->
-        <a href="/admin" aria-label="Overview" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath === '/admin' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin" aria-label="Overview" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath === '/admin' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10-5a1 1 0 011-1h4a1 1 0 011 1v9a1 1 0 01-1 1h-4a1 1 0 01-1-1v-9z"/>
           </svg>
@@ -137,7 +137,7 @@
         </a>
 
         <!-- Inquiries -->
-        <a href="/admin/inquiries" aria-label="Inquiries" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/inquiries') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin/inquiries" aria-label="Inquiries" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/inquiries') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
@@ -145,7 +145,7 @@
         </a>
 
         <!-- Subscribers -->
-        <a href="/admin/subscribers" aria-label="Subscribers" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/subscribers') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin/subscribers" aria-label="Subscribers" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/subscribers') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
           </svg>
@@ -153,7 +153,7 @@
         </a>
 
         <!-- Blog Posts -->
-        <a href="/admin/posts" aria-label="Blog Posts" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/posts') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin/posts" aria-label="Blog Posts" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/posts') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
           </svg>
@@ -161,7 +161,7 @@
         </a>
 
         <!-- Projects -->
-        <a href="/admin/projects" aria-label="Projects" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/projects') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin/projects" aria-label="Projects" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/projects') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
           </svg>
@@ -169,7 +169,7 @@
         </a>
 
         <!-- AI Engine -->
-        <a href="/admin/ai" aria-label="AI Engine" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/ai') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin/ai" aria-label="AI Engine" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/ai') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
           </svg>
@@ -177,7 +177,7 @@
         </a>
 
         <!-- Settings -->
-        <a href="/admin/settings" aria-label="Settings" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/settings') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+        <a href="/admin/settings" aria-label="Settings" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] sm:min-w-[54px] lg:min-w-[58px] py-1 sm:py-1.5 px-1.5 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/settings') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
           <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -192,11 +192,13 @@
         <!-- Grouped Search & Theme Pill (Identical to Public Header) -->
         <%- include('../partials/theme-button', { showSearch: true, searchLabel: 'Search admin pages and settings', wrapperId: 'admin-palette-dropdown-wrapper', btnId: 'admin-palette-dropdown-btn', menuId: 'admin-palette-dropdown-menu', chevronId: 'admin-palette-chevron', activeDotId: 'admin-active-scheme-dot', activeNameId: 'admin-active-palette-name' }) %>
 
-        <a href="/" target="_blank" class="hidden sm:inline-flex items-center px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition text-xs font-bold border border-slate-200 dark:border-slate-700 whitespace-nowrap flex-shrink-0">
-          View Site &rarr;
+        <a href="/" target="_blank" class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition text-xs font-bold border border-slate-200 dark:border-slate-700 whitespace-nowrap flex-shrink-0">
+          <span class="sm:hidden text-xs">Site</span>
+          <span class="hidden sm:inline">View Site &rarr;</span>
         </a>
-        <a href="/admin/logout" class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition text-xs font-bold shadow-xs whitespace-nowrap flex-shrink-0">
-          Sign Out
+        <a href="/admin/logout" class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition text-xs font-bold shadow-xs whitespace-nowrap flex-shrink-0">
+          <span class="sm:hidden text-xs">Exit</span>
+          <span class="hidden sm:inline">Sign Out</span>
         </a>
       </div>
 

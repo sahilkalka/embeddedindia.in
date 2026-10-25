@@ -41,7 +41,7 @@
   <link href="https://fonts.googleapis.com/css2?<%= fontQuery %>&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
-  <link rel="stylesheet" href="/css/style.css?v=20261025_03">
+  <link rel="stylesheet" href="/css/style.css">
 
   <!-- Highlight.js syntax highlighting theme for code blocks -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" media="print" onload="this.media='all'">
@@ -61,7 +61,7 @@
         const rawOp = settings.header_opacity || settings.header_transparency || '95';
         const numOp = Number(rawOp);
         const headerAlpha = !isNaN(numOp) ? (numOp > 1 ? (numOp / 100).toFixed(2) : numOp.toFixed(2)) : '0.95';
-        const cMaxWidth = settings.container_max_width || '80rem';
+        const cMaxWidth = '1280px';
       %>
       :root {
         --header-opacity: <%= headerAlpha %>;
@@ -82,21 +82,11 @@
         max-width: var(--container-max-width, <%= cMaxWidth %>) !important;
         box-sizing: border-box !important;
       }
-      @media (min-width: 1024px) {
-        #palette-dropdown-wrapper {
-          display: inline-flex !important;
-        }
-        #mobile-palette-dropdown-wrapper {
-          display: none !important;
-        }
+      #palette-dropdown-wrapper {
+        display: inline-flex !important;
       }
-      @media (max-width: 1023px) {
-        #palette-dropdown-wrapper {
-          display: none !important;
-        }
-        #mobile-palette-dropdown-wrapper {
-          display: inline-flex !important;
-        }
+      #mobile-palette-dropdown-wrapper {
+        display: none !important;
       }
       .custom-card-shadow {
         box-shadow: var(--card-shadow);
@@ -150,7 +140,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= settings.adsense_pub_id %>" crossorigin="anonymous"></script>
   <% } %>
 
-  <!-- Monetization: Meta Pixel Integration -->
+  <!-- Monetization: Meta Pixel Tracking -->
   <% const safeMetaPixelId = /^\d{5,20}$/.test(String(settings.meta_pixel_id || '')) ? String(settings.meta_pixel_id) : ''; %>
   <% if (settings.enable_meta_pixel === 'true' && safeMetaPixelId) { %>
     <script>
@@ -190,7 +180,7 @@
     document.documentElement.setAttribute('data-palette', savedPalette);
   </script>
 </head>
-<body class="ui-shell public-shell bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col overflow-x-clip max-w-full">
+<body class="ui-shell public-shell bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col overflow-x-clip max-w-full pb-16 md:pb-0">
 
   <!-- Top Announcement Bar / Global Promo Bar (Slot 5) -->
   <% if (settings.promo_banner_active === 'true' || settings.ad_slot_promo_bar === 'true') { %>
@@ -248,7 +238,7 @@
 
   <!-- Navigation Header (Sticky top-0) -->
   <header class="sticky top-0 z-50 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm max-w-full overflow-x-clip">
-    <div class="public-header-inner mx-auto px-2 min-[360px]:px-3 sm:px-6 lg:px-8 min-h-[64px] sm:min-h-[88px] py-1.5 sm:py-2.5 flex items-center justify-between flex-nowrap gap-1 min-[360px]:gap-2 sm:gap-4 box-border max-w-full" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>); margin: 0 auto; width: 100%;">
+    <div class="public-header-inner max-w-[1280px] mx-auto px-4 h-16 sm:h-20 flex items-center justify-between flex-nowrap gap-1 min-[360px]:gap-2 sm:gap-4 box-border w-full">
       
       <!-- Brand Logo (Vector Icon + Semantic HTML Typography) -->
       <a href="/" aria-label="<%= settings.site_name || 'Embedded India' %>" class="flex items-center min-h-[44px] py-1.5 space-x-2 sm:space-x-3 group min-w-0 shrink">
@@ -340,25 +330,25 @@
       </nav>
 
       <!-- Desktop Actions & CTA / Mobile Header Controls -->
-      <div id="public-header-actions" class="flex items-center flex-nowrap gap-1 min-[360px]:gap-1.5 sm:gap-2.5 flex-shrink-0 ml-auto lg:ml-2">
+      <div id="public-header-actions" class="flex items-center flex-nowrap gap-1 min-[360px]:gap-1.5 sm:gap-2.5 flex-shrink-0 ml-auto lg:ml-2 max-md:overflow-x-auto max-md:whitespace-nowrap max-md:[scrollbar-width:none] max-md:[&::-webkit-scrollbar]:hidden max-md:[&>*]:shrink-0">
         
         <!-- Grouped Search, Mode & Expandable Palette Pill (Desktop & Tablet) -->
         <div class="relative inline-flex items-center theme-dropdown-wrapper flex-shrink-0" id="palette-dropdown-wrapper">
-          <div role="group" aria-label="Search and Theme Controls" class="flex items-stretch rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition">
+          <div role="group" aria-label="Search and appearance" class="flex items-stretch rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition">
             
             <!-- 1. Search Button (Icon on Top, Text Below) -->
-            <button id="header-search-btn" type="button" aria-label="Search (Ctrl/Cmd+K)" title="Search (Ctrl/Cmd+K)" class="nav-icon-link group flex flex-col items-center justify-center min-w-[50px] sm:min-w-[56px] py-1.5 px-2.5 rounded-l-xl text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
+            <button id="header-search-btn" type="button" aria-label="Search (Ctrl/Cmd+K)" title="Search (Ctrl/Cmd+K)" class="nav-icon-link group flex flex-col items-center justify-center min-w-[44px] sm:min-w-[56px] py-1 sm:py-1.5 px-1.5 sm:px-2.5 rounded-l-xl text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
               <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
-              <span class="text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Search</span>
+              <span class="hidden sm:inline text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Search</span>
             </button>
 
             <!-- Divider -->
             <div class="w-[1px] bg-slate-200 dark:bg-slate-700 self-stretch my-1.5"></div>
 
             <!-- 2. Theme Mode Toggle Button (Icon on Top, Text Below) -->
-            <button id="theme-toggle" type="button" aria-label="Toggle theme mode" title="Toggle dark/light mode" class="theme-toggle-btn nav-icon-link group flex flex-col items-center justify-center min-w-[50px] sm:min-w-[56px] py-1.5 px-2.5 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
+            <button id="theme-toggle" type="button" aria-label="Toggle theme mode" title="Toggle dark/light mode" class="theme-toggle-btn nav-icon-link group flex flex-col items-center justify-center min-w-[44px] sm:min-w-[56px] py-1 sm:py-1.5 px-1.5 sm:px-2.5 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
               <div class="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
                 <!-- Moon Icon (for Light mode) -->
                 <svg id="theme-toggle-dark-icon" class="theme-dark-icon w-5 h-5 text-slate-700 dark:text-slate-200 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -369,7 +359,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                 </svg>
               </div>
-              <span class="text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Theme</span>
+              <span class="hidden sm:inline text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Theme</span>
               <span id="theme-toggle-label" class="sr-only theme-label">Dark mode</span>
             </button>
             
@@ -411,62 +401,17 @@
         </div>
 
         <!-- Desktop CTA -->
-        <a href="/contact" class="btn-shimmer hidden xl:inline-flex items-center min-h-[42px] px-4 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap ml-1">
-          <span>Request Quote &rarr;</span>
-        </a>
+        <% if (locals.currentUser) { %>
+          <a href="/admin" class="hidden sm:inline-flex items-center min-h-[42px] px-4 py-2 border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold rounded-xl text-xs sm:text-sm hover:border-brand-500 transition active:scale-95 shadow-sm whitespace-nowrap ml-1">
+            Admin Panel
+          </a>
+        <% } else { %>
+          <a href="/contact" class="btn-shimmer hidden sm:inline-flex items-center min-h-[42px] px-4 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap ml-1">
+            <span>Request Quote &rarr;</span>
+          </a>
+        <% } %>
 
-        <!-- Mobile-Only Quick Search Button -->
-        <button type="button" onclick="document.getElementById('header-search-btn')?.click()" aria-label="Search site" class="public-mobile-btn lg:hidden flex flex-col items-center justify-center p-1 min-[360px]:p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-          <svg class="w-5 h-5 min-[360px]:w-6 min-[360px]:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <span class="text-[9px] min-[360px]:text-[10px] font-bold mt-0.5">Search</span>
-        </button>
 
-        <!-- Mobile-Only Theme Toggle Button -->
-        <button type="button" aria-label="Toggle theme" class="public-mobile-btn theme-toggle-btn lg:hidden flex flex-col items-center justify-center p-1 min-[360px]:p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
-          <svg class="theme-dark-icon w-5 h-5 min-[360px]:w-6 min-[360px]:h-6 text-slate-700 dark:text-slate-200" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-          </svg>
-          <svg class="theme-light-icon hidden w-5 h-5 min-[360px]:w-6 min-[360px]:h-6 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
-          </svg>
-          <span class="text-[9px] min-[360px]:text-[10px] font-bold mt-0.5">Theme</span>
-        </button>
-
-        <!-- Mobile-Only Palette Dropdown Button -->
-        <div class="relative lg:hidden inline-flex items-center theme-dropdown-wrapper flex-shrink-0" id="mobile-palette-dropdown-wrapper">
-          <button id="mobile-palette-dropdown-btn" type="button" onclick="window.togglePaletteDropdown(this)" aria-label="Palette colors" aria-expanded="false" title="Expand color palettes" class="public-mobile-btn theme-dropdown-btn flex flex-col items-center justify-center p-1 min-[360px]:p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg cursor-pointer">
-            <div class="relative flex items-center justify-center w-5 h-5 min-[360px]:w-6 min-[360px]:h-6">
-              <svg class="w-5 h-5 min-[360px]:w-5.5 min-[360px]:h-5.5 text-slate-700 dark:text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-              </svg>
-            </div>
-            <span class="text-[9px] min-[360px]:text-[10px] font-bold mt-0.5">Palette</span>
-          </button>
-
-          <!-- Horizontal Palette Expansion for Mobile -->
-          <div id="mobile-palette-dropdown-menu" class="theme-dropdown-menu hidden absolute right-0 top-full mt-2 rounded-xl shadow-xl px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 whitespace-nowrap flex flex-row items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150" style="z-index: 99999; flex-direction: row !important; align-items: center !important; gap: 6px !important; top: calc(100% + 8px) !important; right: 0 !important;">
-            <button type="button" data-scheme="cyber-emerald" title="Cyber Emerald" style="background-color: #007f5f !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-            </button>
-            <button type="button" data-scheme="vscode-theme" title="VS Code Inspired" style="background-color: #007ACC !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-            </button>
-            <button type="button" data-scheme="solar-amber" title="Solar Amber" style="background-color: #d97706 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-            </button>
-            <button type="button" data-scheme="quantum-cyan" title="Quantum Cyan" style="background-color: #0284c7 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-            </button>
-            <button type="button" data-scheme="titanium-slate" title="Titanium Slate" style="background-color: #475569 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-            </button>
-            <button type="button" data-scheme="clean-light" title="Clean Enterprise" style="background-color: #2563eb !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-            </button>
-          </div>
-        </div>
 
         <!-- Mobile Menu Toggle Button (Visible only on mobile/tablet < 1024px) -->
         <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu" class="public-mobile-btn lg:hidden min-w-[38px] min-h-[38px] min-[360px]:min-w-[42px] min-[360px]:min-h-[42px] p-1.5 min-[360px]:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-brand-surface rounded-lg border border-slate-200 dark:border-[#1e3831] active:scale-95 flex items-center justify-center">

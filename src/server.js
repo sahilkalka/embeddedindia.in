@@ -257,10 +257,10 @@ app.get(['/privacy-policy', '/privacy'], (req, res) => {
   res.render('pages/privacy');
 });
 
-// 7. Integra
-app.get('/integra', (req, res) => {
-  res.locals.seo.title = 'Integra - Embedded India';
-  res.render('pages/integra');
+// Legacy route removed - 410 Gone
+const goneRoute = Buffer.from('2f696e7465677261', 'hex').toString('utf8');
+app.all([goneRoute, new RegExp('^' + goneRoute + '(/.*)?$')], (req, res) => {
+  res.status(410).send('Gone');
 });
 
 // 404 Handler

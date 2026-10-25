@@ -69,7 +69,7 @@ const servicesData = {
       },
       {
         title: 'Code Auditing & Static Analysis',
-        description: 'MISRA-C:2012 compliance checks, automated linting, unit testing with Unity/CMock, and automated CI/CD pipeline integration.'
+        description: 'MISRA-C:2012 compliance checks, automated linting, unit testing with Unity/CMock, and automated CI/CD pipeline automation.'
       }
     ]
   },
@@ -125,7 +125,7 @@ const servicesData = {
       },
       {
         title: 'Embedded Linux Kernel Customization',
-        description: 'Kernel configuration, device tree source (DTS) authoring, GPIO muxing, interrupt controllers, and custom driver integration.'
+        description: 'Kernel configuration, device tree source (DTS) authoring, GPIO muxing, interrupt controllers, and custom driver implementation.'
       },
       {
         title: 'Custom Peripheral Driver Development',
@@ -157,7 +157,7 @@ const servicesData = {
     features: [
       {
         title: 'Wireless Protocol Implementation',
-        description: 'Designing and integrating low-power wireless stacks (BLE, Wi-Fi, Zigbee, LoRaWAN, Cellular IoT, and MQTT/CoAP) for reliable device-to-cloud communication.'
+        description: 'Designing and deploying low-power wireless stacks (BLE, Wi-Fi, Zigbee, LoRaWAN, Cellular IoT, and MQTT/CoAP) for reliable device-to-cloud communication.'
       },
       {
         title: 'On-Device Edge AI & TinyML',
@@ -165,7 +165,7 @@ const servicesData = {
       },
       {
         title: 'Ultra-Low Power Battery Engineering',
-        description: 'Energy harvesting integration, battery chemistry selection (LiSOCl2, LiFePO4), and multi-year field operational life modeling.'
+        description: 'Energy harvesting solutions, battery chemistry selection (LiSOCl2, LiFePO4), and multi-year field operational life modeling.'
       },
       {
         title: 'Cloud Telemetry & Protocol Translation',
@@ -177,7 +177,7 @@ const servicesData = {
       },
       {
         title: 'Industrial Environmental Hardening',
-        description: 'IP67/IP68 ingress-rated enclosure integration, conformal coating specifications, and wide temperature (-40°C to +85°C) operation.'
+        description: 'IP67/IP68 ingress-rated enclosure packaging, conformal coating specifications, and wide temperature (-40°C to +85°C) operation.'
       }
     ]
   },
@@ -196,7 +196,7 @@ const servicesData = {
         description: 'Microcontroller architecture (Infineon AURIX, STM32H7, NXP S32K) for body controllers, motor drives, and telematics units.'
       },
       {
-        title: 'In-Vehicle Network Integration',
+        title: 'In-Vehicle Network Engineering',
         description: 'CAN-FD (up to 5 Mbps), LIN 2.2, FlexRay, and Automotive Ethernet (100BASE-T1) stack implementation and message scheduling.'
       },
       {

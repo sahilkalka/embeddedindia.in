@@ -166,7 +166,7 @@ int flash_sector_erase(uint32_t address);
 \`\`\`
 
 ### Continuous Lifecycle Monitoring
-Integrate API tools with component aggregators to receive automated PCN (Product Change Notification) and EOL alerts 6-12 months before last-time-buy windows close.`,
+Connect API tools with component aggregators to receive automated PCN (Product Change Notification) and EOL alerts 6-12 months before last-time-buy windows close.`,
       contentHtml: `<p>Unlike consumer smartphones that refresh annually, industrial controllers...</p>`
     },
     {

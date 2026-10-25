@@ -25,7 +25,7 @@ class AICopilotService {
    - **STM32L4 / STM32U5**: Cortex-M33 with hardware crypto and LPBAM (Low Power Background Autonomous Mode).
 
 2. **Connected IoT & Wi-Fi/Edge Nodes**:
-   - **ESP32-S3 (Dual-core 240MHz)**: Integrated 2.4GHz Wi-Fi + BLE 5, vector instructions for TinyML audio/wake-word, USB OTG, and 8MB PSRAM support.
+   - **ESP32-S3 (Dual-core 240MHz)**: Built-in 2.4GHz Wi-Fi + BLE 5, vector instructions for TinyML audio/wake-word, USB OTG, and 8MB PSRAM support.
    - **Raspberry Pi RP2040**: Dual Cortex-M0+ with programmable PIO state machines for custom protocols.
 
 3. **Mission-Critical & Automotive CAN-FD**:

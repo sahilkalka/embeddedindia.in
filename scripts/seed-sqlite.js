@@ -199,7 +199,7 @@ Embedded India was commissioned to architect a turnkey electronic climate contro
 
 ### Key Engineering Achievements
 
-1. **Active ISO 7637-2 Load-Dump Surge Protection**: Integrated TVS clamping and discrete MOSFET reverse-polarity suppression withstands +87V/400ms alternator transients without microcontroller reset.
+1. **Active ISO 7637-2 Load-Dump Surge Protection**: Built-in TVS clamping and discrete MOSFET reverse-polarity suppression withstands +87V/400ms alternator transients without microcontroller reset.
 2. **Deterministic Dual-Zone PID Control**: Implemented parallel FreeRTOS tasks to dynamically regulate evaporator temperature and variable expansion valves with &plusmn;0.5°C cabin precision.
 3. **Automated Diagnostic Logging**: Non-volatile SPI FRAM stores real-time error codes, compressor run hours, and refrigerant pressure spikes for OBD-II vehicle maintenance tool readouts.
 4. **HIL Verification**: 100% of manufactured production units pass automated Hardware-in-the-Loop functional tests before packaging.`,

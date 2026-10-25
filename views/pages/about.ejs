@@ -19,7 +19,7 @@
 </section>
 
 <!-- Vision & Mission Statement -->
-<section class="py-20 bg-slate-50 dark:bg-[#13221f]">
+<section id="vision" class="py-20 bg-slate-50 dark:bg-[#13221f]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <div class="bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-14 border border-slate-200 dark:border-brand-border shadow-xl">
@@ -72,8 +72,30 @@
 
     </div>
 
+        <!-- Animated Numerical Counter Metrics -->
+    <div class="mt-12 bg-white dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-md grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+      <div>
+        <p class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono">
+          <span class="count-up" data-target="100">0</span>+
+        </p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-semibold uppercase tracking-wider">Delivered Systems</p>
+      </div>
+      <div>
+        <p class="text-3xl sm:text-4xl font-black text-brand-500 dark:text-accent font-mono">
+          <span class="count-up" data-target="99.8" data-decimal="1">0</span>%
+        </p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-semibold uppercase tracking-wider">First-Pass HIL Rate</p>
+      </div>
+      <div>
+        <p class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-mono">
+          &lt; <span class="count-up" data-target="24">0</span>h
+        </p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 font-semibold uppercase tracking-wider">Architect Response SLA</p>
+      </div>
+    </div>
+
     <!-- Offices & Engineering Presence -->
-    <div class="mt-12 bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-10 border border-slate-200 dark:border-brand-border shadow-md">
+    <section id="presence" class="mt-12 bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-10 border border-slate-200 dark:border-brand-border shadow-md">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <span class="text-xs font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Engineering Labs &amp; Presence</span>
@@ -94,9 +116,16 @@
           <% } %>
         </div>
       </div>
-    </div>
+    </section>
 
   </div>
 </section>
 
+<%- include('../partials/cta-banner') %>
+
+<script src="/js/counters.js"></script>
+
+<%- include('../partials/cta-banner') %>
+
 <%- include('../layouts/footer') %>
+

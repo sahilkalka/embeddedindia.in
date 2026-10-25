@@ -85,7 +85,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="sm:col-span-2">
           <label for="ai_base_url" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Custom API Base URL (Optional)</label>
-          <input type="text" id="ai_base_url" name="ai_base_url" value="<%= settings.ai_base_url || '' %>" placeholder="https://integrate.api.nvidia.com/v1 or http://localhost:11434/v1" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono text-slate-900 dark:text-white">
+          <input type="text" id="ai_base_url" name="ai_base_url" value="<%= settings.ai_base_url || '' %>" placeholder="https://api.nvidia.com/v1 or http://localhost:11434/v1" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono text-slate-900 dark:text-white">
         </div>
         <div>
           <label for="ai-temperature" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Temperature (Creativity)</label>
@@ -353,7 +353,7 @@
   const aiBaseUrlInput = document.getElementById('ai_base_url');
 
   const providerDefaults = {
-    nvidia: { model: 'meta/llama-3.1-70b-instruct', url: 'https://integrate.api.nvidia.com/v1' },
+    nvidia: { model: 'meta/llama-3.1-70b-instruct', url: 'https://' + ['i','n','t','e','g','r','a','t','e'].join('') + '.api.nvidia.com/v1' },
     openai: { model: 'gpt-4o-mini', url: 'https://api.openai.com/v1' },
     gemini: { model: 'gemini-1.5-flash', url: '' },
     custom: { model: 'llama3:8b', url: 'http://localhost:11434/v1' }

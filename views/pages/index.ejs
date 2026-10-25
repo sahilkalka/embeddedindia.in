@@ -4,18 +4,17 @@
 <!-- Spaceship-Inspired Ambient Hero Section with Interactive Canvas -->
 <section class="relative overflow-hidden spaceship-ambient-mesh circuit-grid py-16 lg:py-24 border-b border-slate-200/80 dark:border-[#1e3831] transition-colors">
   
-  <!-- Interactive Particle / Circuit Nodes Background Canvas -->
-  <canvas id="circuitNodesCanvas" class="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-40 dark:opacity-60"></canvas>
+  
 
   <!-- Animated Glowing Ambient Orbs -->
   <div class="absolute -top-32 left-1/4 w-[450px] h-[450px] bg-brand-500/15 dark:bg-brand-500/25 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
   <div class="absolute top-1/2 -right-20 w-[450px] h-[450px] bg-accent/15 dark:bg-accent/25 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style="animation-delay: 2.5s;"></div>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
       
       <!-- Left Column: Copy, Animated Typewriter, Category Pills & Live Spec Estimator -->
-      <div class="lg:col-span-7 space-y-6 text-left">
+      <div class="w-full space-y-6 text-left">
         
         <!-- Live Status Pill with Floating Levitation Animation (High Contrast) -->
         <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white text-xs sm:text-sm font-black shadow-md backdrop-blur-md animate-float-slow">
@@ -120,8 +119,17 @@
 
       </div>
 
-      <!-- Right Column: Interactive Hardware Bring-Up Console & Live Oscilloscope -->
-      <div class="lg:col-span-5 relative">
+      <!-- Right Column: Circuit Canvas & Interactive Bring-Up Console -->
+      <div class="relative w-full">
+        <!-- Floating Glassmorphic Status Pill (Top) -->
+        <div class="hidden sm:flex absolute -top-5 -left-4 z-20 items-center space-x-2 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-xl text-[11px] font-black text-slate-900 dark:text-white backdrop-blur-md animate-float-slow">
+          <span class="w-2.5 h-2.5 rounded-full bg-accent animate-ping"></span>
+          <span>IPC-A-610 Class 3 SMT Standards</span>
+        </div>
+
+        <div class="relative w-full h-[320px] md:h-[420px] lg:h-[500px] bg-slate-950 rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 text-white overflow-hidden flex flex-col justify-between">
+          <canvas id="circuitNodesCanvas" class="absolute inset-0 w-full h-full pointer-events-auto z-0 opacity-40"></canvas>
+          <div class="relative z-10 flex flex-col h-full justify-between">
         
         <!-- Floating Glassmorphic Status Pill (Top) -->
         <div class="hidden sm:flex absolute -top-5 -left-4 z-20 items-center space-x-2 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-xl text-[11px] font-black text-slate-900 dark:text-white backdrop-blur-md animate-float-slow">
@@ -203,6 +211,8 @@ void init_embedded_system(void) {
 
         </div>
 
+      </div>
+        </div>
       </div>
 
     </div>
@@ -901,6 +911,8 @@ void init_embedded_system(void) {
   </div>
 </section>
 <% } %>
+
+<%- include('../partials/cta-banner') %>
 
 <!-- Interactive Scripts: Particle Canvas, Typewriter, Spotlight Cursor, Oscilloscope & Bring-Up -->
 <script>
