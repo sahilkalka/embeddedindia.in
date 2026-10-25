@@ -2,7 +2,6 @@
 npm run pack:cpanel
 ```
 
-
 # 🚀 Deployment Guide: GitHub Actions CI/CD & cPanel Automation
 
 This guide covers deployment for **Embedded India (`embeddedindia.in`)**, supporting both **Automated Git Push Deployments via GitHub Actions** and **Terminal-Free Manual Deployment via the cPanel Web Interface**.
