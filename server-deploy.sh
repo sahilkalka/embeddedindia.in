@@ -18,19 +18,28 @@ fi
 SITE_CHOICE="${1:-$TARGET_SITE}"
 
 if [ -z "$SITE_CHOICE" ]; then
-  echo "Select target website to deploy:"
-  echo "  1) Default (embeddedindia.in)"
-  echo "  2) New / Staging (new.embeddedindia.in)"
-  read -rp "Enter choice [1 or 2, default: 1]: " USER_INPUT
+  if [ -t 0 ]; then
+    echo "Select target website to deploy:"
+    echo "  1) Default (embeddedindia.in)"
+    echo "  2) New / Staging (new.embeddedindia.in)"
+    read -rp "Enter choice [1 or 2, default: 1]: " USER_INPUT
 
-  case "$USER_INPUT" in
-    2|new|New)
+    case "$USER_INPUT" in
+      2|new|New)
+        SITE_CHOICE="new"
+        ;;
+      *)
+        SITE_CHOICE="default"
+        ;;
+    esac
+  else
+    # Non-interactive mode (cPanel Git Deployment, cron, or CI/CD)
+    if [[ "$PROJECT_DIR" == *"/new"* ]]; then
       SITE_CHOICE="new"
-      ;;
-    *)
+    else
       SITE_CHOICE="default"
-      ;;
-  esac
+    fi
+  fi
 fi
 
 case "$SITE_CHOICE" in
