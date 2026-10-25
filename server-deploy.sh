@@ -57,7 +57,12 @@ mkdir -p prisma tmp public/downloads public/css
 if [ -f "prisma/dev.db" ]; then
   cp "prisma/dev.db" "prisma/dev.db.bak_$(date +%Y%m%d_%H%M%S)"
   echo "✓ SQLite backup created"
+  # Prune backups keeping the 5 most recent to prevent disk quota accumulation
+  ls -t prisma/dev.db.bak_* 2>/dev/null | tail -n +6 | xargs -r rm -f 2>/dev/null || true
 fi
+
+# Clean up any test/audit report artifacts if extracted on server
+rm -rf deep-qa-report test-results playwright-report .playwright-mcp-profile tests 2>/dev/null || true
 
 if [ "$MODE" = "clean" ]; then
   rm -rf node_modules
@@ -98,10 +103,18 @@ else
   echo "✓ Existing database confirmed (admin account present)"
 fi
 
-# 6. Tailwind Production CSS
-if [ -f "src/public/css/input.css" ]; then
-  echo "🎨 Building production CSS..."
-  npx --yes tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify || true
+# 6. Tailwind Production CSS (pre-built in bundle; rebuild if missing or in clean mode)
+if [ ! -f "public/css/style.css" ] || [ "$MODE" = "clean" ]; then
+  if [ -f "src/public/css/input.css" ]; then
+    echo "🎨 Building production CSS..."
+    if [ -x "./node_modules/.bin/tailwindcss" ]; then
+      ./node_modules/.bin/tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify || true
+    else
+      npx --yes tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify || true
+    fi
+  fi
+else
+  echo "✓ Pre-compiled production CSS confirmed (public/css/style.css)"
 fi
 
 # 7. File Permissions for Phusion Passenger

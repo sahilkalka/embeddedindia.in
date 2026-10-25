@@ -51,9 +51,13 @@ exclude_dirs = {
     '.gemini',
     '.agents',
     '.playwright-mcp',
+    '.playwright-mcp-profile',
     'tests',
     'playwright-report',
     'test-results',
+    'deep-qa-report',
+    'qa-report',
+    'audit-reports',
     '.vscode',
     '.idea',
     'coverage',
@@ -82,14 +86,18 @@ exclude_files = {
     'temp_zip_script.py',
     '.DS_Store',
     'Thumbs.db',
-    'qa-inspector.mjs'
+    'qa-inspector.mjs',
+    'deep-audit.mjs',
+    'database.sqlite'
 }
 
 exclude_extensions = {
     '.log',
     '.bak',
     '.tmp',
-    '.tsbuildinfo'
+    '.tsbuildinfo',
+    '.pma',
+    '.map'
 }
 
 total_files = 0

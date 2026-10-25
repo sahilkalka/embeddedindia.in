@@ -1,772 +1,108 @@
 {
-  "timestamp": "2026-10-25T10:58:17.503Z",
+  "timestamp": "2026-10-25T11:46:37.762Z",
   "baseUrl": "http://localhost:3000",
   "summary": {
     "critical": 0,
     "high": 6,
-    "medium": 147,
-    "low": 21,
-    "totalChecksPassed": 0
+    "medium": 3,
+    "low": 14,
+    "totalChecksPassed": 6
   },
   "findings": [
     {
       "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/services",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/services",
-      "viewport": "desktop",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"COMPREHENSIVE SOLUTIONS\"",
-      "selector": "span"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/services",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/services",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/projects",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/projects",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/projects",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Search projects, MCUs, bus...\")",
-      "selector": "#projectSearchInput"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/projects",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/tools",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/tools",
-      "viewport": "desktop",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"FREE ENGINEERING UTILITIE\"",
-      "selector": "span"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/tools",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/tools",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/blogs",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/blogs",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/blogs",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Search guides, C++, PCB...\")",
-      "selector": "input.w-full.pl-10"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/blogs",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/about",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/about",
-      "viewport": "desktop",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"WHO WE ARE\"",
-      "selector": "span"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/about",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/about",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
       "category": "WCAG Contrast",
       "route": "/contact",
       "viewport": "desktop",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"GET IN TOUCH\"",
-      "selector": "span"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Horizontal text truncation without ellipsis (69px content in 1px box): \"Work Email\"",
-      "selector": "label.sr-only"
-    },
-    {
-      "severity": "LOW",
-      "category": "Tap Target",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Interactive element smaller than 24x24px (22x22px)",
-      "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. Rahul Sharma\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. Acme Robotics Ltd.\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"rahul@company.com\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"+91 83285 14090\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"\")",
-      "selector": "#serviceCategorySelect"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. 4-Layer STM32 Motor Controller Redesign\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Outline target microcontroller/SoC, expected operating environment, layer count, production volume, and timeline...\")",
-      "selector": "textarea.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "desktop",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
+      "message": "Low contrast ratio 4.38:1 (needs 4.5:1) on text \"*\"",
+      "selector": "span.text-red-500"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/services",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/services",
-      "viewport": "tablet",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"COMPREHENSIVE SOLUTIONS\"",
-      "selector": "span"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/services",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/services",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/projects",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/projects",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/projects",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Search projects, MCUs, bus...\")",
-      "selector": "#projectSearchInput"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/projects",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/tools",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/tools",
-      "viewport": "tablet",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"FREE ENGINEERING UTILITIE\"",
-      "selector": "span"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/tools",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/tools",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/blogs",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/blogs",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/blogs",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Search guides, C++, PCB...\")",
-      "selector": "input.w-full.pl-10"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/blogs",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/about",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/about",
-      "viewport": "tablet",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"WHO WE ARE\"",
-      "selector": "span"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/about",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/about",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
     },
     {
       "severity": "MEDIUM",
       "category": "WCAG Contrast",
       "route": "/contact",
       "viewport": "tablet",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"GET IN TOUCH\"",
-      "selector": "span"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Horizontal text truncation without ellipsis (69px content in 1px box): \"Work Email\"",
-      "selector": "label.sr-only"
+      "message": "Low contrast ratio 4.38:1 (needs 4.5:1) on text \"*\"",
+      "selector": "span.text-red-500"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/contact",
       "viewport": "tablet",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. Rahul Sharma\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. Acme Robotics Ltd.\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"rahul@company.com\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"+91 83285 14090\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"\")",
-      "selector": "#serviceCategorySelect"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. 4-Layer STM32 Motor Controller Redesign\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Outline target microcontroller/SoC, expected operating environment, layer count, production volume, and timeline...\")",
-      "selector": "textarea.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "tablet",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
     },
     {
       "severity": "HIGH",
       "category": "Click Occlusion",
       "route": "/",
       "viewport": "mobile",
-      "message": "Interactive element center (328,765) is covered by span.absolute.w-full",
+      "message": "Interactive element center (328,23) is covered by #mobile-menu-btn",
       "selector": "#back-to-top-btn"
     },
     {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"COMPREHENSIVE SOLUTIONS\"",
-      "selector": "span"
-    },
-    {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/services",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
     },
     {
@@ -774,631 +110,87 @@
       "category": "Click Occlusion",
       "route": "/services",
       "viewport": "mobile",
-      "message": "Interactive element center (188,49) is covered by div.public-header-inner.mx-auto",
+      "message": "Interactive element center (188,41) is covered by div.public-header-inner.mx-auto",
       "selector": "a.btn-shimmer.inline-flex"
     },
     {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/services",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
       "severity": "HIGH",
       "category": "Click Occlusion",
       "route": "/services",
       "viewport": "mobile",
-      "message": "Interactive element center (328,765) is covered by span.absolute.w-full",
+      "message": "Interactive element center (328,23) is covered by #mobile-menu-btn",
       "selector": "#back-to-top-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/projects",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Search projects, MCUs, bus...\")",
-      "selector": "#projectSearchInput"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/projects",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
     },
     {
       "severity": "HIGH",
       "category": "Click Occlusion",
       "route": "/projects",
       "viewport": "mobile",
-      "message": "Interactive element center (328,765) is covered by span.absolute.w-full",
+      "message": "Interactive element center (328,23) is covered by #mobile-menu-btn",
       "selector": "#back-to-top-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"FREE ENGINEERING UTILITIE\"",
-      "selector": "span"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/tools",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/tools",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
     },
     {
       "severity": "HIGH",
       "category": "Click Occlusion",
       "route": "/tools",
       "viewport": "mobile",
-      "message": "Interactive element center (328,765) is covered by span.absolute.w-full",
+      "message": "Interactive element center (328,23) is covered by #mobile-menu-btn",
       "selector": "#back-to-top-btn"
     },
     {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
-    },
-    {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/blogs",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Search guides, C++, PCB...\")",
-      "selector": "input.w-full.pl-10"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/blogs",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "WCAG Contrast",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"WHO WE ARE\"",
-      "selector": "span"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/about",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/about",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#public-header-actions"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (81px content in 1px box): \"Light mode\"",
-      "selector": "#theme-toggle-label"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 44px past right viewport edge",
-      "selector": "button.public-mobile-btn.lg:hidden"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 31px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 38px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 100px past right viewport edge",
-      "selector": "button.public-mobile-btn.theme-toggle-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 87px past right viewport edge",
-      "selector": "svg"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 94px past right viewport edge",
-      "selector": "span.text-[10px].font-bold"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 150px past right viewport edge",
-      "selector": "#mobile-menu-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Visual Bleed",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Element bleeds 140px past right viewport edge",
-      "selector": "svg"
     },
     {
       "severity": "MEDIUM",
       "category": "WCAG Contrast",
       "route": "/contact",
       "viewport": "mobile",
-      "message": "Low contrast ratio 1.36:1 (needs 4.5:1) on text \"GET IN TOUCH\"",
-      "selector": "span"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Text Clipping",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Horizontal text truncation without ellipsis (69px content in 1px box): \"Work Email\"",
-      "selector": "label.sr-only"
+      "message": "Low contrast ratio 4.38:1 (needs 4.5:1) on text \"*\"",
+      "selector": "span.text-red-500"
     },
     {
       "severity": "LOW",
       "category": "Tap Target",
       "route": "/contact",
       "viewport": "mobile",
-      "message": "Interactive element smaller than 40x40px (22x22px)",
+      "message": "Interactive element smaller than 40x40px (32x32px)",
       "selector": "#dismiss-lab-notice-btn"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. Rahul Sharma\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. Acme Robotics Ltd.\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"rahul@company.com\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"+91 83285 14090\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"\")",
-      "selector": "#serviceCategorySelect"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"e.g. 4-Layer STM32 Motor Controller Redesign\")",
-      "selector": "input.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Outline target microcontroller/SoC, expected operating environment, layer count, production volume, and timeline...\")",
-      "selector": "textarea.w-full.px-4"
-    },
-    {
-      "severity": "MEDIUM",
-      "category": "Accessibility",
-      "route": "/contact",
-      "viewport": "mobile",
-      "message": "Form input missing associated <label> or aria-label (placeholder=\"Enter your work email...\")",
-      "selector": "input.flex-1.px-4"
     },
     {
       "severity": "HIGH",
       "category": "Click Occlusion",
       "route": "/contact",
       "viewport": "mobile",
-      "message": "Interactive element center (328,765) is covered by span.absolute.w-full",
+      "message": "Interactive element center (328,23) is covered by #mobile-menu-btn",
       "selector": "#back-to-top-btn"
     }
   ]

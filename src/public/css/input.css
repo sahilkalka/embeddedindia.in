@@ -74,10 +74,27 @@
   width: 360px !important;
   max-width: calc(100vw - 2rem) !important;
 }
-#palette-dropdown-wrapper,
 #admin-palette-dropdown-wrapper {
   display: inline-flex !important;
   position: relative !important;
+}
+@media (min-width: 1024px) {
+  #palette-dropdown-wrapper {
+    display: inline-flex !important;
+    position: relative !important;
+  }
+  #mobile-palette-dropdown-wrapper {
+    display: none !important;
+  }
+}
+@media (max-width: 1023px) {
+  #palette-dropdown-wrapper {
+    display: none !important;
+  }
+  #mobile-palette-dropdown-wrapper {
+    display: inline-flex !important;
+    position: relative !important;
+  }
 }
 .theme-dropdown-wrapper {
   position: relative !important;
@@ -109,6 +126,14 @@
   padding: 0 !important;
   border-radius: 9999px !important;
   flex-shrink: 0 !important;
+}
+#back-to-top-btn {
+  bottom: 5.5rem !important;
+  right: 1.5rem !important;
+}
+#back-to-top-btn.hidden {
+  display: none !important;
+  pointer-events: none !important;
 }
 .ui-shell :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea) {
   min-width: 0;

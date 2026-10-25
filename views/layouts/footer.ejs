@@ -29,6 +29,7 @@
                 type="email" 
                 name="email" 
                 required 
+                aria-label="Work email for newsletter"
                 placeholder="Enter your work email..." 
                 class="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white/15 transition text-sm"
               >
@@ -213,7 +214,7 @@
 
   <!-- Back-to-Top Floating Button -->
   <% if (settings.enable_back_to_top !== 'false') { %>
-    <button id="back-to-top-btn" type="button" aria-label="Back to top" class="hidden fixed bottom-6 right-6 z-40 p-3 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95">
+    <button id="back-to-top-btn" type="button" aria-label="Back to top" style="bottom: 5.5rem !important; right: 1.5rem !important;" class="hidden pointer-events-none fixed bottom-20 right-6 z-40 p-3 rounded-full bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition active:scale-95">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
     </button>
   <% } %>
@@ -253,9 +254,9 @@
     if (backToTopBtn) {
       window.addEventListener('scroll', () => {
         if (window.scrollY > 300) {
-          backToTopBtn.classList.remove('hidden');
+          backToTopBtn.classList.remove('hidden', 'pointer-events-none');
         } else {
-          backToTopBtn.classList.add('hidden');
+          backToTopBtn.classList.add('hidden', 'pointer-events-none');
         }
       });
       backToTopBtn.addEventListener('click', () => {
@@ -446,7 +447,7 @@
     <!-- Floating Trigger Bubble Button -->
     <button id="copilot-trigger-btn" type="button" aria-label="Open EI Copilot" class="spring-btn group flex items-center justify-center min-w-[48px] min-h-[48px] p-3 sm:px-4 sm:py-3 rounded-full sm:rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white shadow-xl shadow-brand-500/30 hover:shadow-brand-500/45 border border-white/20 transform hover:-translate-y-1 active:scale-95 transition">
       <div class="relative w-6 h-6 flex items-center justify-center">
-        <span class="absolute w-full h-full rounded-full bg-white/30 animate-ping"></span>
+        <span class="absolute w-full h-full rounded-full bg-white/30 animate-ping pointer-events-none"></span>
         <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>

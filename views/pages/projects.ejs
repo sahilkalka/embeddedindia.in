@@ -7,7 +7,7 @@
     <div class="max-w-3xl space-y-4">
       
       <!-- Live Status Badge -->
-      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/90 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 text-brand-600 dark:text-accent text-xs font-black uppercase tracking-wider shadow-sm backdrop-blur-md animate-float-slow">
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-xs font-bold uppercase tracking-wider shadow-sm backdrop-blur-md animate-float-slow">
         <span class="w-2.5 h-2.5 rounded-full bg-brand-500 dark:bg-accent live-radar"></span>
         <span>Proven Engineering Portfolio &bull; Real Hardware</span>
       </div>
@@ -56,6 +56,7 @@
             id="projectSearchInput"
             value="<%= searchQuery %>"
             placeholder="Search projects, MCUs, bus..." 
+            aria-label="Search projects, MCUs, bus protocols"
             class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-xs"
           >
         </form>

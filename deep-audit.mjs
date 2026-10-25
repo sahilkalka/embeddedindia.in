@@ -101,8 +101,13 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
               totalHeight += distance;
               if (totalHeight >= document.body.scrollHeight) {
                 clearInterval(timer);
-                window.scrollTo(0, 0);
-                setTimeout(resolve, 300);
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                const checkZero = setInterval(() => {
+                  if (window.scrollY === 0) {
+                    clearInterval(checkZero);
+                    setTimeout(resolve, 300);
+                  }
+                }, 50);
               }
             }, 60);
           });
@@ -129,7 +134,7 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 
           const isVisible = (el) => {
             const style = window.getComputedStyle(el);
-            if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) return false;
+            if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0 || style.pointerEvents === 'none') return false;
             const rect = el.getBoundingClientRect();
             return rect.width > 0 && rect.height > 0;
           };
@@ -285,7 +290,8 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 
             // 5b. Accidental Silent Text Clipping
             const hasDirectText = Array.from(el.childNodes).some(n => n.nodeType === 3 && n.nodeValue.trim().length > 0);
-            if (hasDirectText) {
+            const isSrOnly = el.classList?.contains("sr-only") || el.closest(".sr-only") || (Math.round(rect.width) <= 1 && Math.round(rect.height) <= 1);
+            if (hasDirectText && !isSrOnly) {
               if ((style.overflowX === 'hidden' || style.overflowX === 'clip') && style.textOverflow !== 'ellipsis') {
                 if (el.scrollWidth > el.clientWidth + 4) {
                   issues.push({
@@ -300,7 +306,7 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
 
               // 5c. WCAG Color Contrast Verification
               // Skip elements with background images or gradient text fills
-              if (style.backgroundImage === 'none' && style.webkitBackgroundClip !== 'text') {
+              if (style.backgroundImage === 'none' && style.webkitBackgroundClip !== 'text' && !isSrOnly) {
                 const bg = getEffectiveBg(el);
                 const fgRaw = parseColor(style.color);
                 const fg = blend(fgRaw, bg);
@@ -345,7 +351,7 @@ fs.mkdirSync(OUT_DIR, { recursive: true });
               const cx = rect.left + rect.width / 2;
               const cy = rect.top + rect.height / 2;
               const topEl = document.elementFromPoint(cx, cy);
-              if (topEl && !el.contains(topEl) && !topEl.contains(el)) {
+              if (topEl && !el.contains(topEl) && !topEl.contains(el) && window.getComputedStyle(topEl).pointerEvents !== 'none') {
                 // Ignore if covered by sticky nav when scrolled, but we are at scrollTop=0
                 issues.push({
                   severity: 'HIGH',

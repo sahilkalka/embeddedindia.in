@@ -404,9 +404,7 @@
     updateThemeIcons();
 
     // 2. Initial Palette
-    const isAdmin = window.location.pathname.startsWith('/admin') || document.body?.classList.contains('admin-shell');
-    const fallbackPalette = isAdmin ? 'titanium-slate' : 'cyber-emerald';
-    const initialScheme = localStorage.getItem('color-palette') || document.documentElement.getAttribute('data-palette') || fallbackPalette;
+    const initialScheme = localStorage.getItem('color-palette') || document.documentElement.getAttribute('data-palette') || 'cyber-emerald';
     applyPalette(initialScheme);
 
     // 3. Bind Clicks

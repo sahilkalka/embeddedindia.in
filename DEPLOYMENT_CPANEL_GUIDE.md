@@ -1,3 +1,8 @@
+```bash
+npm run pack:cpanel
+```
+
+
 # 🚀 Deployment Guide: GitHub Actions CI/CD & cPanel Automation
 
 This guide covers deployment for **Embedded India (`embeddedindia.in`)**, supporting both **Automated Git Push Deployments via GitHub Actions** and **Terminal-Free Manual Deployment via the cPanel Web Interface**.
@@ -23,16 +28,19 @@ flowchart LR
 1. **Push Event**: Any commit merged into `main` triggers `.github/workflows/deploy.yml`.
 2. **Secure SSH Handshake**: The workflow securely authenticates with your cPanel server via `appleboy/ssh-action@v1.0.3`.
 3. **Repository Sync**:
+
    ```bash
    cd /home/jiazxebj/embeddedindia.in
    git fetch origin main
    git reset --hard origin/main
    ```
 4. **cPanel Version Control Registration**:
+
    ```bash
    uapi VersionControlDeployment create repository_root=/home/jiazxebj/embeddedindia.in
    ```
 5. **Zero-Downtime Deployment Script**:
+
    ```bash
    bash ./server-deploy.sh update
    ```
@@ -103,23 +111,23 @@ This generates a clean, optimized `embeddedindia.zip` excluding local caches, te
 
 Add or verify these environment variables in cPanel Node.js App UI (**Environment variables** section) or in `/home/jiazxebj/embeddedindia.in/.env`:
 
-| Variable                   | Recommended Production Value                     | Description                                         |
-| :------------------------- | :----------------------------------------------- | :-------------------------------------------------- |
-| `NODE_ENV`               | `production`                                   | Enables caching, minification, and security headers |
-| `PORT`                   | `3000`                                         | Port handled by Passenger                           |
-| `APP_URL`                | `https://embeddedindia.in`                     | Canonical public URL (used in SEO & sitemaps)       |
-| `DATABASE_URL`           | `file:./prisma/dev.db`                         | Relative path to production SQLite database         |
-| `SESSION_SECRET`         | *(Random 32+ char secret string)*              | Session cookie cryptographic signature              |
-| `ADMIN_JWT_SECRET`       | *(Random 32+ char secret token)*               | Admin JWT session token                             |
-| `ADMIN_DEFAULT_EMAIL`    | `admin@embeddedindia.in`                       | Email for the initial admin account; used only when no admin exists |
+| Variable                   | Recommended Production Value                     | Description                                                                      |
+| :------------------------- | :----------------------------------------------- | :------------------------------------------------------------------------------- |
+| `NODE_ENV`               | `production`                                   | Enables caching, minification, and security headers                              |
+| `PORT`                   | `3000`                                         | Port handled by Passenger                                                        |
+| `APP_URL`                | `https://embeddedindia.in`                     | Canonical public URL (used in SEO & sitemaps)                                    |
+| `DATABASE_URL`           | `file:./prisma/dev.db`                         | Relative path to production SQLite database                                      |
+| `SESSION_SECRET`         | *(Random 32+ char secret string)*              | Session cookie cryptographic signature                                           |
+| `ADMIN_JWT_SECRET`       | *(Random 32+ char secret token)*               | Admin JWT session token                                                          |
+| `ADMIN_DEFAULT_EMAIL`    | `admin@embeddedindia.in`                       | Email for the initial admin account; used only when no admin exists              |
 | `ADMIN_DEFAULT_PASSWORD` | `AdminEmbedded@2026!`                          | Initial admin password; existing admin passwords are preserved during deployment |
-| `SMTP_HOST`              | `smtp.gmail.com` *(or cPanel mail)*          | Outgoing mail server for inquiries                  |
-| `SMTP_PORT`              | `587`                                          | `587` (STARTTLS) or `465` (SSL)                 |
-| `SMTP_SECURE`            | `false`                                        | `false` for 587, `true` for 465                 |
-| `SMTP_USER`              | `info@embeddedindia.in`                        | Outgoing email address                              |
-| `SMTP_PASS`              | *(Your email app password)*                    | Outgoing email password                             |
-| `AI_PROVIDER`            | `nvidia` / `gemini` / `openai` / `local` | Active AI provider for blog/case-study generator    |
-| `AI_API_KEY`             | *(Your provider API key)*                      | API key for cloud LLM inference                     |
+| `SMTP_HOST`              | `smtp.gmail.com` *(or cPanel mail)*          | Outgoing mail server for inquiries                                               |
+| `SMTP_PORT`              | `587`                                          | `587` (STARTTLS) or `465` (SSL)                                              |
+| `SMTP_SECURE`            | `false`                                        | `false` for 587, `true` for 465                                              |
+| `SMTP_USER`              | `info@embeddedindia.in`                        | Outgoing email address                                                           |
+| `SMTP_PASS`              | *(Your email app password)*                    | Outgoing email password                                                          |
+| `AI_PROVIDER`            | `nvidia` / `gemini` / `openai` / `local` | Active AI provider for blog/case-study generator                                 |
+| `AI_API_KEY`             | *(Your provider API key)*                      | API key for cloud LLM inference                                                  |
 
 ---
 
