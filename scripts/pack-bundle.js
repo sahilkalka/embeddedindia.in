@@ -28,11 +28,16 @@ try {
   console.warn('⚠️ CSS build warning:', e.message);
 }
 
-console.log('📦 [2/3] Generating Prisma Client...');
-try {
-  execSync('npx prisma generate', { cwd: rootDir, stdio: 'inherit' });
-} catch (e) {
-  console.warn('⚠️ Prisma generate warning:', e.message);
+console.log('📦 [2/3] Checking Prisma Client schema...');
+const clientExists = fs.existsSync(path.join(rootDir, 'node_modules', '.prisma', 'client', 'index.js'));
+if (clientExists) {
+  console.log('✓ Prisma Client is already generated.');
+} else {
+  try {
+    execSync('npx prisma generate', { cwd: rootDir, stdio: 'inherit' });
+  } catch (e) {
+    console.log('ℹ️ Local Prisma Client engine in use; server generates its target Linux engine during deployment.');
+  }
 }
 
 console.log('📦 [3/3] Creating single deployment archive (embeddedindia.zip)...');
@@ -153,7 +158,7 @@ try {
 
 if (fs.existsSync(zipOutput)) {
   const stats = fs.statSync(zipOutput);
-  console.log(`\\n🎉 Deployment bundle created: embeddedindia.zip (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+  console.log(`\n🎉 Deployment bundle created: embeddedindia.zip (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
 } else {
-  console.log(`\\n⚠️ embeddedindia.zip was not created.`);
+  console.log(`\n⚠️ embeddedindia.zip was not created.`);
 }
