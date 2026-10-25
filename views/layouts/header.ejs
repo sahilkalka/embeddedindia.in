@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="<%= settings.enable_smooth_scroll === 'false' ? '' : 'scroll-smooth' %> overflow-x-hidden max-w-full" data-palette="emerald">
+<html lang="en" class="<%= settings.enable_smooth_scroll === 'false' ? '' : 'scroll-smooth' %> overflow-x-clip max-w-full" data-palette="emerald">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -31,7 +31,7 @@
   <!-- Google Fonts Preconnect & Dynamic Font Families -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&amp;display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&amp;display=swap" rel="stylesheet">
   <% 
     const hFont = (theme && theme.headingFont) ? theme.headingFont.replace(/\s+/g, '+') : 'Inter';
     const bFont = (theme && theme.bodyFont) ? theme.bodyFont.replace(/\s+/g, '+') : 'Inter';
@@ -41,10 +41,10 @@
   <link href="https://fonts.googleapis.com/css2?<%= fontQuery %>&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/style.css?v=20261025_03">
 
   <!-- Highlight.js syntax highlighting theme for code blocks -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" media="print" onload="this.media='all'">
 
   <!-- Dynamic Theme & Color Palette Engine Styles -->
   <% if (theme && theme.cssString) { %>
@@ -57,11 +57,60 @@
       h1, h2, h3, h4, h5, h6 {
         font-family: var(--font-heading), system-ui, sans-serif;
       }
-      .custom-container {
-        max-width: var(--container-max-width, 80rem);
+      <% 
+        const rawOp = settings.header_opacity || settings.header_transparency || '95';
+        const numOp = Number(rawOp);
+        const headerAlpha = !isNaN(numOp) ? (numOp > 1 ? (numOp / 100).toFixed(2) : numOp.toFixed(2)) : '0.95';
+        const cMaxWidth = settings.container_max_width || '80rem';
+      %>
+      :root {
+        --header-opacity: <%= headerAlpha %>;
+        --container-max-width: <%= cMaxWidth %>;
+      }
+      header.sticky,
+      .public-shell header {
+        background-color: rgba(255, 255, 255, var(--header-opacity, <%= headerAlpha %>)) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+      }
+      html.dark header.sticky,
+      .dark .public-shell header {
+        background-color: rgba(15, 23, 42, var(--header-opacity, <%= headerAlpha %>)) !important;
+      }
+      .custom-container,
+      .public-header-inner {
+        max-width: var(--container-max-width, <%= cMaxWidth %>) !important;
       }
       .custom-card-shadow {
         box-shadow: var(--card-shadow);
+      }
+      #palette-dropdown-menu.hidden {
+        display: none !important;
+      }
+      #palette-dropdown-menu:not(.hidden) {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 6px !important;
+        top: calc(100% + 8px) !important;
+        right: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        z-index: 999999 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      #palette-dropdown-menu .palette-btn {
+        width: 15px !important;
+        height: 15px !important;
+        min-width: 15px !important;
+        min-height: 15px !important;
+        max-width: 15px !important;
+        max-height: 15px !important;
+        padding: 0 !important;
+        border-radius: 9999px !important;
+        flex-shrink: 0 !important;
       }
       <% if (theme.glassmorphism) { %>
       .glassmorphism-surface {
@@ -74,7 +123,7 @@
   <% } %>
 
   <!-- Monetization: Google AdSense Lazy/Async Script Tag -->
-  <% if (settings.enable_adsense === 'true' && settings.adsense_pub_id) { %>
+  <% if (settings.enable_adsense === 'true' && settings.adsense_pub_id && process.env.NODE_ENV === 'production') { %>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= settings.adsense_pub_id %>" crossorigin="anonymous"></script>
   <% } %>
 
@@ -118,7 +167,7 @@
     document.documentElement.setAttribute('data-palette', savedPalette);
   </script>
 </head>
-<body class="bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col overflow-x-hidden max-w-full">
+<body class="ui-shell public-shell bg-white dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300 antialiased min-h-screen flex flex-col overflow-x-clip max-w-full">
 
   <!-- Top Announcement Bar / Global Promo Bar (Slot 5) -->
   <% if (settings.promo_banner_active === 'true' || settings.ad_slot_promo_bar === 'true') { %>
@@ -127,194 +176,308 @@
         <span class="bg-white/20 text-white px-2 py-0.5 rounded-full text-[10px] tracking-wider uppercase font-black animate-pulse">New</span>
         <span class="text-white drop-shadow-sm font-bold"><%= settings.promo_banner_title || 'Engineering Feasibility Consultation Available' %></span>
       </div>
-      <a href="<%= settings.promo_banner_url || '/contact' %>" class="underline hover:text-white/80 text-white font-black ml-2 inline-flex items-center group drop-shadow-sm">
+      <a href="<%= settings.promo_banner_url || '/contact' %>" class="underline hover:text-white/80 text-white font-black ml-2 min-h-[44px] inline-flex items-center group drop-shadow-sm">
         <span><%= settings.promo_banner_cta || 'Book Consultation' %></span>
         <span class="inline-block transform group-hover:translate-x-1 transition ml-1">&rarr;</span>
       </a>
     </aside>
   <% } %>
 
-  <!-- Navigation Header (Sticky or Relative based on Customizer Toggle) -->
-  <header class="<%= settings.nav_sticky === 'false' ? 'relative' : 'sticky top-0' %> z-50 bg-white/95 dark:bg-slate-900 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
+  <% if (settings.lab_event_enabled !== 'false') { %>
+  <!-- Bangalore Lab Dismissible Top Notice Bar (Above Sticky Header) -->
+  <aside id="lab-event-notice" aria-label="Bangalore Lab Status" class="w-full bg-slate-900 text-white text-xs border-b border-slate-800 py-1.5 px-3 sm:px-6 transition-all duration-300">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3" style="max-width: 80rem; margin: 0 auto; width: 100%;">
+      <div class="flex items-center space-x-2.5 min-w-0">
+        <a href="<%= settings.lab_event_url || '/about#lab' %>" title="<%= settings.lab_status_text || 'Bangalore Lab: Online • 4 Active SMT Lines • HIL Station #2 Active' %>" class="inline-flex items-center space-x-2 px-2.5 py-0.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 rounded-full text-[11px] font-bold text-emerald-400 transition group flex-shrink-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 live-radar flex-shrink-0"></span>
+          <span><%= settings.lab_event_label || 'Bangalore Lab Active' %></span>
+        </a>
+        <span class="hidden md:inline text-[11px] text-slate-300 font-medium truncate">
+          <%= settings.lab_status_text || '4 Active SMT Lines • HIL Station #2 Active' %>
+        </span>
+      </div>
+      <div class="flex items-center space-x-3 text-[11px] text-slate-300 flex-shrink-0">
+        <span class="hidden sm:inline text-slate-400">ISO 9001:2015 Verified Lab</span>
+        <a href="/contact" class="font-bold text-emerald-400 hover:text-emerald-300 hover:underline">Schedule Lab Visit &rarr;</a>
+        <!-- Dismiss Button -->
+        <button type="button" id="dismiss-lab-notice-btn" aria-label="Dismiss Lab Notice" title="Dismiss notice" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/10 transition cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+  <script>
+    (function() {
+      try {
+        if (sessionStorage.getItem('lab-notice-dismissed') === 'true') {
+          const el = document.getElementById('lab-event-notice');
+          if (el) el.style.display = 'none';
+        }
+        document.getElementById('dismiss-lab-notice-btn')?.addEventListener('click', function() {
+          const el = document.getElementById('lab-event-notice');
+          if (el) el.style.display = 'none';
+          sessionStorage.setItem('lab-notice-dismissed', 'true');
+        });
+      } catch (e) {}
+    })();
+  </script>
+  <% } %>
+
+  <!-- Navigation Header (Sticky top-0) -->
+  <header class="sticky top-0 z-50 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
+    <div class="public-header-inner mx-auto px-2 min-[360px]:px-3 sm:px-6 lg:px-8 min-h-[76px] sm:min-h-[88px] py-2 sm:py-2.5 flex items-center justify-between flex-nowrap gap-2 sm:gap-4" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>); margin: 0 auto; width: 100%;">
       
       <!-- Brand Logo (Vector Icon + Semantic HTML Typography) -->
-      <a href="/" class="flex items-center space-x-2 sm:space-x-3 group flex-shrink-0">
-        <!-- Iconic Spaceship Delta Arrowhead Brandmark -->
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent p-0.5 shadow-md shadow-brand-500/20 group-hover:shadow-brand-500/40 transition duration-300 transform group-hover:scale-105 icon-bounce-container flex-shrink-0">
-          <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[8px] sm:rounded-[10px] flex items-center justify-center p-1.5 sm:p-2">
-            <svg id="siteBrandmarkSvg" class="w-full h-full text-brand-500 dark:text-accent transition-colors duration-300" viewBox="0 0 32 32" fill="currentColor">
-              <path d="M16 3C16.8 3 17.5 3.4 18 4.2L28.5 21.8C29.2 23 28.7 24.5 27.5 25.2C27.1 25.4 26.6 25.5 26.1 25.5H19.8C18.7 25.5 17.7 24.8 17.3 23.8L16 20.3L14.7 23.8C14.3 24.8 13.3 25.5 12.2 25.5H5.9C4.5 25.5 3.4 24.4 3.4 23C3.4 22.5 3.5 22.1 3.8 21.8L14 4.2C14.5 3.4 15.2 3 16 3Z"/>
-            </svg>
+      <a href="/" aria-label="<%= settings.site_name || 'Embedded India' %>" class="flex items-center min-h-[44px] py-1.5 space-x-2 sm:space-x-3 group flex-shrink-0">
+        <% if (settings.site_logo) { %>
+          <img src="<%= settings.site_logo %>" alt="<%= settings.site_name || 'Embedded India' %>" class="h-8 sm:h-10 w-auto object-contain flex-shrink-0">
+        <% } else { %>
+          <!-- Iconic Spaceship Delta Arrowhead Brandmark -->
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent p-0.5 shadow-md shadow-brand-500/20 group-hover:shadow-brand-500/40 transition duration-300 transform group-hover:scale-105 icon-bounce-container flex-shrink-0">
+            <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[7px] sm:rounded-[10px] flex items-center justify-center p-1 sm:p-2">
+              <svg id="siteBrandmarkSvg" class="w-full h-full text-brand-500 dark:text-accent transition-colors duration-300" viewBox="0 0 32 32" fill="currentColor">
+                <path d="M16 3C16.8 3 17.5 3.4 18 4.2L28.5 21.8C29.2 23 28.7 24.5 27.5 25.2C27.1 25.4 26.6 25.5 26.1 25.5H19.8C18.7 25.5 17.7 24.8 17.3 23.8L16 20.3L14.7 23.8C14.3 24.8 13.3 25.5 12.2 25.5H5.9C4.5 25.5 3.4 24.4 3.4 23C3.4 22.5 3.5 22.1 3.8 21.8L14 4.2C14.5 3.4 15.2 3 16 3Z"/>
+              </svg>
+            </div>
           </div>
-        </div>
+        <% } %>
+
         <!-- Semantic Brand Typography (High Contrast in Light and Dark) -->
         <div class="flex flex-col">
-          <div class="text-base sm:text-2xl font-black tracking-tight leading-none text-slate-900 dark:text-white flex items-center">
+          <div class="text-xs min-[360px]:text-sm sm:text-xl lg:text-2xl font-black tracking-tight leading-none text-slate-900 dark:text-white flex items-center whitespace-nowrap">
             <% const headerParts = (settings.site_name || 'Embedded India').split(' '); %>
             <span><%= headerParts[0] %></span>
             <% if (headerParts.length > 1) { %>
               <span class="text-brand-500 dark:text-accent ml-1 sm:ml-1.5 font-black"><%= headerParts.slice(1).join(' ') %></span>
             <% } %>
           </div>
-          <span class="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-300 mt-0.5 sm:mt-1"><%= settings.site_tagline || 'Engineering Hub' %></span>
+          <span class="public-brand-tagline text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-300 mt-0.5 sm:mt-1"><%= settings.site_tagline || 'Engineering Hub' %></span>
         </div>
       </a>
 
-      <% if (settings.lab_event_enabled !== 'false') { %>
-      <!-- Live Hardware Lab Status Pill (Compact, Truncated & Configurable) -->
-      <a href="<%= settings.lab_event_url || '/about#lab' %>" title="<%= settings.lab_status_text || 'Bangalore Lab: Online • 4 Active SMT Lines • HIL Station #2 Active' %>" class="hidden xl:inline-flex items-center space-x-2 px-3 py-1 bg-brand-500/10 dark:bg-accent/15 hover:bg-brand-500/20 dark:hover:bg-accent/25 border border-brand-500/20 rounded-full text-[11px] font-bold text-brand-700 dark:text-accent flex-shrink-0 transition max-w-[210px] 2xl:max-w-xs group cursor-pointer shadow-xs">
-        <span class="w-2 h-2 rounded-full bg-brand-500 dark:bg-accent live-radar flex-shrink-0"></span>
-        <span class="truncate"><%= settings.lab_event_label || (settings.lab_status_text ? settings.lab_status_text.split('•')[0].trim() : 'Bangalore Lab: Online') %></span>
-      </a>
-      <% } %>
-
-      <!-- Desktop Navigation Menu with Smooth Indicator Lines -->
-      <nav aria-label="Primary Navigation" class="hidden md:flex items-center space-x-7 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
-        <a href="/" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Home</a>
-        <a href="/services" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/services') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Services</a>
-        <a href="/projects" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/projects') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Projects</a>
-        <a href="/tools" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 flex items-center <%= currentPath.startsWith('/tools') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">
-          <span>Tools</span>
-          <span class="ml-1.5 px-1.5 py-0.5 text-[10px] bg-accent/20 text-accent dark:bg-accent/30 rounded font-bold uppercase tracking-wider animate-float-subtle">Hub</span>
+      <!-- Desktop & Tablet Icon Navigation Menu Bar -->
+      <nav aria-label="Primary Navigation" class="public-desktop-nav hidden lg:flex items-center justify-center gap-1 sm:gap-1.5 lg:gap-2 text-slate-700 dark:text-slate-200 min-w-0 flex-1 whitespace-nowrap [&>a]:shrink-0">
+        
+        <!-- Home -->
+        <a href="/" aria-label="Home" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath === '/' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Home</span>
         </a>
-        <a href="/blogs" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath.startsWith('/blogs') ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Blogs</a>
-        <a href="/about" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/about' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">About</a>
-        <a href="/contact" class="nav-link-indicator hover:text-brand-500 dark:hover:text-accent transition duration-200 <%= currentPath === '/contact' ? 'text-brand-500 dark:text-accent font-bold active' : '' %>">Connect</a>
+
+        <!-- Services -->
+        <a href="/services" aria-label="Services" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/services') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Services</span>
+        </a>
+
+        <!-- Projects -->
+        <a href="/projects" aria-label="Projects" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/projects') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Projects</span>
+        </a>
+
+        <!-- Tools -->
+        <a href="/tools" aria-label="Tools" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 relative <%= currentPath.startsWith('/tools') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Tools</span>
+        </a>
+
+        <!-- Blogs -->
+        <a href="/blogs" aria-label="Blogs" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/blogs') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Blogs</span>
+        </a>
+
+        <!-- About -->
+        <a href="/about" aria-label="About" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath === '/about' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">About</span>
+        </a>
+
+        <!-- Connect -->
+        <a href="/contact" aria-label="Connect" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath === '/contact' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Connect</span>
+        </a>
+
       </nav>
 
-      <!-- Right Controls: Search, Accent Dropdown, Theme Toggle & CTA -->
-      <div class="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0 ml-auto pl-2 sm:pl-0">
+      <!-- Desktop Actions & CTA / Mobile Header Controls -->
+      <div id="public-header-actions" class="flex items-center flex-nowrap gap-1.5 sm:gap-2.5 flex-shrink-0 ml-auto lg:ml-2">
         
-        <!-- Header Quick Search Button -->
-        <button id="header-search-btn" type="button" aria-label="Search services, calculators, articles" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95 flex items-center justify-center" title="Search (Ctrl+K)">
-          <span class="material-symbols-rounded text-[18px] sm:text-xl" aria-hidden="true">search</span>
-        </button>
+        <!-- Grouped Search, Mode & Expandable Palette Pill (Desktop & Tablet) -->
+        <div class="relative hidden lg:inline-flex items-center theme-dropdown-wrapper flex-shrink-0" id="palette-dropdown-wrapper" style="display: inline-flex !important;">
+          <div role="group" aria-label="Search and Theme Controls" class="flex items-stretch rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition">
+            
+            <!-- 1. Search Button (Icon on Top, Text Below) -->
+            <button id="header-search-btn" type="button" aria-label="Search (Ctrl/Cmd+K)" title="Search (Ctrl/Cmd+K)" class="nav-icon-link group flex flex-col items-center justify-center min-w-[50px] sm:min-w-[56px] py-1.5 px-2.5 rounded-l-xl text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <span class="text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Search</span>
+            </button>
 
-        <!-- Modern Compact Accent Color Dropdown -->
-        <div class="relative" id="palette-dropdown-wrapper">
-          <button id="palette-dropdown-btn" type="button" aria-label="Appearance settings" aria-expanded="false" class="p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 transition shadow-sm active:scale-95 flex items-center space-x-1 sm:space-x-1.5" title="Appearance">
-            <span class="material-symbols-rounded text-[18px] sm:text-xl" aria-hidden="true">palette</span>
-            <span id="active-scheme-dot" class="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 transition-colors shadow-xs" style="background-color: var(--accent-primary, #007f5f);"></span>
-            <svg id="palette-chevron" class="w-3 h-3 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
+            <!-- Divider -->
+            <div class="w-[1px] bg-slate-200 dark:bg-slate-700 self-stretch my-1.5"></div>
 
-          <!-- Floating Dropdown Menu -->
-          <div id="palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-2xl py-2 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-            <div class="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">Appearance</div>
-            <button id="theme-toggle" type="button" aria-label="Switch to dark mode" class="w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span id="theme-toggle-dark-icon" class="material-symbols-rounded text-base">dark_mode</span>
-                <span id="theme-toggle-light-icon" class="material-symbols-rounded text-base hidden">light_mode</span>
-                <span id="theme-toggle-label">Dark mode</span>
-              </span>
-              <span class="material-symbols-rounded text-sm" aria-hidden="true">toggle_on</span>
+            <!-- 2. Theme Mode Toggle Button (Icon on Top, Text Below) -->
+            <button id="theme-toggle" type="button" aria-label="Toggle theme mode" title="Toggle dark/light mode" class="theme-toggle-btn nav-icon-link group flex flex-col items-center justify-center min-w-[50px] sm:min-w-[56px] py-1.5 px-2.5 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
+              <div class="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
+                <!-- Moon Icon (for Light mode) -->
+                <svg id="theme-toggle-dark-icon" class="theme-dark-icon w-5 h-5 text-slate-700 dark:text-slate-200 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <!-- Sun Icon (for Dark mode) -->
+                <svg id="theme-toggle-light-icon" class="theme-light-icon hidden w-5 h-5 text-amber-400 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+              </div>
+              <span class="text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Theme</span>
+              <span id="theme-toggle-label" class="sr-only theme-label">Dark mode</span>
             </button>
-            <div class="mx-3.5 my-1 border-t border-slate-100 dark:border-slate-700"></div>
-            <div class="px-3.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400">Color palette</div>
-            <button type="button" data-scheme="cyber-emerald" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#007f5f] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
-                <span>Cyber Emerald</span>
-              </span>
-              <span class="scheme-check hidden text-[#007f5f] font-black text-xs">✓</span>
+            
+            <!-- Divider -->
+            <div class="w-[1px] bg-slate-200 dark:bg-slate-700 self-stretch my-1.5"></div>
+
+            <!-- 3. Expandable Chevron Dropdown Trigger (Downward Arrow) -->
+            <button id="palette-dropdown-btn" type="button" aria-label="Palette colors" aria-expanded="false" title="Expand color palettes" class="theme-dropdown-btn flex items-center justify-center px-2 py-1 text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-r-xl transition cursor-pointer">
+              <svg id="palette-chevron" class="theme-chevron w-4 h-4 transition-transform duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
             </button>
-            <button type="button" data-scheme="quantum-cyan" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#0284c7] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
-                <span>Quantum Cyan</span>
-              </span>
-              <span class="scheme-check hidden text-[#0284c7] font-black text-xs">✓</span>
+          </div>
+
+          <span id="active-scheme-dot" class="active-scheme-dot hidden"></span>
+
+          <!-- Horizontal Palette Expansion: Opens below Theme button as a single horizontal row -->
+          <div id="palette-dropdown-menu" class="theme-dropdown-menu hidden absolute right-0 top-full mt-2 rounded-xl shadow-xl px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 whitespace-nowrap flex flex-row items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150" style="z-index: 99999; flex-direction: row !important; align-items: center !important; gap: 6px !important; top: calc(100% + 8px) !important; right: 0 !important;">
+            <!-- Small Circular Color Pickers in Horizontal Row -->
+            <button type="button" data-scheme="cyber-emerald" title="Cyber Emerald" style="background-color: #007f5f !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
+              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
             </button>
-            <button type="button" data-scheme="titanium-slate" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#475569] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
-                <span>Titanium Slate</span>
-              </span>
-              <span class="scheme-check hidden text-[#475569] font-black text-xs">✓</span>
+            <button type="button" data-scheme="vscode-theme" title="VS Code Inspired" style="background-color: #007ACC !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
+              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
             </button>
-            <button type="button" data-scheme="solar-amber" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#d97706] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
-                <span>Solar Amber</span>
-              </span>
-              <span class="scheme-check hidden text-[#d97706] font-black text-xs">✓</span>
+            <button type="button" data-scheme="solar-amber" title="Solar Amber" style="background-color: #d97706 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
+              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
             </button>
-            <button type="button" data-scheme="supernova-violet" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#9333ea] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
-                <span>Supernova Violet</span>
-              </span>
-              <span class="scheme-check hidden text-[#9333ea] font-black text-xs">✓</span>
+            <button type="button" data-scheme="quantum-cyan" title="Quantum Cyan" style="background-color: #0284c7 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
+              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
             </button>
-            <button type="button" data-scheme="clean-light" class="palette-btn w-full px-3.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl">
-              <span class="flex items-center space-x-2.5">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#2563eb] shadow-xs flex-shrink-0 ring-1 ring-black/10"></span>
-                <span>Clean Enterprise</span>
-              </span>
-              <span class="scheme-check hidden text-[#2563eb] font-black text-xs">✓</span>
+            <button type="button" data-scheme="titanium-slate" title="Titanium Slate" style="background-color: #475569 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
+              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
+            </button>
+            <button type="button" data-scheme="clean-light" title="Clean Enterprise" style="background-color: #2563eb !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
+              <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
             </button>
           </div>
         </div>
 
-        <!-- Dark / Light Mode Toggle Button -->
-        <button id="legacy-theme-toggle" type="button" aria-label="Toggle theme" class="hidden">
-          <!-- Moon Icon (for Dark) -->
-          <svg id="legacy-theme-toggle-dark-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
+        <!-- Desktop CTA -->
+        <a href="/contact" class="btn-shimmer hidden xl:inline-flex items-center min-h-[42px] px-4 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap ml-1">
+          <span>Request Quote &rarr;</span>
+        </a>
+
+        <!-- Mobile-Only Quick Search Button -->
+        <button type="button" onclick="document.getElementById('header-search-btn')?.click()" aria-label="Search site" class="public-mobile-btn lg:hidden flex flex-col items-center justify-center p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span class="text-[10px] font-bold mt-0.5">Search</span>
+        </button>
+
+        <!-- Mobile-Only Theme Toggle Button -->
+        <button type="button" aria-label="Toggle theme" class="public-mobile-btn theme-toggle-btn lg:hidden flex flex-col items-center justify-center p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+          <svg class="theme-dark-icon w-6 h-6 text-slate-700 dark:text-slate-200" fill="currentColor" viewBox="0 0 20 20">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
           </svg>
-          <!-- Sun Icon (for Light) -->
-          <svg id="legacy-theme-toggle-light-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+          <svg class="theme-light-icon hidden w-6 h-6 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
           </svg>
+          <span class="text-[10px] font-bold mt-0.5">Theme</span>
         </button>
 
-        <!-- Admin / CTA -->
-        <% if (locals.currentUser) { %>
-          <a href="/admin" class="hidden sm:inline-flex items-center px-4 py-2 border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold rounded-xl text-sm hover:border-brand-500 transition active:scale-95 shadow-sm">
-            Admin Panel
-          </a>
-        <% } else { %>
-          <a href="/contact" class="btn-shimmer hidden sm:inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5">
-            <span>Request Quote</span>
-          </a>
-        <% } %>
-
-        <!-- Mobile Menu Toggle Button -->
-        <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu" class="md:hidden p-1.5 sm:p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-brand-surface rounded-lg sm:rounded-xl border border-slate-200 dark:border-[#1e3831] active:scale-95">
-          <span class="material-symbols-rounded text-xl sm:text-2xl" aria-hidden="true">menu</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Global Quick Search Modal Dialog -->
-    <div id="header-search-modal" aria-hidden="true" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-16 sm:pt-24 px-4">
-      <div id="header-search-panel" class="w-full max-w-xl bg-white dark:bg-[#13221f] rounded-2xl shadow-2xl border border-slate-200 dark:border-brand-border overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-        <div class="p-4 border-b border-slate-100 dark:border-brand-border flex items-center space-x-3">
-          <svg class="w-5 h-5 text-brand-500 dark:text-accent flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        <!-- Mobile Menu Toggle Button (Visible only on mobile/tablet < 1024px) -->
+        <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu" class="public-mobile-btn lg:hidden min-w-[42px] min-h-[42px] p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-brand-surface rounded-lg border border-slate-200 dark:border-[#1e3831] active:scale-95 flex items-center justify-center">
+          <svg class="w-6 h-6" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
-          <input type="text" id="headerSearchInput" placeholder="Search services, calculators, guides... (type 2+ characters)" autocomplete="off" class="w-full bg-transparent border-none text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none text-sm font-medium">
-          <button id="header-search-close" type="button" aria-label="Close search" class="text-xs px-2.5 py-1 bg-slate-100 dark:bg-brand-dark rounded-lg text-slate-500 hover:text-slate-700 dark:hover:text-white font-mono">
-            ESC
-          </button>
-        </div>
-        <!-- Live Search Results Container -->
-        <div id="headerSearchResults" class="hidden max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-brand-border/60 text-xs"></div>
+        </button>
       </div>
     </div>
 
-    <!-- Mobile Dropdown Menu -->
-    <nav aria-label="Mobile Navigation" id="mobile-menu" aria-hidden="true" class="hidden md:hidden border-t border-slate-200 dark:border-brand-border bg-white dark:bg-[#13221f] px-4 pt-3 pb-6 space-y-2 text-base font-semibold">
-      <a href="/" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath === '/' ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Home</a>
-      <a href="/services" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/services') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Services</a>
-      <a href="/projects" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/projects') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Projects</a>
-      <a href="/tools" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface text-accent font-bold">Tools</a>
-      <a href="/blogs" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath.startsWith('/blogs') ? 'text-brand-500 dark:text-accent font-bold' : '' %>">Blogs</a>
-      <a href="/about" class="block px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-brand-surface <%= currentPath === '/about' ? 'text-brand-500 dark:text-accent font-bold' : '' %>">About</a>
-      <a href="/contact" class="block px-3 py-2 rounded-lg bg-brand-500 text-white text-center mt-2 font-bold btn-shimmer">Connect</a>
+    <%- include('../partials/search-dialog') %>
+
+    <!-- Mobile Dropdown Menu (Collapsed only for mobile/tablet < 1024px) -->
+    <nav aria-label="Mobile Navigation" id="mobile-menu" aria-hidden="true" class="hidden lg:hidden border-t border-slate-200 dark:border-brand-border bg-white dark:bg-[#13221f] px-4 pt-4 pb-6 space-y-3">
+      <div class="grid grid-cols-4 gap-2 text-center">
+        <!-- Home -->
+        <a href="/" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath === '/' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">Home</span>
+        </a>
+        <!-- Services -->
+        <a href="/services" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath.startsWith('/services') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">Services</span>
+        </a>
+        <!-- Projects -->
+        <a href="/projects" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath.startsWith('/projects') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">Projects</span>
+        </a>
+        <!-- Tools -->
+        <a href="/tools" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath.startsWith('/tools') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">Tools</span>
+        </a>
+        <!-- Blogs -->
+        <a href="/blogs" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath.startsWith('/blogs') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">Blogs</span>
+        </a>
+        <!-- About -->
+        <a href="/about" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath === '/about' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">About</span>
+        </a>
+        <!-- Connect -->
+        <a href="/contact" class="flex flex-col items-center justify-center p-2 rounded-xl transition <%= currentPath === '/contact' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold">Connect</span>
+        </a>
+      </div>
+      <a href="/contact" class="block px-3 py-2.5 min-h-[44px] flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white text-center font-bold btn-shimmer">
+        <span>Request Quote &rarr;</span>
+      </a>
     </nav>
   </header>
 

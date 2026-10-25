@@ -156,6 +156,29 @@ This repository is linked to the live production server at `embeddedindia.in`:
 
 ## 🧪 Automated Test Suite
 
+Project video fields accept YouTube sharing/watch/embed/shorts/live links or a
+complete iframe embed snippet. Both project creation and editing normalize these
+to a privacy-enhanced `youtube-nocookie.com/embed/VIDEO_ID?rel=0` URL. Invalid or
+non-YouTube inputs return HTTP 400 without saving; an empty field removes the video.
+
+Run the isolated admin responsive layout regression check:
+```bash
+npm run test:admin-layout
+```
+This rebuilds Tailwind CSS and renders the real admin EJS templates with local
+fixtures in Playwright Chromium, without starting the app or accessing the database.
+It checks the overview, inquiries (populated and empty), subscribers, posts, and
+projects at 1920, 1440, 1280, 1024, 768, and 375 pixels in light and dark modes.
+Assertions cover document overflow, single-row header actions, visible View Site
+and Sign Out links, inquiry controls, and opening/closing the SMTP dialog and
+appearance menus. Signed-in and guest homepage fixtures also verify that the
+Admin Panel / Request Quote button stays inside the public header action group.
+Search, light/dark mode, and accent colors share one labeled control group;
+the regression check also verifies grouping and theme switching.
+Playwright Chromium must be installed (`npx playwright install chromium`).
+Below 1024 pixels, admin links use a separate horizontally scrollable navigation
+row; the brand and action controls remain together in the top row.
+
 Run the full automated test suite:
 ```bash
 npm test

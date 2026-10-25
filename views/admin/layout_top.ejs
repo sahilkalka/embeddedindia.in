@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="overflow-x-hidden max-w-full">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,164 +19,191 @@
     } else {
       document.documentElement.classList.remove('dark');
     }
-    const savedPalette = localStorage.getItem('color-palette') || 'cyber-emerald';
+    const savedPalette = localStorage.getItem('color-palette') || '<%= settings.active_theme_palette || "titanium-slate" %>';
     document.documentElement.setAttribute('data-palette', savedPalette);
   </script>
-</head>
-<body class="bg-slate-100 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200 overflow-x-hidden max-w-full">
 
-  <!-- Top Admin Bar -->
-  <header class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+  <% if (settings) { %>
+    <style id="admin-header-styles">
+      <% 
+        const rawOp = settings.header_opacity || settings.header_transparency || '95';
+        const numOp = Number(rawOp);
+        const headerAlpha = !isNaN(numOp) ? (numOp > 1 ? (numOp / 100).toFixed(2) : numOp.toFixed(2)) : '0.95';
+        const cMaxWidth = settings.container_max_width || '80rem';
+      %>
+      :root {
+        --header-opacity: <%= headerAlpha %>;
+        --container-max-width: <%= cMaxWidth %>;
+      }
+      header.sticky,
+      .admin-shell header {
+        background-color: rgba(255, 255, 255, var(--header-opacity, <%= headerAlpha %>)) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+      }
+      html.dark header.sticky,
+      .dark .admin-shell header {
+        background-color: rgba(15, 23, 42, var(--header-opacity, <%= headerAlpha %>)) !important;
+      }
+      .admin-header-inner,
+      .admin-shell main,
+      .admin-main-container,
+      .custom-container {
+        max-width: var(--container-max-width, <%= cMaxWidth %>) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        width: 100% !important;
+      }
+      .theme-dropdown-menu.hidden,
+      #admin-palette-dropdown-menu.hidden {
+        display: none !important;
+      }
+      .theme-dropdown-menu:not(.hidden),
+      #admin-palette-dropdown-menu:not(.hidden) {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 6px !important;
+        top: calc(100% + 8px) !important;
+        right: 0 !important;
+        width: auto !important;
+        max-width: none !important;
+        z-index: 999999 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      .theme-dropdown-menu .palette-btn,
+      #admin-palette-dropdown-menu .palette-btn {
+        width: 15px !important;
+        height: 15px !important;
+        min-width: 15px !important;
+        min-height: 15px !important;
+        max-width: 15px !important;
+        max-height: 15px !important;
+        padding: 0 !important;
+        border-radius: 9999px !important;
+        flex-shrink: 0 !important;
+      }
+    </style>
+  <% } %>
+</head>
+<body class="ui-shell admin-shell bg-slate-100 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased transition-colors duration-200">
+
+  <!-- Top Admin Bar (Sticky with Dynamic Transparency and Max Width matching Public Header) -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-200 shadow-xs">
+    <div class="admin-header-inner mx-auto px-2 min-[360px]:px-3 sm:px-6 lg:px-8 min-h-[76px] sm:min-h-[88px] py-2 sm:py-2.5 flex items-center justify-between flex-nowrap gap-2 sm:gap-4" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>); margin: 0 auto; width: 100%;">
       
       <!-- Brand & Admin Badge -->
-      <div class="flex items-center space-x-3">
-        <a href="/admin" class="flex items-center space-x-2.5 group">
-          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 via-brand-500 to-accent p-0.5 shadow-sm">
-            <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[6px] flex items-center justify-center p-1.5 transition">
-              <svg class="w-full h-full text-brand-600 dark:text-accent" viewBox="0 0 32 32" fill="currentColor">
+      <a href="/admin" aria-label="Embedded India Admin" class="flex items-center min-h-[44px] py-1.5 space-x-2 sm:space-x-3 group flex-shrink-0">
+        <% if (settings.site_logo) { %>
+          <img src="<%= settings.site_logo %>" alt="<%= settings.site_name || 'Embedded India' %>" class="h-8 sm:h-10 w-auto object-contain flex-shrink-0">
+        <% } else { %>
+          <!-- Iconic Spaceship Delta Arrowhead Brandmark -->
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent p-0.5 shadow-md shadow-brand-500/20 group-hover:shadow-brand-500/40 transition duration-300 transform group-hover:scale-105 icon-bounce-container flex-shrink-0">
+            <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[7px] sm:rounded-[10px] flex items-center justify-center p-1 sm:p-2">
+              <svg id="adminBrandmarkSvg" class="w-full h-full text-brand-500 dark:text-accent transition-colors duration-300" viewBox="0 0 32 32" fill="currentColor">
                 <path d="M16 3C16.8 3 17.5 3.4 18 4.2L28.5 21.8C29.2 23 28.7 24.5 27.5 25.2C27.1 25.4 26.6 25.5 26.1 25.5H19.8C18.7 25.5 17.7 24.8 17.3 23.8L16 20.3L14.7 23.8C14.3 24.8 13.3 25.5 12.2 25.5H5.9C4.5 25.5 3.4 24.4 3.4 23C3.4 22.5 3.5 22.1 3.8 21.8L14 4.2C14.5 3.4 15.2 3 16 3Z"/>
               </svg>
             </div>
           </div>
-          <span class="text-base font-black tracking-tight text-slate-900 dark:text-white flex items-center">
-            <span>Embedded</span>
-            <span class="text-brand-600 dark:text-accent font-black ml-1">India</span>
-          </span>
-          <span class="text-[10px] bg-brand-500/10 dark:bg-accent/20 text-brand-700 dark:text-accent font-extrabold px-2 py-0.5 rounded uppercase tracking-wider border border-brand-500/20">
-            Admin
-          </span>
-        </a>
-      </div>
+        <% } %>
 
-      <!-- Navigation Tabs (Desktop) -->
-      <nav class="hidden lg:flex items-center space-x-1 text-xs font-bold">
-        <a href="/admin" class="px-3 py-1.5 rounded-lg transition <%= currentPath === '/admin' ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Overview
+        <!-- Semantic Brand Typography -->
+        <div class="flex flex-col">
+          <div class="text-xs min-[360px]:text-sm sm:text-xl lg:text-2xl font-black tracking-tight leading-none text-slate-900 dark:text-white flex items-center whitespace-nowrap">
+            <% const adminBrandParts = (settings.site_name || 'Embedded India').split(' '); %>
+            <span><%= adminBrandParts[0] %></span>
+            <% if (adminBrandParts.length > 1) { %>
+              <span class="text-brand-500 dark:text-accent ml-1 sm:ml-1.5 font-black"><%= adminBrandParts.slice(1).join(' ') %></span>
+            <% } %>
+          </div>
+          <span class="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-300 mt-0.5 sm:mt-1">ADMIN CONSOLE</span>
+        </div>
+
+        <span class="hidden sm:inline-block text-[10px] bg-brand-500/10 dark:bg-accent/20 text-brand-700 dark:text-accent font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-brand-500/20 whitespace-nowrap ml-1">
+          Admin
+        </span>
+      </a>
+
+      <!-- Large Icon Button Navigation Bar (Matching Home Header) -->
+      <nav aria-label="Admin navigation" class="hidden md:flex items-center justify-center gap-1 sm:gap-1.5 lg:gap-2 text-slate-700 dark:text-slate-200 min-w-0 flex-1 whitespace-nowrap [&>a]:shrink-0">
+        <!-- Overview -->
+        <a href="/admin" aria-label="Overview" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath === '/admin' ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v5a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v2a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10-5a1 1 0 011-1h4a1 1 0 011 1v9a1 1 0 01-1 1h-4a1 1 0 01-1-1v-9z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Overview</span>
         </a>
-        <a href="/admin/inquiries" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/inquiries') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Inquiries
+
+        <!-- Inquiries -->
+        <a href="/admin/inquiries" aria-label="Inquiries" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/inquiries') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Inquiries</span>
         </a>
-        <a href="/admin/subscribers" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/subscribers') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Subscribers
+
+        <!-- Subscribers -->
+        <a href="/admin/subscribers" aria-label="Subscribers" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/subscribers') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Subscribers</span>
         </a>
-        <a href="/admin/posts" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/posts') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Blog Posts
+
+        <!-- Blog Posts -->
+        <a href="/admin/posts" aria-label="Blog Posts" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/posts') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Blog Posts</span>
         </a>
-        <a href="/admin/projects" class="px-3 py-1.5 rounded-lg transition <%= currentPath.startsWith('/admin/projects') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-slate-700 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
-          Projects
+
+        <!-- Projects -->
+        <a href="/admin/projects" aria-label="Projects" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/projects') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Projects</span>
         </a>
-        <a href="/admin/ai" class="px-3 py-1.5 rounded-lg transition flex items-center space-x-1 <%= currentPath.startsWith('/admin/ai') ? 'bg-brand-500 text-white font-extrabold shadow-sm' : 'text-brand-600 dark:text-accent font-extrabold hover:bg-brand-50 dark:hover:bg-slate-800' %>">
-          <span>✨ AI Engine</span>
+
+        <!-- AI Engine -->
+        <a href="/admin/ai" aria-label="AI Engine" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/ai') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">AI Engine</span>
+        </a>
+
+        <!-- Settings -->
+        <a href="/admin/settings" aria-label="Settings" class="nav-icon-link group flex flex-col items-center justify-center min-w-[52px] sm:min-w-[58px] lg:min-w-[64px] py-1.5 sm:py-2 px-2 rounded-xl transition duration-200 <%= currentPath.startsWith('/admin/settings') ? 'text-brand-600 dark:text-accent font-black bg-brand-500/10 dark:bg-accent/15' : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800' %>">
+          <svg class="w-7 h-7 sm:w-8 sm:h-8 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span class="text-xs sm:text-[13px] font-bold tracking-tight mt-1 whitespace-nowrap leading-tight">Settings</span>
         </a>
       </nav>
 
-      <!-- Right Header Actions: Settings Gear Icon, Palette Switcher, Theme Toggle, View Site & Sign Out -->
-      <div class="flex items-center space-x-2 sm:space-x-2.5 text-xs">
+      <!-- Right Header Actions: Grouped Search + Theme, View Site & Sign Out -->
+      <div id="admin-header-actions" class="flex items-center flex-nowrap gap-1.5 sm:gap-2 text-xs flex-shrink-0 ml-auto lg:ml-2">
         
-        <!-- Borderless Settings Gear Icon Button -->
-        <a href="/admin/settings" id="admin-settings-gear" aria-label="Settings" title="Admin Settings" class="p-2 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition transform duration-300 hover:rotate-90 active:scale-95 <%= currentPath.startsWith('/admin/settings') ? 'text-brand-600 dark:text-accent bg-brand-50 dark:bg-brand-950/60 ring-2 ring-brand-500/30' : '' %>">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-          </svg>
-        </a>
+        <!-- Grouped Search & Theme Pill (Identical to Public Header) -->
+        <%- include('../partials/theme-button', { showSearch: true, searchLabel: 'Search admin pages and settings', wrapperId: 'admin-palette-dropdown-wrapper', btnId: 'admin-palette-dropdown-btn', menuId: 'admin-palette-dropdown-menu', chevronId: 'admin-palette-chevron', activeDotId: 'admin-active-scheme-dot', activeNameId: 'admin-active-palette-name' }) %>
 
-        <!-- Compact Palette Switcher: Emerald, Cyan, Space Grey -->
-        <div class="relative" id="admin-palette-dropdown-wrapper">
-          <button id="admin-palette-dropdown-btn" type="button" aria-label="Appearance settings" aria-expanded="false" class="p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none transition shadow-sm active:scale-95 flex items-center space-x-1" title="Appearance">
-            <svg class="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
-              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
-              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
-              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
-              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"></path>
-            </svg>
-            <span id="admin-active-scheme-dot" class="w-2 h-2 rounded-full transition-colors duration-200" style="background-color: #007f5f;"></span>
-          </button>
-
-          <!-- Floating Dropdown Menu -->
-          <div id="admin-palette-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-xl shadow-2xl py-1 z-50 palette-dropdown-panel animate-in fade-in zoom-in-95 duration-150">
-            <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider palette-header-label">
-              Appearance
-            </div>
-            <button id="theme-toggle" type="button" aria-label="Switch to dark mode" class="w-full px-2.5 py-2 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span id="theme-toggle-dark-icon" class="material-symbols-rounded text-base">dark_mode</span>
-                <span id="theme-toggle-light-icon" class="material-symbols-rounded text-base hidden">light_mode</span>
-                <span id="theme-toggle-label">Dark mode</span>
-              </span>
-              <span class="material-symbols-rounded text-sm" aria-hidden="true">toggle_on</span>
-            </button>
-            <div class="mx-2.5 my-1 border-t border-slate-200 dark:border-slate-700"></div>
-            <div class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider palette-header-label">Color palette</div>
-            <button type="button" data-scheme="cyber-emerald" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#007f5f]"></span>
-                <span>Cyber Emerald</span>
-              </span>
-              <span class="scheme-check hidden text-[#007f5f] font-bold text-xs">✓</span>
-            </button>
-            <button type="button" data-scheme="quantum-cyan" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#0284c7]"></span>
-                <span>Quantum Cyan</span>
-              </span>
-              <span class="scheme-check hidden text-[#0284c7] font-bold text-xs">✓</span>
-            </button>
-            <button type="button" data-scheme="titanium-slate" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#475569]"></span>
-                <span>Space Grey</span>
-              </span>
-              <span class="scheme-check hidden text-[#475569] font-bold text-xs">✓</span>
-            </button>
-            <button type="button" data-scheme="solar-amber" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#d97706]"></span>
-                <span>Solar Amber</span>
-              </span>
-              <span class="scheme-check hidden text-[#d97706] font-bold text-xs">✓</span>
-            </button>
-            <button type="button" data-scheme="supernova-violet" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#9333ea]"></span>
-                <span>Supernova Violet</span>
-              </span>
-              <span class="scheme-check hidden text-[#9333ea] font-bold text-xs">✓</span>
-            </button>
-            <button type="button" data-scheme="clean-light" class="palette-btn w-full px-2.5 py-1.5 text-left text-xs font-semibold flex items-center justify-between transition rounded-md">
-              <span class="flex items-center space-x-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#2563eb]"></span>
-                <span>Clean Enterprise</span>
-              </span>
-              <span class="scheme-check hidden text-[#2563eb] font-bold text-xs">✓</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Dark / Light Theme Toggle -->
-        <button id="legacy-theme-toggle" type="button" aria-label="Toggle theme" class="hidden">
-          <svg id="legacy-theme-toggle-dark-icon" class="hidden w-4 h-4 text-slate-700" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-          </svg>
-          <svg id="legacy-theme-toggle-light-icon" class="hidden w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
-          </svg>
-        </button>
-
-        <a href="/" target="_blank" class="hidden sm:inline-flex px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg transition font-bold border border-slate-200 dark:border-slate-700">
+        <a href="/" target="_blank" class="hidden sm:inline-flex items-center px-3 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl transition text-xs font-bold border border-slate-200 dark:border-slate-700 whitespace-nowrap flex-shrink-0">
           View Site &rarr;
         </a>
-        <a href="/admin/logout" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg transition font-bold shadow-sm">
+        <a href="/admin/logout" class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition text-xs font-bold shadow-xs whitespace-nowrap flex-shrink-0">
           Sign Out
         </a>
       </div>
 
     </div>
 
-    <!-- Mobile Sub-Navigation Bar for Small Screens -->
-    <div class="lg:hidden flex items-center space-x-2 px-4 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-[11px] font-bold overflow-x-auto whitespace-nowrap">
+    <!-- Mobile Sub-Navigation Bar for Small Screens (< 768px) -->
+    <nav aria-label="Admin mobile navigation" class="md:hidden flex items-center gap-2 px-4 sm:px-6 py-2 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 text-base font-bold overflow-x-auto whitespace-nowrap [&>a]:shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden w-full" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>); margin: 0 auto;">
       <a href="/admin" class="px-2.5 py-1 rounded-md transition <%= currentPath === '/admin' ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Overview</a>
       <a href="/admin/inquiries" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/inquiries') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Inquiries</a>
       <a href="/admin/subscribers" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/subscribers') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">Subscribers</a>
@@ -186,7 +213,8 @@
         <span>✨ AI Engine</span>
       </a>
       <a href="/admin/settings" class="px-2.5 py-1 rounded-md transition <%= currentPath.startsWith('/admin/settings') ? 'bg-brand-500 text-white' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800' %>">⚙️ Settings</a>
-    </div>
+    </nav>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow">
+  <%- include('../partials/search-dialog', { adminSearch: true }) %>
+  <main class="custom-container admin-main-container mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full min-w-0 box-border flex-grow" style="max-width: var(--container-max-width, <%= settings.container_max_width || '80rem' %>) !important; margin: 0 auto !important; width: 100% !important;">

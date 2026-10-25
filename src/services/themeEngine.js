@@ -49,17 +49,17 @@ const PREDEFINED_PALETTES = {
     borderColor: '#3f3f46',
     swatchHex: '#d97706'
   },
-  'supernova-violet': {
-    id: 'supernova-violet',
-    name: 'Supernova Violet',
-    bgPrimary: '#0f0c1b',
-    bgSurface: '#18142a',
-    textPrimary: '#faf5ff',
-    textMuted: '#c084fc',
-    accentPrimary: '#a855f7',
-    accentSecondary: '#c084fc',
-    borderColor: '#3b2d54',
-    swatchHex: '#9333ea'
+  'vscode-theme': {
+    id: 'vscode-theme',
+    name: 'VS Code Inspired',
+    bgPrimary: '#1E1E1E',
+    bgSurface: '#252526',
+    textPrimary: '#CCCCCC',
+    textMuted: '#9D9D9D',
+    accentPrimary: '#007ACC',
+    accentSecondary: '#3794FF',
+    borderColor: '#3E3E42',
+    swatchHex: '#007ACC'
   },
   'clean-light': {
     id: 'clean-light',
@@ -77,11 +77,14 @@ const PREDEFINED_PALETTES = {
 
 // Aliases for backward compatibility
 const PALETTE_ALIASES = {
+  'supernova-violet': 'vscode-theme',
+  'vscode': 'vscode-theme',
   'emerald': 'cyber-emerald',
   'pcb-emerald-green': 'cyber-emerald',
   'cyan': 'quantum-cyan',
   'silicon-dark-blue': 'quantum-cyan',
   'spacegrey': 'titanium-slate',
+  'slate': 'titanium-slate',
   'automotive-slate-red': 'titanium-slate',
   'industrial-amber-charcoal': 'solar-amber',
   'clean-light-enterprise': 'clean-light'
@@ -176,6 +179,7 @@ function resolveTheme(settings = {}) {
       --base-font-size: ${baseFontSize};
       --border-radius-scale: ${borderRadiusScale};
       --container-max-width: ${containerMaxWidth};
+      --header-opacity: ${Number(settings.header_opacity || settings.header_transparency) > 1 ? (Number(settings.header_opacity || settings.header_transparency)/100).toFixed(2) : (settings.header_opacity || settings.header_transparency || '0.95')};
       --card-shadow: ${shadowValue};
       --spring-curve: ${springCurve};
       --glass-backdrop: ${glassmorphism ? 'blur(12px)' : 'none'};

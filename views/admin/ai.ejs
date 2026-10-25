@@ -1,6 +1,6 @@
 <%- include('layout_top') %>
 
-<div class="max-w-4xl space-y-8">
+<div class="w-full space-y-8 mx-auto">
   
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
@@ -9,7 +9,7 @@
       </h1>
       <p class="text-xs text-slate-500 mt-1">Configure NVIDIA NIM, OpenAI, Google Gemini, or Local Ollama models to auto-generate engineering articles</p>
     </div>
-    <span class="inline-flex items-center px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+    <span class="inline-flex items-center px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-full text-xs font-bold uppercase tracking-wider">
       Automated CMS Engine
     </span>
   </div>
@@ -59,9 +59,9 @@
       </div>
 
       <!-- Quick API key links banner -->
-      <div class="p-3 bg-slate-50 dark:bg-brand-dark/50 rounded-xl border border-slate-200 dark:border-brand-border/60 text-[11px] text-slate-600 dark:text-slate-300 flex flex-wrap items-center justify-between gap-2">
+      <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-[11px] text-slate-700 dark:text-slate-200 flex flex-wrap items-center justify-between gap-2">
         <span class="font-medium">Get API credentials:</span>
-        <div class="flex flex-wrap gap-3 font-semibold text-brand-600 dark:text-accent">
+        <div class="flex flex-wrap gap-3 font-semibold text-brand-700 dark:text-emerald-400">
           <a href="https://build.nvidia.com" target="_blank" rel="noopener" class="hover:underline">NVIDIA NIM (Free Credits) &nearr;</a>
           <a href="https://aistudio.google.com" target="_blank" rel="noopener" class="hover:underline">Google AI Studio &nearr;</a>
           <a href="https://platform.openai.com" target="_blank" rel="noopener" class="hover:underline">OpenAI Platform &nearr;</a>
@@ -71,12 +71,12 @@
       <!-- API Key & Model Name -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">API Key / Secret Token</label>
+          <label for="ai_api_key" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">API Key / Secret Token</label>
           <input type="password" id="ai_api_key" name="ai_api_key" value="<%= settings.ai_api_key || '' %>" placeholder="Enter API key or 'demo-key' for simulation mode" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono text-slate-900 dark:text-white">
           <span class="text-[10px] text-slate-500 mt-1 block">Leave empty or use 'demo-key' to run in built-in simulation mode</span>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Model Identifier</label>
+          <label for="ai_model" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Model Identifier</label>
           <input type="text" id="ai_model" name="ai_model" value="<%= settings.ai_model || 'meta/llama-3.1-70b-instruct' %>" placeholder="meta/llama-3.1-70b-instruct, gpt-4o-mini, gemini-1.5-flash" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono font-semibold text-slate-900 dark:text-white">
         </div>
       </div>
@@ -84,12 +84,12 @@
       <!-- Base URL & Temperature -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="sm:col-span-2">
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Custom API Base URL (Optional)</label>
+          <label for="ai_base_url" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Custom API Base URL (Optional)</label>
           <input type="text" id="ai_base_url" name="ai_base_url" value="<%= settings.ai_base_url || '' %>" placeholder="https://integrate.api.nvidia.com/v1 or http://localhost:11434/v1" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono text-slate-900 dark:text-white">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Temperature (Creativity)</label>
-          <input type="number" step="0.1" min="0" max="1" name="ai_temperature" value="<%= settings.ai_temperature || '0.7' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono text-slate-900 dark:text-white">
+          <label for="ai-temperature" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Temperature (Creativity)</label>
+          <input id="ai-temperature" type="number" step="0.1" min="0" max="1" name="ai_temperature" value="<%= settings.ai_temperature || '0.7' %>" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-mono text-slate-900 dark:text-white">
         </div>
       </div>
 
@@ -121,7 +121,7 @@
         </h2>
         <p class="text-xs text-slate-500 mt-0.5">Produces in-depth embedded engineering guides with code snippets, schematics, and DFM rules</p>
       </div>
-      <span class="text-[10px] bg-accent/20 text-accent font-extrabold px-2 py-0.5 rounded uppercase">
+      <span class="text-[10px] bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-extrabold px-2 py-0.5 rounded uppercase">
         Live Drafting
       </span>
     </div>
@@ -141,7 +141,7 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Category</label>
+          <label for="aiCategory" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Category</label>
           <select id="aiCategory" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white text-xs font-semibold">
             <option value="Embedded Electronics">Embedded Electronics</option>
             <option value="Guides">Guides</option>
@@ -150,7 +150,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Audience Profile</label>
+          <label for="aiAudience" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Target Audience Profile</label>
           <input type="text" id="aiAudience" value="Hardware Layout Specialists &amp; Firmware Engineers" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-slate-900 dark:text-white text-xs font-medium">
         </div>
       </div>
@@ -167,13 +167,13 @@
       <div id="aiGenStatus" class="hidden p-4 rounded-xl text-xs font-mono"></div>
 
       <!-- Outline Output Container -->
-      <div id="aiOutlineBox" class="hidden p-4 rounded-xl border border-slate-200 dark:border-brand-border bg-slate-50 dark:bg-brand-dark/40 space-y-3">
+      <div id="aiOutlineBox" class="hidden p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 space-y-3">
         <div class="flex items-center justify-between border-b border-slate-200 dark:border-brand-border/60 pb-2">
           <div class="font-bold text-xs text-slate-900 dark:text-white flex items-center space-x-2">
             <span>📑 Generated Technical Outline</span>
-            <span id="aiOutlineSourceBadge" class="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-accent/20 text-accent"></span>
+            <span id="aiOutlineSourceBadge" class="text-[10px] px-2 py-0.5 rounded font-mono font-bold bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60"></span>
           </div>
-          <button type="button" id="btnCopyOutline" class="text-[11px] font-bold text-brand-600 dark:text-accent hover:underline">
+          <button type="button" id="btnCopyOutline" class="text-[11px] font-bold text-brand-700 dark:text-emerald-400 hover:underline">
             📋 Copy Markdown
           </button>
         </div>
@@ -217,7 +217,7 @@
 
       <!-- Quick Metrics Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-brand-dark/50 border border-slate-200 dark:border-brand-border/60">
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <div class="text-[10px] uppercase font-bold text-slate-400">Total Blog Pages in CMS</div>
           <div class="text-lg font-black text-slate-900 dark:text-white mt-0.5">
             <%= totalPosts %> <span class="text-xs font-normal text-slate-500">/ max <%= schedulerSettings.maxPosts %> allowed</span>
@@ -227,7 +227,7 @@
           </div>
         </div>
 
-        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-brand-dark/50 border border-slate-200 dark:border-brand-border/60">
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <div class="text-[10px] uppercase font-bold text-slate-400">Current Frequency</div>
           <div class="text-sm font-bold text-slate-900 dark:text-white mt-1 capitalize flex items-center space-x-1.5">
             <span>⏰</span>
@@ -236,7 +236,7 @@
           <div class="text-[10px] text-slate-500 mt-1">Background cron checks every 15 min</div>
         </div>
 
-        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-brand-dark/50 border border-slate-200 dark:border-brand-border/60">
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <div class="text-[10px] uppercase font-bold text-slate-400">Last Auto-Generated Article</div>
           <div class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">
             <%= schedulerSettings.lastRun ? new Date(schedulerSettings.lastRun).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Never run yet' %>
@@ -254,7 +254,7 @@
             <div class="text-[11px] text-slate-600 dark:text-slate-400">When turned on, the system synthesizes articles and adds them to the CMS at your specified frequency until max limit is reached.</div>
           </div>
           <label class="relative inline-flex items-center cursor-pointer ml-4">
-            <input type="checkbox" name="ai_auto_gen_enabled" value="true" <%= schedulerSettings.enabled ? 'checked' : '' %> class="sr-only peer">
+            <input type="checkbox" aria-label="Enable automatic article generation" name="ai_auto_gen_enabled" value="true" <%= schedulerSettings.enabled ? 'checked' : '' %> class="sr-only peer">
             <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
           </label>
         </div>
@@ -264,7 +264,7 @@
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
             Generation Frequency <span class="text-red-500">*</span>
           </label>
-          <select name="ai_auto_gen_frequency" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
+          <select aria-label="Generation frequency" name="ai_auto_gen_frequency" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
             <option value="hourly" <%= schedulerSettings.frequency === 'hourly' ? 'selected' : '' %>>Every 1 Hour</option>
             <option value="every_6_hours" <%= schedulerSettings.frequency === 'every_6_hours' ? 'selected' : '' %>>Every 6 Hours (4 articles / day)</option>
             <option value="every_12_hours" <%= schedulerSettings.frequency === 'every_12_hours' ? 'selected' : '' %>>Every 12 Hours (2 articles / day)</option>
@@ -283,6 +283,7 @@
           <input 
             type="number" 
             name="ai_auto_gen_max_posts" 
+            aria-label="Maximum blog pages allowed"
             min="1" 
             max="10000" 
             value="<%= schedulerSettings.maxPosts %>" 
@@ -296,7 +297,7 @@
           <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
             Auto-Generated Status
           </label>
-          <select name="ai_auto_gen_status" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
+          <select aria-label="Auto-generated article status" name="ai_auto_gen_status" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border text-xs font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-500">
             <option value="published" <%= schedulerSettings.statusMode === 'published' ? 'selected' : '' %>>Published (Live Immediately)</option>
             <option value="scheduled" <%= schedulerSettings.statusMode === 'scheduled' ? 'selected' : '' %>>Scheduled (Queued for Release)</option>
             <option value="draft" <%= schedulerSettings.statusMode === 'draft' ? 'selected' : '' %>>Draft (Requires Manual Approval)</option>
@@ -311,7 +312,7 @@
               Topic &amp; Keyword Queue (One Topic Per Line) <span class="text-red-500">*</span>
             </label>
             <div class="flex items-center space-x-2">
-              <button type="button" id="btnPopulateDefaultTopics" class="text-[11px] font-bold text-brand-600 dark:text-accent hover:underline">
+              <button type="button" id="btnPopulateDefaultTopics" class="text-[11px] font-bold text-brand-700 dark:text-emerald-400 hover:underline">
                 ↺ Reset Curated Engineering Topics
               </button>
             </div>
@@ -453,7 +454,7 @@
         data.topics.forEach((t) => {
           const chip = document.createElement('button');
           chip.type = 'button';
-          chip.className = 'text-[11px] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-brand-border bg-slate-50 dark:bg-brand-dark/50 hover:bg-brand-50 dark:hover:bg-brand-900/40 hover:border-brand-500 text-slate-700 dark:text-slate-300 font-medium transition text-left';
+          chip.className = 'text-[11px] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-brand-border bg-slate-50 dark:bg-slate-900 hover:bg-brand-50 dark:hover:bg-brand-900/40 hover:border-brand-500 text-slate-700 dark:text-slate-300 font-medium transition text-left';
           chip.textContent = t;
           chip.addEventListener('click', () => {
             aiTopicInput.value = t;

@@ -48,16 +48,16 @@
             Select an engineering domain to inspect real-world architecture:
           </span>
           <div class="flex flex-wrap items-center justify-start gap-2 text-xs font-bold" id="archetypePills">
-            <button type="button" data-type="iot" class="px-3.5 py-2 rounded-xl bg-brand-500 text-white font-black border border-white/20 shadow-md transition transform hover:scale-105 archetype-btn">
+            <button type="button" data-type="iot" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-brand-500 text-white font-black border border-white/20 shadow-md transition transform hover:scale-105 archetype-btn">
               ⚡ IoT &amp; Wireless
             </button>
-            <button type="button" data-type="automotive" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
+            <button type="button" data-type="automotive" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
               🚗 Automotive CAN-FD
             </button>
-            <button type="button" data-type="edgeai" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
+            <button type="button" data-type="edgeai" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
               🧠 TinyML Edge AI
             </button>
-            <button type="button" data-type="highspeed" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
+            <button type="button" data-type="highspeed" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
               🔌 High-Speed PCB
             </button>
           </div>
@@ -65,22 +65,22 @@
 
         <!-- Live Dynamic Architecture Preview Card (Human-Readable Contrast) -->
         <div class="bg-slate-100 dark:bg-slate-900 rounded-2xl p-5 border border-slate-300 dark:border-slate-700 shadow-md transition-all text-xs" id="archCard">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left pr-14 sm:pr-0">
             <div>
-              <span class="text-slate-600 dark:text-slate-300 block text-[11px] uppercase font-bold tracking-wider">Target Silicon</span>
-              <span id="specMcu" class="font-black text-slate-900 dark:text-white text-sm">ESP32-S3 Dual 240MHz</span>
+              <span class="text-slate-600 dark:text-slate-300 inline-block text-[11px] uppercase font-bold tracking-wider">Target Silicon</span>
+              <span id="specMcu" class="font-black text-slate-900 dark:text-white text-sm block w-fit">ESP32-S3 Dual 240MHz</span>
             </div>
             <div>
-              <span class="text-slate-600 dark:text-slate-300 block text-[11px] uppercase font-bold tracking-wider">PCB Stackup</span>
-              <span id="specPcb" class="font-black text-slate-900 dark:text-white text-sm">4-Layer FR-4 (1.6mm)</span>
+              <span class="text-slate-600 dark:text-slate-300 inline-block text-[11px] uppercase font-bold tracking-wider">PCB Stackup</span>
+              <span id="specPcb" class="font-black text-slate-900 dark:text-white text-sm block w-fit">4-Layer FR-4 (1.6mm)</span>
             </div>
             <div>
-              <span class="text-slate-600 dark:text-slate-300 block text-[11px] uppercase font-bold tracking-wider">Power Budget</span>
-              <span id="specPower" class="font-black text-brand-600 dark:text-accent text-sm">&lt; 15µA Deep Sleep</span>
+              <span class="text-slate-600 dark:text-slate-300 inline-block text-[11px] uppercase font-bold tracking-wider">Power Budget</span>
+              <span id="specPower" class="font-black text-brand-600 dark:text-accent text-sm block w-fit">&lt; 15µA Deep Sleep</span>
             </div>
             <div>
-              <span class="text-slate-600 dark:text-slate-300 block text-[11px] uppercase font-bold tracking-wider">Prototype Turn</span>
-              <span id="specTurn" class="font-black text-brand-600 dark:text-accent text-sm">3 - 4 Weeks Turnkey</span>
+              <span class="text-slate-600 dark:text-slate-300 inline-block text-[11px] uppercase font-bold tracking-wider">Prototype Turn</span>
+              <span id="specTurn" class="font-black text-brand-600 dark:text-accent text-sm block w-fit">3 - 4 Weeks Turnkey</span>
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@
           </a>
           <a href="/tools" class="w-full sm:w-auto px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-extrabold rounded-xl border border-slate-300 dark:border-slate-600 transition shadow-sm text-center flex items-center justify-center space-x-2 text-sm active:scale-95">
             <span>Explore Tools</span>
-            <span class="text-[10px] bg-accent/20 text-accent font-black px-2 py-0.5 rounded uppercase">8 Tools</span>
+            <span class="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-black px-2 py-0.5 rounded uppercase">8 Tools</span>
           </a>
         </div>
 
@@ -130,7 +130,7 @@
         </div>
 
         <!-- Floating Glassmorphic Status Pill (Bottom) -->
-        <div class="hidden sm:flex absolute -bottom-4 -right-4 z-20 items-center space-x-2 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-xl text-[11px] font-black text-slate-900 dark:text-white backdrop-blur-md animate-float-reverse">
+        <div class="hidden sm:flex absolute -bottom-4 left-6 z-20 items-center space-x-2 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-xl text-[11px] font-black text-slate-900 dark:text-white backdrop-blur-md animate-float-reverse">
           <span class="w-2.5 h-2.5 rounded-full bg-accent animate-pulse"></span>
           <span>Live HIL Telemetry Active</span>
         </div>
@@ -147,9 +147,9 @@
             
             <!-- Interactive Tabs -->
             <div class="flex items-center space-x-1.5 text-[11px] font-mono" id="consoleTabs">
-              <button type="button" data-tab="code" class="px-3 py-1 rounded-md bg-brand-500 text-white font-black border border-white/20 console-tab-btn">firmware.c</button>
-              <button type="button" data-tab="scope" class="px-3 py-1 rounded-md text-slate-300 hover:text-white font-bold console-tab-btn">Oscilloscope</button>
-              <button type="button" data-tab="terminal" class="px-3 py-1 rounded-md text-slate-300 hover:text-white font-bold console-tab-btn">Serial Monitor</button>
+              <button type="button" data-tab="code" class="min-h-[44px] px-3 py-2 rounded-md bg-brand-500 text-white font-black border border-white/20 console-tab-btn inline-flex items-center justify-center">firmware.c</button>
+              <button type="button" data-tab="scope" class="min-h-[44px] px-3 py-2 rounded-md text-slate-300 hover:text-white font-bold console-tab-btn inline-flex items-center justify-center">Oscilloscope</button>
+              <button type="button" data-tab="terminal" class="min-h-[44px] px-3 py-2 rounded-md text-slate-300 hover:text-white font-bold console-tab-btn inline-flex items-center justify-center">Serial Monitor</button>
             </div>
           </div>
 
@@ -171,10 +171,10 @@ void init_embedded_system(void) {
             <div class="flex items-center justify-between text-[11px] font-mono text-slate-300 mb-2 font-bold">
               <span id="scopeSignalLabel">Signal: Clock PWM (10.0 MHz)</span>
               <!-- Signal Selectors -->
-              <div class="flex space-x-1">
-                <button type="button" onclick="setWaveform('square')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] text-white font-bold">Square</button>
-                <button type="button" onclick="setWaveform('sine')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] text-white font-bold">Sine</button>
-                <button type="button" onclick="setWaveform('burst')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 rounded text-[10px] text-white font-bold">Burst</button>
+              <div class="flex space-x-1.5">
+                <button type="button" onclick="setWaveform('square')" class="min-h-[44px] min-w-[44px] px-2.5 py-2 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-white font-bold transition">Square</button>
+                <button type="button" onclick="setWaveform('sine')" class="min-h-[44px] min-w-[44px] px-2.5 py-2 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-white font-bold transition">Sine</button>
+                <button type="button" onclick="setWaveform('burst')" class="min-h-[44px] min-w-[44px] px-2.5 py-2 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-white font-bold transition">Burst</button>
               </div>
             </div>
             <canvas id="scopeCanvas" width="400" height="150" class="w-full h-36 bg-slate-900 rounded-xl border border-slate-800"></canvas>
@@ -195,7 +195,7 @@ void init_embedded_system(void) {
 
           <!-- Interactive Action Bar: Run Virtual Bring-up -->
           <div class="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
-            <button type="button" id="btnRunBringUp" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white font-mono text-xs font-black rounded-xl transition flex items-center space-x-2 shadow-lg shadow-brand-500/20 border border-white/20 active:scale-95">
+            <button type="button" id="btnRunBringUp" class="min-h-[44px] px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-mono text-xs font-black rounded-xl transition flex items-center space-x-2 shadow-lg shadow-brand-500/20 border border-white/20 active:scale-95">
               <span>▶ Run Virtual Bring-Up</span>
             </button>
             <span id="bringUpStatus" class="text-[11px] font-mono text-accent font-black tracking-wide">Board Status: ONLINE</span>
@@ -227,15 +227,15 @@ void init_embedded_system(void) {
     </div>
     <div class="flex items-center space-x-5 text-slate-400 font-semibold text-[11px] w-full md:w-auto justify-between md:justify-end">
       <div class="flex items-center space-x-1.5">
-        <span class="text-slate-500">HIL Station #2:</span>
+        <span class="text-slate-300">HIL Station #2:</span>
         <span class="text-emerald-400 font-bold">100% Loopback PASS</span>
       </div>
       <div class="flex items-center space-x-1.5">
-        <span class="text-slate-500">First-Pass Rate:</span>
-        <span class="text-brand-400 font-bold">99.8%</span>
+        <span class="text-slate-300">First-Pass Rate:</span>
+        <span class="text-emerald-400 font-bold">99.8%</span>
       </div>
       <div class="hidden lg:flex items-center space-x-1.5">
-        <span class="text-slate-500">Avg Turnaround:</span>
+        <span class="text-slate-300">Avg Turnaround:</span>
         <span class="text-white font-bold">3.2 Weeks</span>
       </div>
     </div>
@@ -250,7 +250,7 @@ void init_embedded_system(void) {
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
         <div class="lg:col-span-5 space-y-2">
-          <span class="px-2.5 py-0.5 rounded-full bg-accent/20 text-accent font-bold text-xs uppercase tracking-wider">Instant Sandbox</span>
+          <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">Instant Sandbox</span>
           <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
             Live PCB Trace Width Estimator
           </h2>
@@ -265,7 +265,7 @@ void init_embedded_system(void) {
               <span class="text-slate-700 dark:text-slate-300">Target Current:</span>
               <span id="miniCurrentLabel" class="font-mono text-brand-600 dark:text-accent text-sm">2.5 Amps</span>
             </div>
-            <input type="range" id="miniCurrentSlider" min="0.5" max="10.0" step="0.5" value="2.5" class="w-full accent-brand-500 cursor-pointer">
+            <input type="range" id="miniCurrentSlider" min="0.5" max="10.0" step="0.5" value="2.5" aria-label="Target Trace Current in Amperes" class="w-full h-11 py-3 accent-brand-500 cursor-pointer">
             <div class="flex justify-between text-[10px] text-slate-400 font-mono">
               <span>0.5A (Signals)</span>
               <span>5.0A (Motors)</span>
@@ -276,8 +276,8 @@ void init_embedded_system(void) {
           <div class="sm:col-span-5 p-4 bg-white dark:bg-brand-surface rounded-2xl border border-slate-200 dark:border-brand-border text-center shadow-sm">
             <span class="text-[10px] font-bold uppercase text-slate-700 dark:text-slate-300 font-semibold block">Required Trace Width</span>
             <span id="miniWidthResult" class="text-2xl font-black text-slate-900 dark:text-white font-mono mt-0.5 block">21.4 mils</span>
-            <span id="miniWidthMmResult" class="text-xs font-semibold text-emerald-600 dark:text-accent block">(0.54 mm)</span>
-            <a href="/tools/pcb-trace" class="inline-block mt-2 text-[10px] font-bold text-brand-500 dark:text-accent hover:underline">
+            <span id="miniWidthMmResult" class="text-xs font-semibold text-emerald-700 dark:text-accent block">(0.54 mm)</span>
+            <a href="/tools/pcb-trace" class="inline-flex items-center min-h-[44px] py-2 mt-2 text-xs font-bold text-brand-600 dark:text-accent hover:underline">
               Advanced IPC-2221 Tool &rarr;
             </a>
           </div>
@@ -319,7 +319,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Explore hardware design &rarr;
           </a>
         </div>
@@ -337,7 +337,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <a href="/contact" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/contact" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Start your new design experience with us &rarr;
           </a>
         </div>
@@ -355,7 +355,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <a href="/services" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Engineering services &rarr;
           </a>
         </div>
@@ -464,7 +464,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services/full-cycle-embedded-product-engineering" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/full-cycle-embedded-product-engineering" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Learn more &rarr;
           </a>
         </div>
@@ -482,7 +482,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services/embedded-software-firmware-development" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/embedded-software-firmware-development" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Learn more &rarr;
           </a>
         </div>
@@ -500,7 +500,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services/hardware-design-engineering" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/hardware-design-engineering" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Learn more &rarr;
           </a>
         </div>
@@ -518,7 +518,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services/bsp-development" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/bsp-development" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Learn more &rarr;
           </a>
         </div>
@@ -536,7 +536,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services/iot-edge-computing-solutions" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/iot-edge-computing-solutions" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Learn more &rarr;
           </a>
         </div>
@@ -554,7 +554,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60">
-          <a href="/services/automotive-embedded-systems" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/services/automotive-embedded-systems" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Learn more &rarr;
           </a>
         </div>
@@ -595,7 +595,7 @@ void init_embedded_system(void) {
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold" id="estimatorPhasePills">
             <button type="button" data-val="prototype" class="est-phase-btn px-4 py-3 rounded-2xl bg-brand-500 text-white font-black border border-brand-500 shadow-md text-left transition transform active:scale-95">
               <span class="block text-sm">Prototype MVP</span>
-              <span class="text-[10px] opacity-80 block font-normal">Schematic, Layout &amp; 5 SMT boards</span>
+              <span class="text-[10px] text-white font-medium block">Schematic, Layout &amp; 5 SMT boards</span>
             </button>
             <button type="button" data-val="turnkey" class="est-phase-btn px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-left transition hover:border-brand-500 active:scale-95">
               <span class="block text-sm">Full Turnkey</span>
@@ -614,7 +614,7 @@ void init_embedded_system(void) {
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold" id="estimatorComplexityPills">
             <button type="button" data-val="low" class="est-comp-btn px-4 py-3 rounded-2xl bg-brand-500 text-white font-black border border-brand-500 shadow-md text-left transition transform active:scale-95">
               <span class="block text-sm">Ultra-Low Power</span>
-              <span class="text-[10px] opacity-80 block font-normal">Cortex-M0+/M4, BLE/LoRa</span>
+              <span class="text-[10px] text-white block font-semibold">Cortex-M0+/M4, BLE/LoRa</span>
             </button>
             <button type="button" data-val="medium" class="est-comp-btn px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-left transition hover:border-brand-500 active:scale-95">
               <span class="block text-sm">Dual-Core RTOS</span>
@@ -631,10 +631,10 @@ void init_embedded_system(void) {
         <div class="space-y-2">
           <label class="block text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">3. Regulatory &amp; Environmental Target</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold" id="estimatorCompliancePills">
-            <button type="button" data-val="none" class="est-comp-rule px-3 py-2.5 rounded-xl bg-brand-500 text-white font-black border border-brand-500 text-center transition active:scale-95">Commercial MVP</button>
-            <button type="button" data-val="ce_fcc" class="est-comp-rule px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-center transition hover:border-brand-500 active:scale-95">CE / FCC EMC</button>
-            <button type="button" data-val="automotive" class="est-comp-rule px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-center transition hover:border-brand-500 active:scale-95">Automotive ISO</button>
-            <button type="button" data-val="medical" class="est-comp-rule px-3 py-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-center transition hover:border-brand-500 active:scale-95">Medical IEC</button>
+            <button type="button" data-val="none" class="est-comp-rule min-h-[44px] px-3 py-2.5 flex items-center justify-center rounded-xl bg-brand-500 text-white font-black border border-brand-500 text-center transition active:scale-95">Commercial MVP</button>
+            <button type="button" data-val="ce_fcc" class="est-comp-rule min-h-[44px] px-3 py-2.5 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-center transition hover:border-brand-500 active:scale-95">CE / FCC EMC</button>
+            <button type="button" data-val="automotive" class="est-comp-rule min-h-[44px] px-3 py-2.5 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-center transition hover:border-brand-500 active:scale-95">Automotive ISO</button>
+            <button type="button" data-val="medical" class="est-comp-rule min-h-[44px] px-3 py-2.5 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-center transition hover:border-brand-500 active:scale-95">Medical IEC</button>
           </div>
         </div>
 
@@ -644,7 +644,7 @@ void init_embedded_system(void) {
       <div class="lg:col-span-5 bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700 shadow-lg space-y-6">
         
         <div class="space-y-1 pb-4 border-b border-slate-100 dark:border-slate-700">
-          <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Forecasted Turnaround</span>
+          <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Forecasted Turnaround</span>
           <div class="flex items-baseline space-x-2">
             <span id="estTimelineOutput" class="text-3xl sm:text-4xl font-black text-brand-600 dark:text-accent font-mono">3 - 4 Weeks</span>
           </div>
@@ -653,7 +653,7 @@ void init_embedded_system(void) {
 
         <!-- Deliverables Checklist -->
         <div class="space-y-2">
-          <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Milestone Deliverables</span>
+          <span class="text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Milestone Deliverables</span>
           <ul id="estDeliverablesList" class="space-y-1.5 text-xs text-slate-700 dark:text-slate-200 font-medium">
             <li class="flex items-center space-x-2"><span class="text-emerald-500 font-bold">✓</span><span>Schematic Capture &amp; Component Sourcing</span></li>
             <li class="flex items-center space-x-2"><span class="text-emerald-500 font-bold">✓</span><span>Multi-Layer Controlled Impedance Layout</span></li>
@@ -663,7 +663,7 @@ void init_embedded_system(void) {
 
         <!-- Team Composition -->
         <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl text-xs space-y-1 border border-slate-200/60 dark:border-slate-700/60">
-          <span class="text-[10px] uppercase font-bold text-slate-400 block">Dedicated Engineering Pod</span>
+          <span class="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">Dedicated Engineering Pod</span>
           <p id="estTeamOutput" class="font-bold text-slate-800 dark:text-slate-200 text-xs">
             1 Principal Hardware Architect &bull; 1 Firmware Engineer &bull; 1 DFM Specialist
           </p>
@@ -701,7 +701,7 @@ void init_embedded_system(void) {
           Production electronics deployed across Indian automotive, utilities, and consumer industries.
         </p>
       </div>
-      <a href="/projects" class="mt-4 md:mt-0 inline-flex items-center text-xs font-bold text-brand-500 dark:text-accent hover:underline">
+      <a href="/projects" class="mt-4 md:mt-0 inline-flex items-center min-h-[44px] py-2.5 text-xs font-bold text-brand-600 dark:text-accent hover:underline">
         View All Projects Portfolio &rarr;
       </a>
     </div>
@@ -716,7 +716,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <a href="/projects" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/projects" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Inspect Architecture &rarr;
           </a>
         </div>
@@ -731,7 +731,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <a href="/projects" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/projects" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Inspect Architecture &rarr;
           </a>
         </div>
@@ -746,7 +746,7 @@ void init_embedded_system(void) {
           </p>
         </div>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <a href="/projects" class="text-xs font-bold text-brand-500 dark:text-accent hover:underline inline-flex items-center">
+          <a href="/projects" class="text-xs font-bold text-brand-600 dark:text-accent hover:underline inline-flex items-center min-h-[44px] py-2.5">
             Inspect Architecture &rarr;
           </a>
         </div>
@@ -772,7 +772,7 @@ void init_embedded_system(void) {
           Peer-reviewed hardware guides, functional safety breakdowns, and firmware architectural patterns.
         </p>
       </div>
-      <a href="/blogs" class="mt-4 md:mt-0 inline-flex items-center text-xs font-bold text-brand-500 dark:text-accent hover:underline">
+      <a href="/blogs" class="mt-4 md:mt-0 inline-flex items-center min-h-[44px] py-2.5 text-xs font-bold text-brand-600 dark:text-accent hover:underline">
         Read All Technical Blogs &rarr;
       </a>
     </div>
@@ -822,8 +822,8 @@ void init_embedded_system(void) {
           "Embedded India delivered our multi-layer CAN-FD ECU prototype in under 4 weeks with zero board respins. Their DFM review caught 3 critical footprint errors early."
         </p>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <h4 class="text-xs font-bold text-slate-900 dark:text-white">Rajesh K.</h4>
-          <span class="text-[11px] text-slate-500">VP Hardware Engineering, EV Powertrain</span>
+          <p class="text-xs font-bold text-slate-900 dark:text-white">Rajesh K.</p>
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">VP Hardware Engineering, EV Powertrain</span>
         </div>
       </div>
 
@@ -832,8 +832,8 @@ void init_embedded_system(void) {
           "Their low-power firmware architecture squeezed 3.5 years of battery life from a 1200mAh coin cell on our LoRaWAN agricultural asset trackers."
         </p>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <h4 class="text-xs font-bold text-slate-900 dark:text-white">Vikram S.</h4>
-          <span class="text-[11px] text-slate-500">CTO, Smart Agri IoT</span>
+          <p class="text-xs font-bold text-slate-900 dark:text-white">Vikram S.</p>
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">CTO, Smart Agri IoT</span>
         </div>
       </div>
 
@@ -842,8 +842,8 @@ void init_embedded_system(void) {
           "Seamless HIL testing automation that gave our functional safety audit team 100% test branch coverage for ISO 26262 ASIL-B compliance."
         </p>
         <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <h4 class="text-xs font-bold text-slate-900 dark:text-white">Anand M.</h4>
-          <span class="text-[11px] text-slate-500">Principal Embedded Architect, Automotive</span>
+          <p class="text-xs font-bold text-slate-900 dark:text-white">Anand M.</p>
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">Principal Embedded Architect, Automotive</span>
         </div>
       </div>
     </div>

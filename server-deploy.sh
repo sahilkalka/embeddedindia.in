@@ -1,68 +1,25 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Embedded India Portal - Server Setup & Clean Deployment Script
+# Embedded India Portal - Lightweight Server Deployment Script
 # Supports cPanel Phusion Passenger, GitHub Actions CI/CD, and Linux VPS
 # ==============================================================================
-
 set -e
-
-# ANSI Color Codes
-CLR_RESET="\033[0m"
-CLR_BOLD="\033[1m"
-CLR_GREEN="\033[1;32m"
-CLR_BLUE="\033[1;34m"
-CLR_YELLOW="\033[1;33m"
-CLR_RED="\033[1;31m"
-CLR_CYAN="\033[1;36m"
-
-echo -e "${CLR_CYAN}"
-echo "=============================================================================="
-echo "   🚀 Embedded India - Server Deployment & Maintenance Automation"
-echo "=============================================================================="
-echo -e "${CLR_RESET}"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_DIR"
 
-# Mode Selection: non-interactive calls default to "update"
-if [ -n "$1" ]; then
-  MODE="$1"
-elif [ ! -t 0 ]; then
-  MODE="update"
-else
-  MODE="interactive"
-fi
+MODE="${1:-update}"
+echo "🚀 Deploying Embedded India [Mode: ${MODE}]"
 
-if [ "$MODE" = "interactive" ]; then
-  echo -e "Choose an operation:"
-  echo -e "  ${CLR_BOLD}1)${CLR_RESET} Clean Reinstall (Full wipe of node_modules, safe DB backup, fresh install & restart)"
-  echo -e "  ${CLR_BOLD}2)${CLR_RESET} Quick Update    (Safe DB backup, update dependencies, sync DB & restart)"
-  echo -e "  ${CLR_BOLD}3)${CLR_RESET} Self-Healing Fix & Restart (Fixes permissions, verifies schema, triggers restart)"
-  echo ""
-  read -p "Enter choice [1-3, default: 2]: " USER_CHOICE
-  case "$USER_CHOICE" in
-    1) MODE="clean" ;;
-    3) MODE="fix" ;;
-    *) MODE="update" ;;
-  esac
-fi
-
-echo -e "Execution Mode: ${CLR_BOLD}${MODE}${CLR_RESET}"
-
-# Step 1: Detect and Activate Node.js Environment
-echo -e "\n${CLR_BLUE}📌 [Step 1/6] Environment & Node.js Verification...${CLR_RESET}"
-
+# 1. Detect & Activate Node.js Environment (cPanel nodevenv / system)
 if ! command -v node >/dev/null 2>&1; then
-  echo -e "${CLR_YELLOW}Node.js not found in current PATH. Searching for cPanel nodevenv...${CLR_RESET}"
   for venv in \
     /home/jiazxebj/nodevenv/embeddedindia.in/20/bin/activate \
     /home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate \
     /home/jiazxebj/nodevenv/embeddedindia/20/bin/activate \
     /home/jiazxebj/nodevenv/embeddedindia/22/bin/activate \
-    "$HOME"/nodevenv/*/*/bin/activate \
-    /usr/local/bin/node; do
+    "$HOME"/nodevenv/*/*/bin/activate; do
     if [ -f "$venv" ]; then
-      echo -e "Activating virtual environment: ${CLR_CYAN}$venv${CLR_RESET}"
       # shellcheck source=/dev/null
       source "$venv"
       break
@@ -74,18 +31,14 @@ NODE_BIN="$(command -v node || true)"
 NPM_BIN="$(command -v npm || true)"
 
 if [ -z "$NODE_BIN" ]; then
-  echo -e "${CLR_RED}❌ Error: Node.js binary was not found in PATH or nodevenv!${CLR_RESET}"
-  echo "Please activate your environment first (e.g. source /home/username/nodevenv/.../bin/activate)"
+  echo "❌ Error: Node.js binary not found. Please activate your environment."
   exit 1
 fi
 
-NODE_VERSION="$("$NODE_BIN" -v)"
-echo -e "Node binary:  ${CLR_GREEN}$NODE_BIN ($NODE_VERSION)${CLR_RESET}"
-echo -e "Working path: ${CLR_CYAN}$PROJECT_DIR${CLR_RESET}"
+echo "✓ Node $("$NODE_BIN" -v) / NPM $("$NPM_BIN" -v 2>/dev/null || echo 'unknown')"
 
-# Ensure .env exists with production defaults if missing
+# 2. Ensure Environment Configuration
 if [ ! -f ".env" ]; then
-  echo -e "${CLR_YELLOW}⚠️  No .env file found. Creating production .env template...${CLR_RESET}"
   cat << 'EOF' > .env
 NODE_ENV=production
 PORT=3000
@@ -96,273 +49,74 @@ ADMIN_JWT_SECRET=embeddedindia_jwt_secret_token_9999_xyz
 ADMIN_DEFAULT_EMAIL=admin@embeddedindia.in
 ADMIN_DEFAULT_PASSWORD=AdminEmbedded@2026!
 EOF
-  echo -e "${CLR_GREEN}✅ Created default .env${CLR_RESET}"
+  echo "✓ Created default .env"
 fi
 
-# Step 2: Database & Directory Backup
-echo -e "\n${CLR_BLUE}💾 [Step 2/6] Backing up SQLite Database & Data Directories...${CLR_RESET}"
+# 3. Directories & Database Backup
 mkdir -p prisma tmp public/downloads public/css
-
 if [ -f "prisma/dev.db" ]; then
-  TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
-  cp "prisma/dev.db" "prisma/dev.db.bak_${TIMESTAMP}"
-  echo -e "${CLR_GREEN}✅ Backup created: prisma/dev.db.bak_${TIMESTAMP}${CLR_RESET}"
+  cp "prisma/dev.db" "prisma/dev.db.bak_$(date +%Y%m%d_%H%M%S)"
+  echo "✓ SQLite backup created"
 fi
 
 if [ "$MODE" = "clean" ]; then
-  echo -e "\n${CLR_YELLOW}🧹 [Clean Mode] Removing old node_modules while preserving the lockfile...${CLR_RESET}"
   rm -rf node_modules
 fi
 
-# Step 3: Install Dependencies
-echo -e "\n${CLR_BLUE}📦 [Step 3/6] Installing Production Node Packages...${CLR_RESET}"
-if [ -z "$NPM_BIN" ]; then
-  echo -e "${CLR_RED}❌ Error: npm was not found in PATH.${CLR_RESET}"
-  exit 1
-fi
+# 4. Dependency Installation (cached by package hash)
+HASH_FILE="node_modules/.deps.hash"
+CURRENT_HASH="$(cksum package.json package-lock.json 2>/dev/null || md5sum package.json 2>/dev/null || date)"
 
-# Ensure prisma/schema.prisma exists so postinstall (prisma generate) never fails
-mkdir -p prisma
-if [ ! -f "prisma/schema.prisma" ]; then
-  echo -e "${CLR_YELLOW}⚠️  prisma/schema.prisma missing; creating minimal schema for postinstall...${CLR_RESET}"
-  cat << 'EOF' > prisma/schema.prisma
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native"]
-}
-
-model User {
-  id           String   @id @default(uuid())
-  username     String   @unique
-  email        String   @unique
-  passwordHash String
-  role         String   @default("admin")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
-model Post {
-  id              String    @id @default(uuid())
-  title           String
-  slug            String    @unique
-  category        String    @default("Embedded Electronics")
-  tags            String    @default("embedded,firmware,hardware")
-  summary         String
-  contentMarkdown String
-  contentHtml     String
-  coverImage      String?
-  author          String    @default("Embedded India Team")
-  status          String    @default("published")
-  scheduledAt     DateTime?
-  publishedAt     DateTime? @default(now())
-  views           Int       @default(0)
-  readingTime     Int       @default(3)
-  seoTitle        String?
-  seoDescription  String?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-}
-
-model Inquiry {
-  id              String   @id @default(uuid())
-  name            String
-  email           String
-  phone           String?
-  subject         String
-  serviceCategory String   @default("General")
-  message         String
-  status          String   @default("new")
-  ipAddress       String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-}
-
-model Subscriber {
-  id             String    @id @default(uuid())
-  email          String    @unique
-  status         String    @default("pending")
-  verifyToken    String?   @unique
-  verifiedAt     DateTime?
-  leadMagnetSent Boolean   @default(false)
-  source         String    @default("website")
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-}
-
-model Setting {
-  id        String   @id @default(uuid())
-  key       String   @unique
-  value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Analytics {
-  id        String   @id @default(uuid())
-  path      String
-  referrer  String?
-  userAgent String?
-  ipHash    String?
-  timestamp DateTime @default(now())
-}
-
-model CalculatorStat {
-  id             String   @id @default(uuid())
-  toolName       String   @unique
-  executionCount Int      @default(0)
-  updatedAt      DateTime @updatedAt
-}
-
-model Project {
-  id                  String   @id @default(uuid())
-  title               String
-  slug                String   @unique
-  category            String   @default("Automotive")
-  industry            String   @default("Automotive Electronics")
-  client              String   @default("Tier-1 Automotive OEM")
-  summary             String
-  descriptionMarkdown String
-  descriptionHtml     String
-  coverImage          String?
-  gallery             String?
-  videoUrl            String?
-  techStack           String   @default("STM32, FreeRTOS, CAN-FD")
-  specs               String?
-  metrics             String?
-  featured            Boolean  @default(false)
-  order               Int      @default(0)
-  status              String   @default("completed")
-  liveUrl             String?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-}
-EOF
-fi
-
-DEPENDENCY_HASH="$("$NODE_BIN" -e '
-  const fs = require("fs");
-  const crypto = require("crypto");
-  const hash = crypto.createHash("sha256");
-  for (const file of process.argv.slice(1)) {
-    hash.update(file);
-    hash.update(fs.readFileSync(file));
-  }
-  process.stdout.write(hash.digest("hex"));
-' package.json package-lock.json)"
-DEPENDENCY_HASH_FILE="node_modules/.deploy-dependencies.sha256"
-
-if [ "$MODE" = "clean" ] || [ ! -d "node_modules" ] || [ ! -f "$DEPENDENCY_HASH_FILE" ] || [ "$(cat "$DEPENDENCY_HASH_FILE")" != "$DEPENDENCY_HASH" ]; then
-  echo -e "Dependency manifest changed or install cache missing; installing production packages..."
+if [ "$MODE" = "clean" ] || [ ! -d "node_modules" ] || [ ! -f "$HASH_FILE" ] || [ "$(cat "$HASH_FILE" 2>/dev/null)" != "$CURRENT_HASH" ]; then
+  echo "📦 Installing production dependencies..."
   "$NPM_BIN" install --omit=dev --no-audit --no-fund --prefer-offline
-  printf '%s\n' "$DEPENDENCY_HASH" > "$DEPENDENCY_HASH_FILE"
+  echo "$CURRENT_HASH" > "$HASH_FILE"
 else
-  echo -e "${CLR_GREEN}✅ Dependencies unchanged; skipping npm install.${CLR_RESET}"
-fi
-echo -e "${CLR_GREEN}✅ NPM packages verified.${CLR_RESET}"
-
-# Step 4: Database Schema Initialization & Initial Seeding
-echo -e "\n${CLR_BLUE}⚙️  [Step 4/6] Initializing Database & Case Studies...${CLR_RESET}"
-
-DATABASE_ALREADY_INITIALIZED=0
-if [ -s "prisma/dev.db" ]; then
-  # Test if dev.db is readable and not corrupt using quick_check
-  DB_CHECK="$("$NODE_BIN" -e '
-    try {
-      const Database = require("better-sqlite3");
-      const db = new Database("prisma/dev.db");
-      const r = db.pragma("quick_check");
-      if (r && r[0] && r[0].quick_check === "ok") {
-        process.stdout.write("ok");
-      } else {
-        process.stdout.write("corrupt");
-      }
-    } catch (e) {
-      process.stdout.write("corrupt");
-    }
-  ' 2>/dev/null || echo "corrupt")"
-
-  if [ "$DB_CHECK" = "ok" ]; then
-    DATABASE_ALREADY_INITIALIZED=1
-  else
-    echo -e "${CLR_YELLOW}⚠️  Detected corrupted or malformed database file. Auto-recovering...${CLR_RESET}"
-    TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
-    cp prisma/dev.db "prisma/dev.db.corrupt_${TIMESTAMP}" 2>/dev/null || true
-    rm -f prisma/dev.db prisma/dev.db-wal prisma/dev.db-shm prisma/dev.db-journal
-    DATABASE_ALREADY_INITIALIZED=0
-  fi
+  echo "✓ Dependencies unchanged (skipped npm install)"
 fi
 
-# Initialize all database tables with native better-sqlite3 (Zero Network Failure)
-node scripts/init-db.js
+# 5. Database Initialization & Seeding
+"$NODE_BIN" scripts/init-db.js
 
-if [ "$DATABASE_ALREADY_INITIALIZED" -eq 0 ]; then
-  echo -e "Database is new or recovered; seeding initial admin credentials and site content..."
-  node scripts/seed-sqlite.js
+# Auto-seed if database is new or was recovered from corruption
+ADMIN_EXISTS="$("$NODE_BIN" -e "
+  try {
+    const Database = require('better-sqlite3');
+    const db = new Database('prisma/dev.db');
+    const row = db.prepare('SELECT 1 FROM User WHERE role = ? LIMIT 1').get('admin');
+    process.stdout.write(row ? 'yes' : 'no');
+    db.close();
+  } catch (e) {
+    process.stdout.write('no');
+  }
+" 2>/dev/null || echo "no")"
+
+if [ "$ADMIN_EXISTS" != "yes" ]; then
+  echo "🌱 Seeding initial database & admin..."
+  "$NODE_BIN" scripts/seed-sqlite.js
 else
-  echo -e "${CLR_GREEN}✅ Existing database detected; skipping initial seed.${CLR_RESET}"
+  echo "✓ Existing database confirmed (admin account present)"
 fi
 
-# Compile Tailwind CSS if stylesheet is missing
-if [ ! -f "public/css/style.css" ] || [ ! -s "public/css/style.css" ] || [ "$MODE" = "clean" ]; then
-  echo -e "Building Tailwind CSS stylesheet..."
-  npx tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify || true
+# 6. Tailwind Production CSS
+if [ -f "src/public/css/input.css" ]; then
+  echo "🎨 Building production CSS..."
+  npx --yes tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify || true
 fi
 
-# Step 5: Storage & Runtime Permissions
-echo -e "\n${CLR_BLUE}🔒 [Step 5/6] Setting Storage & Runtime Permissions...${CLR_RESET}"
-chmod 755 .
-chmod 777 tmp
-chmod 777 prisma
-if [ -f "prisma/dev.db" ]; then
-  chmod 666 prisma/dev.db
-fi
-if [ -f "prisma/dev.db-journal" ]; then
-  chmod 666 prisma/dev.db-journal
-fi
-if [ -f "prisma/dev.db-wal" ]; then
-  chmod 666 prisma/dev.db-wal
-fi
-if [ -f "prisma/dev.db-shm" ]; then
-  chmod 666 prisma/dev.db-shm
-fi
-chmod 777 public/downloads 2>/dev/null || true
-echo -e "${CLR_GREEN}✅ Permissions configured (chmod 777 on tmp & prisma, 666 on dev.db).${CLR_RESET}"
+# 7. File Permissions for Phusion Passenger
+chmod 777 tmp prisma public/downloads 2>/dev/null || true
+chmod 666 prisma/dev.db* 2>/dev/null || true
 
-# Step 6: Verifying Startup & Triggering Reload
-echo -e "\n${CLR_BLUE}🧪 [Step 6/6] Verifying Application Startup & Reloading...${CLR_RESET}"
+# 8. Syntax Verification & Phusion Passenger Reload
+"$NODE_BIN" --check app.js src/server.js && echo "✓ Application syntax verified"
 
-# Dry-run test of server loader
-if NODE_ENV=test "$NODE_BIN" -e "const app = require('./src/server'); process.exit(typeof app === 'function' ? 0 : 1);" 2>/dev/null; then
-  echo -e "${CLR_GREEN}✅ App self-test passed: Express server and routes loaded cleanly!${CLR_RESET}"
-else
-  echo -e "${CLR_RED}❌ Startup warning during test loader. Running verbose diagnostic check:${CLR_RESET}"
-  NODE_ENV=test "$NODE_BIN" -e "require('./src/server'); process.exit(0);" || true
-fi
-
-# 1. cPanel / Phusion Passenger instant reload hook
+# Restart Passenger / PM2
 touch tmp/restart.txt
-echo -e "${CLR_GREEN}✅ Triggered cPanel / Phusion Passenger reload (tmp/restart.txt).${CLR_RESET}"
+echo "✓ Touched tmp/restart.txt (Passenger reload)"
 
-# 2. PM2 reload if PM2 is present and running
 if command -v pm2 >/dev/null 2>&1; then
-  if pm2 list 2>/dev/null | grep -q "embeddedindia"; then
-    pm2 reload embeddedindia || pm2 restart embeddedindia
-    echo -e "${CLR_GREEN}✅ Reloaded PM2 process 'embeddedindia'.${CLR_RESET}"
-  fi
+  pm2 reload embeddedindia >/dev/null 2>&1 || true
 fi
 
-echo -e "\n${CLR_GREEN}==============================================================================${CLR_RESET}"
-echo -e "${CLR_BOLD}🎉 All server deployment & maintenance steps finished successfully!${CLR_RESET}"
-echo -e "=============================================================================="
-echo -e "🌐 Site URL:       ${CLR_CYAN}https://embeddedindia.in${CLR_RESET}"
-echo -e "📁 Projects Hub:   ${CLR_CYAN}https://embeddedindia.in/projects${CLR_RESET}"
-echo -e "🔒 Admin Panel:    ${CLR_CYAN}https://embeddedindia.in/admin/login${CLR_RESET}"
-echo -e "👤 Default Admin:  ${CLR_YELLOW}admin@embeddedindia.in${CLR_RESET}"
-echo -e "🔑 Default Pass:   ${CLR_YELLOW}AdminEmbedded@2026!${CLR_RESET}"
-echo -e "=============================================================================="
-echo ""
+echo "🎉 Deployment complete: https://embeddedindia.in"

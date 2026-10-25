@@ -1,11 +1,17 @@
 // src/services/markdown.js
 const { marked } = require('marked');
 const hljs = require('highlight.js');
-const { JSDOM } = require('jsdom');
-const DOMPurify = require('dompurify');
 
-const window = new JSDOM('').window;
-const purify = DOMPurify(window);
+let purifyInstance = null;
+function getPurify() {
+  if (!purifyInstance) {
+    const { JSDOM } = require('jsdom');
+    const DOMPurify = require('dompurify');
+    const window = new JSDOM('').window;
+    purifyInstance = DOMPurify(window);
+  }
+  return purifyInstance;
+}
 
 // Use marked.use with custom renderer in Marked v15
 marked.use({
@@ -21,7 +27,7 @@ marked.use({
 function renderMarkdown(content) {
   if (!content) return '';
   const rawHtml = marked.parse(content);
-  return purify.sanitize(rawHtml, {
+  return getPurify().sanitize(rawHtml, {
     ADD_TAGS: ['iframe'],
     ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'class']
   });

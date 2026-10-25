@@ -14,6 +14,7 @@ const aiScheduler = require('../services/aiScheduler');
 const { renderMarkdown } = require('../services/markdown');
 const mailer = require('../services/mailer');
 const { PREDEFINED_PALETTES, PALETTE_ALIASES, getAvailablePaletteKey, resolveTheme } = require('../services/themeEngine');
+const { formatYouTubeEmbedUrl, YouTubeUrlError } = require('../utils/youtube');
 
 const PALETTE_OVERRIDE_FIELDS = ['bgPrimary', 'bgSurface', 'accentPrimary', 'accentSecondary', 'textPrimary'];
 
@@ -119,10 +120,18 @@ router.get('/', async (req, res) => {
         orderBy: { views: 'desc' },
         take: 5
       }),
-      prisma.calculatorStat.findMany({
-        orderBy: { executionCount: 'desc' },
-        take: 6
-      }),
+      (async () => {
+        try {
+          const allStats = await prisma.calculatorStat.findMany();
+          const grouped = {};
+          for (const s of allStats) {
+            const key = String(s.toolName || 'unknown').toLowerCase().trim();
+            if (!grouped[key]) grouped[key] = { toolName: key, executionCount: 0 };
+            grouped[key].executionCount += (s.executionCount || 0);
+          }
+          return Object.values(grouped).sort((a, b) => b.executionCount - a.executionCount).slice(0, 6);
+        } catch (e) { return []; }
+      })(),
       prisma.project ? prisma.project.count().catch(() => 0) : 0,
       prisma.project ? prisma.project.count({ where: { featured: true } }).catch(() => 0) : 0
     ]);
@@ -510,6 +519,56 @@ router.post('/settings', async (req, res) => {
       return res.status(500).json({ success: false, error: err.message || 'Error saving settings' });
     }
     res.status(500).send('Error saving settings');
+  }
+});
+
+router.post('/settings/palettes/create', async (req, res) => {
+  const { name, badge, bgPrimary, bgSurface, accentPrimary, accentSecondary, textPrimary, borderColor } = req.body;
+  if (!name || !name.trim()) {
+    return res.status(400).json({ success: false, error: 'Palette name is required.' });
+  }
+
+  const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const key = `custom-${slug || Date.now()}`;
+
+  try {
+    const rows = await prisma.setting.findMany();
+    const settings = rows.reduce((result, row) => {
+      result[row.key] = row.value;
+      return result;
+    }, {});
+
+    let customPalettes = [];
+    if (settings.custom_palettes_json) {
+      try { customPalettes = JSON.parse(settings.custom_palettes_json); } catch (e) {}
+    }
+
+    const newPalette = {
+      key,
+      name: name.trim(),
+      badge: (badge && badge.trim()) || 'Custom',
+      badgeClass: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
+      borderActiveClass: 'border-brand-500 bg-brand-50/20 dark:bg-brand-900/20 ring-2 ring-brand-500/20',
+      radioClass: 'text-brand-500 focus:ring-brand-500',
+      activeLabelColor: 'text-brand-600 dark:text-accent',
+      defaults: {
+        bgPrimary: bgPrimary || '#0d1117',
+        bgSurface: bgSurface || '#161b22',
+        accentPrimary: accentPrimary || '#58a6ff',
+        accentSecondary: accentSecondary || '#79c0ff',
+        textPrimary: textPrimary || '#c9d1d9',
+        borderColor: borderColor || '#30363d'
+      }
+    };
+
+    customPalettes.push(newPalette);
+    await saveSetting('custom_palettes_json', JSON.stringify(customPalettes));
+    clearSettingsCache();
+
+    return res.json({ success: true, palette: newPalette });
+  } catch (err) {
+    console.error('[PALETTE CREATE ERROR]', err);
+    return res.status(500).json({ success: false, error: 'Unable to create custom color scheme.' });
   }
 });
 
@@ -1000,7 +1059,7 @@ router.post('/projects/new', async (req, res) => {
         descriptionMarkdown: contentMarkdown || '',
         descriptionHtml,
         coverImage: coverImage || '/assets/images/mission1.svg',
-        videoUrl: videoUrl || null,
+        videoUrl: formatYouTubeEmbedUrl(videoUrl) || null,
         techStack: techStack || 'STM32, FreeRTOS',
         specs: specsJson || null,
         metrics: metricsJson || null,
@@ -1013,6 +1072,7 @@ router.post('/projects/new', async (req, res) => {
     res.redirect('/admin/projects?saved=1');
   } catch (err) {
     console.error('[PROJECT CREATE ERROR]', err);
+    if (err instanceof YouTubeUrlError) return res.status(400).send(err.message);
     res.status(500).send('Error creating project: ' + err.message);
   }
 });
@@ -1058,7 +1118,7 @@ router.post('/projects/:id/edit', async (req, res) => {
         descriptionMarkdown: contentMarkdown || '',
         descriptionHtml,
         coverImage: coverImage || null,
-        videoUrl: videoUrl || null,
+        videoUrl: formatYouTubeEmbedUrl(videoUrl) || null,
         techStack: techStack || 'STM32, FreeRTOS',
         specs: specsJson || null,
         metrics: metricsJson || null,
@@ -1071,6 +1131,7 @@ router.post('/projects/:id/edit', async (req, res) => {
     res.redirect('/admin/projects?saved=1');
   } catch (err) {
     console.error('[PROJECT UPDATE ERROR]', err);
+    if (err instanceof YouTubeUrlError) return res.status(400).send(err.message);
     res.status(500).send('Error updating project: ' + err.message);
   }
 });

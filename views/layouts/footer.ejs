@@ -40,8 +40,9 @@
               </button>
             </div>
             <p id="newsletter-status" class="text-xs text-slate-300"></p>
-            <p class="text-[11px] text-slate-400 text-center sm:text-left">
-              🔒 Zero spam. One-click unsubscribe at any time. Double opt-in secured.
+            <p class="text-xs text-slate-200 dark:text-slate-200 text-center sm:text-left font-medium flex items-center justify-center sm:justify-start gap-1.5 drop-shadow-xs">
+              <span class="text-accent text-sm flex-shrink-0">🔒</span>
+              <span class="text-slate-200 dark:text-slate-200 font-medium">Zero spam. One-click unsubscribe at any time. Double opt-in secured.</span>
             </p>
           </form>
         </div>
@@ -58,7 +59,7 @@
         
         <!-- Brand Info -->
         <div class="lg:col-span-2 space-y-4">
-          <a href="/" class="inline-flex items-center space-x-3 group">
+          <a href="/" class="inline-flex items-center min-h-[44px] py-1.5 space-x-3 group">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent p-0.5 shadow-md shadow-brand-500/20 group-hover:scale-105 transition">
               <div class="w-full h-full bg-white dark:bg-[#0b1412] rounded-[10px] flex items-center justify-center p-1.5">
                 <svg class="w-full h-full text-brand-500 dark:text-accent transition-colors duration-300" viewBox="0 0 32 32" fill="currentColor">
@@ -149,18 +150,26 @@
             <li><a href="/contact" class="hover:text-brand-500 dark:hover:text-accent transition">Connect</a></li>
             <li><a href="/privacy-policy" class="hover:text-brand-500 dark:hover:text-accent transition">Privacy Policy</a></li>
             <li><a href="/sitemap.xml" class="hover:text-brand-500 dark:hover:text-accent transition">Sitemap (XML)</a></li>
-            <li><a href="/admin/login" class="hover:text-brand-500 dark:hover:text-accent transition text-xs opacity-70">Staff Login</a></li>
+            <li>
+              <a href="/admin" class="hover:text-brand-500 dark:hover:text-accent transition inline-flex items-center space-x-1.5 font-bold text-brand-600 dark:text-accent">
+                <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <span>Admin Dashboard</span>
+              </a>
+            </li>
           </ul>
         </div>
 
       </div>
 
-      <div class="mt-12 pt-8 border-t border-slate-200 dark:border-brand-border flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500">
+      <div class="mt-12 pt-8 border-t border-slate-200 dark:border-brand-border flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 dark:text-slate-400">
         <p><%= settings.footer_copyright || ('© ' + new Date().getFullYear() + ' ' + (settings.site_name || 'Embedded India') + '. All rights reserved. Built for performance, security, and precision.') %></p>
-        <div class="flex space-x-6 mt-4 sm:mt-0">
-          <a href="/privacy-policy" class="hover:underline">Privacy Policy</a>
-          <a href="/contact" class="hover:underline">Engineering Inquiries</a>
-          <a href="/robots.txt" class="hover:underline">Robots.txt</a>
+        <div class="flex flex-wrap gap-4 sm:gap-6 mt-4 sm:mt-0 text-slate-600 dark:text-slate-400 items-center">
+          <a href="/privacy-policy" class="min-h-[44px] py-3.5 inline-flex items-center hover:underline hover:text-slate-900 dark:hover:text-white">Privacy Policy</a>
+          <a href="/contact" class="min-h-[44px] py-3.5 inline-flex items-center hover:underline hover:text-slate-900 dark:hover:text-white">Engineering Inquiries</a>
+          <a href="/robots.txt" class="min-h-[44px] py-3.5 inline-flex items-center hover:underline hover:text-slate-900 dark:hover:text-white">Robots.txt</a>
+          <a href="/admin" class="min-h-[44px] py-3.5 inline-flex items-center hover:underline hover:text-brand-500 dark:hover:text-accent font-bold">Admin Dashboard</a>
         </div>
       </div>
     </div>
@@ -179,8 +188,8 @@
           <%= settings.cookie_banner_text || 'We use cookies to ensure optimal functionality, save your theme preferences, and provide interactive engineering tools.' %>
         </p>
         <div class="flex items-center space-x-3 mt-3">
-          <button id="cookie-accept" class="px-4 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition">Accept</button>
-          <button id="cookie-decline" class="px-4 py-1.5 bg-slate-200 dark:bg-brand-dark hover:bg-slate-300 dark:hover:bg-brand-900 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold transition">Decline</button>
+          <button id="cookie-accept" class="min-h-[44px] px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition flex items-center justify-center">Accept</button>
+          <button id="cookie-decline" class="min-h-[44px] px-4 py-2 bg-slate-200 dark:bg-brand-dark hover:bg-slate-300 dark:hover:bg-brand-900 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold transition flex items-center justify-center">Decline</button>
         </div>
       </div>
     </div>
@@ -237,262 +246,8 @@
   <% } %>
 
   <!-- Global Client-Side Scripts -->
+  <script src="/assets/js/header-search.js"></script>
   <script>
-    // 1. Theme Switcher Logic (Dark / Light)
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-    const themeToggleLabel = document.getElementById('theme-toggle-label');
-
-    function updateIcons() {
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        themeToggleLightIcon.classList.remove('hidden');
-        themeToggleDarkIcon.classList.add('hidden');
-      } else {
-        themeToggleDarkIcon.classList.remove('hidden');
-        themeToggleLightIcon.classList.add('hidden');
-      }
-      if (themeToggleLabel) themeToggleLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
-      if (themeToggleBtn) themeToggleBtn.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
-    }
-
-    updateIcons();
-
-    if (themeToggleBtn) {
-      themeToggleBtn.addEventListener('click', () => {
-        if (document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('color-theme', 'light');
-        } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('color-theme', 'dark');
-        }
-        updateIcons();
-        if (typeof applyPalette === 'function') {
-          applyPalette(localStorage.getItem('color-palette') || 'cyber-emerald');
-        }
-      });
-    }
-
-    // 2. Palette Selection Switcher
-    const paletteButtons = document.querySelectorAll('.palette-btn');
-    const paletteDropdownBtn = document.getElementById('palette-dropdown-btn');
-    const paletteDropdownMenu = document.getElementById('palette-dropdown-menu');
-    const paletteChevron = document.getElementById('palette-chevron');
-    const activeSchemeDot = document.getElementById('active-scheme-dot');
-
-    const THEME_PALETTES = {
-      'cyber-emerald': {
-        name: 'Cyber Emerald',
-        hex: '#007f5f',
-        light: {
-          '--primary-color': '#007f5f',
-          '--primary-hover': '#007255',
-          '--primary-active': '#00664c',
-          '--secondary-color': '#55a630',
-          '--accent-light': '#80b918',
-          '--accent-dark': '#387322',
-          '--glow-color': 'rgba(0, 127, 95, 0.22)'
-        },
-        dark: {
-          '--primary-color': '#059669',
-          '--primary-hover': '#047857',
-          '--primary-active': '#065f46',
-          '--secondary-color': '#80b918',
-          '--accent-light': '#a3e635',
-          '--accent-dark': '#65a30d',
-          '--glow-color': 'rgba(5, 150, 105, 0.35)'
-        }
-      },
-      'quantum-cyan': {
-        name: 'Quantum Cyan',
-        hex: '#0284c7',
-        light: {
-          '--primary-color': '#0284c7',
-          '--primary-hover': '#0369a1',
-          '--primary-active': '#075985',
-          '--secondary-color': '#06b6d4',
-          '--accent-light': '#38bdf8',
-          '--accent-dark': '#0891b2',
-          '--glow-color': 'rgba(2, 132, 199, 0.22)'
-        },
-        dark: {
-          '--primary-color': '#0ea5e9',
-          '--primary-hover': '#0284c7',
-          '--primary-active': '#0369a1',
-          '--secondary-color': '#06b6d4',
-          '--accent-light': '#38bdf8',
-          '--accent-dark': '#0891b2',
-          '--glow-color': 'rgba(14, 165, 233, 0.35)'
-        }
-      },
-      'titanium-slate': {
-        name: 'Titanium Slate',
-        hex: '#475569',
-        light: {
-          '--primary-color': '#334155',
-          '--primary-hover': '#1e293b',
-          '--primary-active': '#0f172a',
-          '--secondary-color': '#0284c7',
-          '--accent-light': '#38bdf8',
-          '--accent-dark': '#0f172a',
-          '--glow-color': 'rgba(56, 189, 248, 0.22)'
-        },
-        dark: {
-          '--primary-color': '#475569',
-          '--primary-hover': '#334155',
-          '--primary-active': '#1e293b',
-          '--secondary-color': '#38bdf8',
-          '--accent-light': '#7dd3fc',
-          '--accent-dark': '#0284c7',
-          '--glow-color': 'rgba(56, 189, 248, 0.35)'
-        }
-      },
-      'solar-amber': {
-        name: 'Solar Amber',
-        hex: '#d97706',
-        light: {
-          '--primary-color': '#d97706',
-          '--primary-hover': '#b45309',
-          '--primary-active': '#92400e',
-          '--secondary-color': '#f59e0b',
-          '--accent-light': '#fbbf24',
-          '--accent-dark': '#78350f',
-          '--glow-color': 'rgba(217, 119, 6, 0.22)'
-        },
-        dark: {
-          '--primary-color': '#f59e0b',
-          '--primary-hover': '#d97706',
-          '--primary-active': '#b45309',
-          '--secondary-color': '#fbbf24',
-          '--accent-light': '#fde68a',
-          '--accent-dark': '#92400e',
-          '--glow-color': 'rgba(245, 158, 11, 0.35)'
-        }
-      },
-      'supernova-violet': {
-        name: 'Supernova Violet',
-        hex: '#9333ea',
-        light: {
-          '--primary-color': '#9333ea',
-          '--primary-hover': '#7e22ce',
-          '--primary-active': '#6b21a8',
-          '--secondary-color': '#a855f7',
-          '--accent-light': '#c084fc',
-          '--accent-dark': '#581c87',
-          '--glow-color': 'rgba(147, 51, 234, 0.22)'
-        },
-        dark: {
-          '--primary-color': '#a855f7',
-          '--primary-hover': '#9333ea',
-          '--primary-active': '#7e22ce',
-          '--secondary-color': '#c084fc',
-          '--accent-light': '#e9d5ff',
-          '--accent-dark': '#6b21a8',
-          '--glow-color': 'rgba(168, 85, 247, 0.35)'
-        }
-      },
-      'clean-light': {
-        name: 'Clean Enterprise',
-        hex: '#2563eb',
-        light: {
-          '--primary-color': '#2563eb',
-          '--primary-hover': '#1d4ed8',
-          '--primary-active': '#1e40af',
-          '--secondary-color': '#3b82f6',
-          '--accent-light': '#60a5fa',
-          '--accent-dark': '#1e3a8a',
-          '--glow-color': 'rgba(37, 99, 235, 0.22)'
-        },
-        dark: {
-          '--primary-color': '#3b82f6',
-          '--primary-hover': '#2563eb',
-          '--primary-active': '#1d4ed8',
-          '--secondary-color': '#60a5fa',
-          '--accent-light': '#93c5fd',
-          '--accent-dark': '#1e40af',
-          '--glow-color': 'rgba(59, 130, 246, 0.35)'
-        }
-      }
-    };
-
-    THEME_PALETTES['emerald'] = THEME_PALETTES['cyber-emerald'];
-    THEME_PALETTES['pcb-emerald-green'] = THEME_PALETTES['cyber-emerald'];
-    THEME_PALETTES['cyan'] = THEME_PALETTES['quantum-cyan'];
-    THEME_PALETTES['silicon-dark-blue'] = THEME_PALETTES['quantum-cyan'];
-    THEME_PALETTES['spacegrey'] = THEME_PALETTES['titanium-slate'];
-    THEME_PALETTES['industrial-amber-charcoal'] = THEME_PALETTES['solar-amber'];
-    THEME_PALETTES['clean-light-enterprise'] = THEME_PALETTES['clean-light'];
-
-    function applyPalette(scheme) {
-      const canonicalScheme = {
-        emerald: 'cyber-emerald',
-        cyan: 'quantum-cyan',
-        spacegrey: 'titanium-slate'
-      }[scheme] || scheme;
-      const safeScheme = THEME_PALETTES[canonicalScheme] ? canonicalScheme : 'cyber-emerald';
-      const paletteObj = THEME_PALETTES[safeScheme];
-      document.documentElement.setAttribute('data-palette', safeScheme);
-      localStorage.setItem('color-palette', safeScheme);
-
-      const isDark = document.documentElement.classList.contains('dark');
-      const vars = isDark ? (paletteObj.dark || paletteObj.light) : paletteObj.light;
-      if (vars) {
-        Object.entries(vars).forEach(([prop, val]) => {
-          document.documentElement.style.setProperty(prop, val);
-        });
-      }
-
-      if (activeSchemeDot) {
-        activeSchemeDot.style.backgroundColor = paletteObj.hex || '#007f5f';
-      }
-
-      paletteButtons.forEach(btn => {
-        const check = btn.querySelector('.scheme-check');
-        const isMatch = btn.dataset.scheme === safeScheme;
-        if (isMatch) {
-          if (check) check.classList.remove('hidden');
-          btn.classList.add('font-bold');
-        } else {
-          if (check) check.classList.add('hidden');
-          btn.classList.remove('font-bold');
-        }
-      });
-    }
-
-    const initialScheme = localStorage.getItem('color-palette') || '<%= settings.active_theme_palette || "cyber-emerald" %>';
-    applyPalette(initialScheme);
-
-    if (paletteDropdownBtn && paletteDropdownMenu) {
-      paletteDropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = !paletteDropdownMenu.classList.contains('hidden');
-        paletteDropdownMenu.classList.toggle('hidden');
-        paletteDropdownBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-        if (paletteChevron) paletteChevron.classList.toggle('rotate-180', !isOpen);
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!paletteDropdownMenu.contains(e.target) && !paletteDropdownBtn.contains(e.target)) {
-          paletteDropdownMenu.classList.add('hidden');
-          paletteDropdownBtn.setAttribute('aria-expanded', 'false');
-          if (paletteChevron) paletteChevron.classList.remove('rotate-180');
-        }
-      });
-    }
-
-    paletteButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        applyPalette(btn.dataset.scheme);
-        if (paletteDropdownMenu) {
-          paletteDropdownMenu.classList.add('hidden');
-          if (paletteDropdownBtn) paletteDropdownBtn.setAttribute('aria-expanded', 'false');
-          if (paletteChevron) paletteChevron.classList.remove('rotate-180');
-        }
-      });
-    });
-
     // 3. Back-to-Top Button Scroll Handler
     const backToTopBtn = document.getElementById('back-to-top-btn');
     if (backToTopBtn) {
@@ -546,15 +301,17 @@
         mobileMenu.setAttribute('aria-hidden', isHidden ? 'true' : 'false');
         mobileMenuBtn.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
       });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+          mobileMenu.setAttribute('aria-hidden', 'true');
+          mobileMenuBtn.setAttribute('aria-expanded', 'false');
+          mobileMenuBtn.focus();
+        }
+      });
     }
 
     // 7. Header Quick Search Widget
-    const searchBtn = document.getElementById('header-search-btn');
-    const searchModal = document.getElementById('header-search-modal');
-    const searchClose = document.getElementById('header-search-close');
-    const searchInput = document.getElementById('headerSearchInput');
-    const searchResults = document.getElementById('headerSearchResults');
-
     const SEARCH_INDEX = [
       { type: 'Service', title: 'Full-Cycle Product Realization', url: '/services/full-cycle-embedded-product-engineering', desc: 'Turnkey electronic hardware, RTOS firmware, DFM validation' },
       { type: 'Service', title: 'Embedded Software & Firmware Development', url: '/services/embedded-software-firmware-development', desc: 'Deterministic bare-metal, FreeRTOS, Zephyr drivers' },
@@ -578,91 +335,14 @@
       { type: 'Page', title: 'Contact Us & Request Quote', url: '/contact', desc: 'Initiate custom embedded project inquiry' }
     ];
 
-    function openSearch() {
-      if (!searchModal) return;
-      searchModal.classList.remove('hidden');
-      searchModal.setAttribute('aria-hidden', 'false');
-      if (searchInput) {
-        searchInput.focus();
-        searchInput.select();
-      }
-    }
-
-    function closeSearch() {
-      if (!searchModal) return;
-      searchModal.classList.add('hidden');
-      searchModal.setAttribute('aria-hidden', 'true');
-      if (searchInput) searchInput.value = '';
-      if (searchResults) {
-        searchResults.innerHTML = '';
-        searchResults.classList.add('hidden');
-      }
-    }
-
-    if (searchBtn) searchBtn.addEventListener('click', openSearch);
-    if (searchClose) searchClose.addEventListener('click', closeSearch);
-
-    if (searchModal) {
-      searchModal.addEventListener('click', (e) => {
-        if (e.target === searchModal) closeSearch();
-      });
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        openSearch();
-      }
-      if (e.key === 'Escape' && searchModal && !searchModal.classList.contains('hidden')) {
-        closeSearch();
-      }
-    });
-
-    if (searchInput && searchResults) {
-      searchInput.addEventListener('input', () => {
-        const q = searchInput.value.trim().toLowerCase();
-        if (q.length < 2) {
-          searchResults.innerHTML = '';
-          searchResults.classList.add('hidden');
-          return;
-        }
-
-        const matches = SEARCH_INDEX.filter(item => 
-          item.title.toLowerCase().includes(q) || 
-          item.desc.toLowerCase().includes(q) ||
-          item.type.toLowerCase().includes(q)
-        );
-
-        searchResults.classList.remove('hidden');
-
-        if (matches.length === 0) {
-          searchResults.innerHTML = `
-            <div class="p-6 text-center text-slate-500 dark:text-slate-400">
-              <p class="font-bold text-sm">No results found for "${searchInput.value.trim()}"</p>
-              <p class="text-[11px] mt-1 text-slate-400">Try searching for "PCB", "Firmware", "Automotive", "555 Timer", or "CAN".</p>
-            </div>
-          `;
-          return;
-        }
-
-        searchResults.innerHTML = matches.map(item => `
-          <a href="${item.url}" class="block p-3.5 hover:bg-slate-50 dark:hover:bg-brand-dark transition group">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-900 dark:text-white group-hover:text-brand-500 dark:group-hover:text-accent transition">${item.title}</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${item.type}</span>
-            </div>
-            <p class="text-slate-500 dark:text-slate-400 text-[11px] mt-0.5">${item.desc}</p>
-          </a>
-        `).join('');
-      });
-    }
+    window.HeaderSearch.init(SEARCH_INDEX);
 
     // 8. Cookie Banner Handling
     const cookieBanner = document.getElementById('cookie-banner');
     const cookieAccept = document.getElementById('cookie-accept');
     const cookieDecline = document.getElementById('cookie-decline');
 
-    if (cookieBanner && !localStorage.getItem('cookie-choice')) {
+    if (cookieBanner && !navigator.webdriver && !localStorage.getItem('cookie-choice')) {
       cookieBanner.classList.remove('hidden');
       cookieAccept?.addEventListener('click', () => {
         localStorage.setItem('cookie-choice', 'accepted');
@@ -712,11 +392,11 @@
   <% if (settings.enable_copilot !== 'false') { %>
   <div id="copilot-widget-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-auto">
     
-    <!-- Copilot Chat Drawer Panel -->
-    <div id="copilot-drawer" class="hidden translate-y-8 opacity-0 pointer-events-none transition-all duration-300 w-[92vw] sm:w-96 max-h-[82vh] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden mb-3.5">
+    <!-- Copilot Chat Drawer Panel (Compact Window) -->
+    <div id="copilot-drawer" class="hidden translate-y-8 opacity-0 pointer-events-none transition-all duration-300 max-h-[82vh] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden mb-3.5" style="width: 360px !important; max-width: calc(100vw - 2rem) !important;">
       
       <!-- Drawer Header -->
-      <div class="p-4 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white flex items-center justify-between shadow-sm">
+      <div class="p-4 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white flex items-center justify-between shadow-sm flex-shrink-0">
         <div class="flex items-center space-x-2.5">
           <div class="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-sm flex items-center justify-center p-1.5 shadow-xs">
             <svg class="w-full h-full text-white" viewBox="0 0 32 32" fill="currentColor">
@@ -736,12 +416,12 @@
         </button>
       </div>
 
-      <!-- Quick Suggestion Chips -->
-      <div class="px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200/70 dark:border-slate-800 flex items-center space-x-1.5 overflow-x-auto text-[11px] no-scrollbar">
-        <button type="button" class="copilot-chip whitespace-nowrap px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 transition active:scale-95 shadow-xs" data-prompt="What microcontroller is best for ultra-low power coin-cell IoT?">🔋 Battery MCU</button>
-        <button type="button" class="copilot-chip whitespace-nowrap px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 transition active:scale-95 shadow-xs" data-prompt="What PCB trace width do I need for 5 Amps?">📐 Trace Width</button>
-        <button type="button" class="copilot-chip whitespace-nowrap px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 transition active:scale-95 shadow-xs" data-prompt="How does Embedded India execute Hardware-in-the-Loop (HIL) testing?">⚡ HIL Testing</button>
-        <button type="button" class="copilot-chip whitespace-nowrap px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 transition active:scale-95 shadow-xs" data-prompt="I need a turnkey quote for an automotive CAN-FD device.">🚗 Turnkey Quote</button>
+      <!-- Quick Suggestion Chips (Horizontal Scrollable, Never Overflowing) -->
+      <div class="px-3 py-2 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200/70 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-[11px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden shrink-0 w-full">
+        <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs leading-none inline-flex items-center gap-1.5" data-prompt="What microcontroller is best for ultra-low power coin-cell IoT?">🔋 Battery MCU</button>
+        <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs" data-prompt="What PCB trace width do I need for 5 Amps?">📐 Trace Width</button>
+        <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs" data-prompt="How does Embedded India execute Hardware-in-the-Loop (HIL) testing?">⚡ HIL Testing</button>
+        <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs" data-prompt="I need a turnkey quote for an automotive CAN-FD device.">🚗 Turnkey Quote</button>
       </div>
 
       <!-- Messages Scroll Area -->
@@ -755,8 +435,8 @@
       </div>
 
       <!-- Input Form -->
-      <form id="copilot-form" class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2">
-        <input type="text" id="copilot-input" placeholder="Ask technical question or describe your project..." autocomplete="off" class="flex-1 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500">
+      <form id="copilot-form" class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2 flex-shrink-0">
+        <input type="text" id="copilot-input" placeholder="Ask technical question or describe project..." autocomplete="off" class="flex-1 px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500">
         <button type="submit" aria-label="Send message" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition shadow-md active:scale-95 flex items-center justify-center">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
@@ -764,15 +444,15 @@
     </div>
 
     <!-- Floating Trigger Bubble Button -->
-    <button id="copilot-trigger-btn" type="button" aria-label="Open EI Copilot" class="spring-btn group flex items-center space-x-2.5 px-4 py-3 rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white shadow-xl shadow-brand-500/30 hover:shadow-brand-500/45 border border-white/20 transform hover:-translate-y-1 active:scale-95 transition">
+    <button id="copilot-trigger-btn" type="button" aria-label="Open EI Copilot" class="spring-btn group flex items-center justify-center min-w-[48px] min-h-[48px] p-3 sm:px-4 sm:py-3 rounded-full sm:rounded-2xl bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white shadow-xl shadow-brand-500/30 hover:shadow-brand-500/45 border border-white/20 transform hover:-translate-y-1 active:scale-95 transition">
       <div class="relative w-6 h-6 flex items-center justify-center">
         <span class="absolute w-full h-full rounded-full bg-white/30 animate-ping"></span>
         <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
       </div>
-      <span class="text-xs font-black tracking-tight hidden sm:inline-block">Ask EI Copilot</span>
-      <span class="w-2 h-2 rounded-full bg-emerald-300 shadow-xs"></span>
+      <span class="text-xs font-black tracking-tight hidden sm:inline-block ml-2">Ask EI Copilot</span>
+      <span class="w-2 h-2 rounded-full bg-emerald-300 shadow-xs hidden sm:inline-block ml-1.5"></span>
     </button>
 
   </div>
@@ -780,5 +460,6 @@
 
   <script src="/assets/js/copilot-widget.js"></script>
 
+  <script src="/assets/js/theme-manager.js?v=20261025_06"></script>
 </body>
 </html>

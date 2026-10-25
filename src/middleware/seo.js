@@ -30,7 +30,11 @@ async function seoMiddleware(req, res, next) {
   const currentPath = (req.originalUrl || req.path).split('?')[0];
 
   // Resolve dynamic theme CSS variables & palette
-  const theme = resolveTheme(settings);
+  const isAdminRoute = currentPath.startsWith('/admin');
+  const themeSettings = isAdminRoute
+    ? { ...settings, active_theme_palette: settings.active_theme_palette || 'titanium-slate' }
+    : settings;
+  const theme = resolveTheme(themeSettings);
 
   // Default SEO meta object
   const defaultTitle = settings.site_title_default || 'Embedded System Design & Development Services in India';
@@ -62,7 +66,7 @@ async function seoMiddleware(req, res, next) {
       contactPoint: {
         '@type': 'ContactPoint',
         email: settings.contact_email || 'info@embeddedindia.in',
-        telephone: settings.contact_phone || '+91 98765 43210',
+        telephone: settings.contact_phone || '+91 83285 14090',
         contactType: 'Customer Service'
       }
     }

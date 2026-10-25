@@ -6,22 +6,15 @@ const prisma = require('../services/db');
 // Helper to track tool usage
 async function incrementToolStat(toolName) {
   try {
-    await prisma.calculatorStat.upsert({
-      where: { id: toolName }, // If id is matching or find by toolName
-      update: { executionCount: { increment: 1 } },
-      create: { toolName, executionCount: 1 }
-    });
-  } catch (e) {
-    // If id mismatch, find first
-    try {
-      const stat = await prisma.calculatorStat.findFirst({ where: { toolName } });
-      if (stat) {
-        await prisma.calculatorStat.update({ where: { id: stat.id }, data: { executionCount: { increment: 1 } } });
-      } else {
-        await prisma.calculatorStat.create({ data: { toolName, executionCount: 1 } });
-      }
-    } catch (err) {}
-  }
+    const normalizedName = String(toolName || "").toLowerCase().trim();
+    if (!normalizedName) return;
+    const stat = await prisma.calculatorStat.findFirst({ where: { toolName: normalizedName } });
+    if (stat) {
+      await prisma.calculatorStat.update({ where: { id: stat.id }, data: { executionCount: { increment: 1 } } });
+    } else {
+      await prisma.calculatorStat.create({ data: { toolName: normalizedName, executionCount: 1 } });
+    }
+  } catch (err) {}
 }
 
 // Main Tools Directory

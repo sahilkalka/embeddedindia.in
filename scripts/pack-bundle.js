@@ -50,6 +50,7 @@ exclude_dirs = {
     '.github',
     '.gemini',
     '.agents',
+    '.playwright-mcp',
     'tests',
     'playwright-report',
     'test-results',
@@ -80,7 +81,8 @@ exclude_files = {
     'temp_bundle_script.py',
     'temp_zip_script.py',
     '.DS_Store',
-    'Thumbs.db'
+    'Thumbs.db',
+    'qa-inspector.mjs'
 }
 
 exclude_extensions = {
@@ -124,11 +126,14 @@ print(f"Packed {total_files} files directly into {output_zip}")
 const tempScriptPath = path.join(rootDir, 'temp_bundle_script.py');
 fs.writeFileSync(tempScriptPath, pythonScript, 'utf8');
 
+const primaryPy = process.platform === 'win32' ? 'python' : 'python3';
+const secondaryPy = process.platform === 'win32' ? 'python3' : 'python';
+
 try {
-  execSync(`python3 "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
+  execSync(`${primaryPy} "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
 } catch (pyErr) {
   try {
-    execSync(`python "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
+    execSync(`${secondaryPy} "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
   } catch (err2) {
     console.error('⚠️ Could not run Python zip packaging:', err2.message);
   }
@@ -140,7 +145,7 @@ try {
 
 if (fs.existsSync(zipOutput)) {
   const stats = fs.statSync(zipOutput);
-  console.log(`\n🎉 Deployment bundle created: embeddedindia.zip (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+  console.log(`\\n🎉 Deployment bundle created: embeddedindia.zip (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
 } else {
-  console.log(`\n⚠️ embeddedindia.zip was not created.`);
+  console.log(`\\n⚠️ embeddedindia.zip was not created.`);
 }

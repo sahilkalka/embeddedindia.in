@@ -49,6 +49,9 @@ app.use(helmet({
         "'unsafe-eval'",
         "https://cdnjs.cloudflare.com",
         "https://pagead2.googlesyndication.com",
+        "https://ep1.adtrafficquality.google",
+        "https://*.adtrafficquality.google",
+        "https://googleads.g.doubleclick.net",
         "https://connect.facebook.net",
         "https://cdn.carbonads.com",
         "https://srv.carbonads.net",
@@ -67,9 +70,13 @@ app.use(helmet({
       connectSrc: [
         "'self'",
         "https://pagead2.googlesyndication.com",
+        "https://ep1.adtrafficquality.google",
+        "https://*.adtrafficquality.google",
+        "https://googleads.g.doubleclick.net",
         "https://www.facebook.com",
         "https://srv.carbonads.net",
-        "https://cloudflareinsights.com"
+        "https://cloudflareinsights.com",
+        "https://static.cloudflareinsights.com"
       ],
       frameSrc: [
         "'self'",
@@ -112,7 +119,11 @@ app.use(session({
 }));
 
 // Static files directory
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'), {
+  maxAge: '7d',
+  etag: true,
+  lastModified: true
+}));
 
 // SEO & Global View Locals Middleware
 app.use(seoMiddleware);

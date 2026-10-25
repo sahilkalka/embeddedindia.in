@@ -4,112 +4,27 @@
     <p>Embedded India Administration Console &bull; Node.js &amp; Prisma ORM &bull; Version 1.0.0</p>
   </footer>
 
+  <script src="/assets/js/header-search.js"></script>
   <script>
-    // Theme Switcher Logic (Dark / Light)
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-    const themeToggleLabel = document.getElementById('theme-toggle-label');
-
-    function updateIcons() {
-      if (!themeToggleDarkIcon || !themeToggleLightIcon) return;
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        themeToggleLightIcon.classList.remove('hidden');
-        themeToggleDarkIcon.classList.add('hidden');
-      } else {
-        themeToggleDarkIcon.classList.remove('hidden');
-        themeToggleLightIcon.classList.add('hidden');
-      }
-      if (themeToggleLabel) themeToggleLabel.textContent = isDark ? 'Light mode' : 'Dark mode';
-      if (themeToggleBtn) themeToggleBtn.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} mode`);
-    }
-
-    updateIcons();
-
-    if (themeToggleBtn) {
-      themeToggleBtn.addEventListener('click', () => {
-        if (document.documentElement.classList.contains('dark')) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('color-theme', 'light');
-        } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('color-theme', 'dark');
-        }
-        updateIcons();
-      });
-    }
-
-    // Color Scheme Palette Switcher (Emerald, Cyan, Space Grey)
-    const paletteButtons = document.querySelectorAll('.palette-btn');
-    const adminPaletteDropdownBtn = document.getElementById('admin-palette-dropdown-btn');
-    const adminPaletteDropdownMenu = document.getElementById('admin-palette-dropdown-menu');
-    const adminActiveSchemeDot = document.getElementById('admin-active-scheme-dot');
-
-    const adminPaletteColorMap = {
-      emerald: '#007f5f',
-      cyan: '#0284c7',
-      spacegrey: '#475569',
-      'cyber-emerald': '#007f5f',
-      'quantum-cyan': '#0284c7',
-      'titanium-slate': '#475569',
-      'solar-amber': '#d97706',
-      'supernova-violet': '#9333ea',
-      'clean-light': '#2563eb'
-    };
-
-    function updatePaletteChecks(activeScheme) {
-      if (adminActiveSchemeDot) {
-        adminActiveSchemeDot.style.backgroundColor = adminPaletteColorMap[activeScheme] || '#007f5f';
-      }
-      const matchingAdminScheme = {
-        emerald: 'cyber-emerald',
-        cyan: 'quantum-cyan',
-        spacegrey: 'titanium-slate'
-      }[activeScheme] || activeScheme;
-
-      paletteButtons.forEach(btn => {
-        const check = btn.querySelector('.scheme-check');
-        const isMatch = btn.dataset.scheme === matchingAdminScheme;
-        if (isMatch) {
-          if (check) check.classList.remove('hidden');
-          btn.classList.add('active-palette-item', 'font-bold');
-        } else {
-          if (check) check.classList.add('hidden');
-          btn.classList.remove('active-palette-item', 'font-bold');
-        }
-      });
-    }
-
-    const currentPalette = localStorage.getItem('color-palette') || 'cyber-emerald';
-    updatePaletteChecks(currentPalette);
-
-    if (adminPaletteDropdownBtn && adminPaletteDropdownMenu) {
-      adminPaletteDropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = !adminPaletteDropdownMenu.classList.contains('hidden');
-        adminPaletteDropdownMenu.classList.toggle('hidden');
-        adminPaletteDropdownBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!adminPaletteDropdownMenu.contains(e.target) && !adminPaletteDropdownBtn.contains(e.target)) {
-          adminPaletteDropdownMenu.classList.add('hidden');
-          adminPaletteDropdownBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-    }
-
-    paletteButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const scheme = btn.dataset.scheme;
-        document.documentElement.setAttribute('data-palette', scheme);
-        localStorage.setItem('color-palette', scheme);
-        updatePaletteChecks(scheme);
-        if (adminPaletteDropdownMenu) adminPaletteDropdownMenu.classList.add('hidden');
-      });
-    });
+    window.HeaderSearch.init([
+      { title: 'Overview', url: '/admin', type: 'Admin', desc: 'Dashboard metrics and quick actions' },
+      { title: 'Inquiries', url: '/admin/inquiries', type: 'Admin', desc: 'Lead and RFQ pipeline' },
+      { title: 'Subscribers', url: '/admin/subscribers', type: 'Admin', desc: 'Newsletter leads and subscribers' },
+      { title: 'Blog Posts', url: '/admin/posts', type: 'Admin', desc: 'Manage technical articles' },
+      { title: 'Projects', url: '/admin/projects', type: 'Admin', desc: 'Engineering portfolio and case studies' },
+      { title: 'AI Engine', url: '/admin/ai', type: 'Admin', desc: 'Article generation and scheduling' },
+      { title: 'Customizer', url: '/admin/customizer', type: 'Admin', desc: 'Homepage content and section visibility' },
+      <% const searchSettingsSections = [
+        ['Theme and palettes', 'theme-engine'], ['Branding and customizer', 'site-customizer'],
+        ['SEO', 'seo-scripts'], ['Newsletter', 'newsletter-config'],
+        ['SMTP and routing', 'smtp-settings'], ['Staff accounts', 'team-accounts']
+      ]; %>
+      <% searchSettingsSections.forEach(([title, section]) => { %>
+        { title: <%- JSON.stringify(title) %>, url: '/admin/settings#<%= section %>', type: 'Settings', desc: 'Admin settings navigation' },
+      <% }); %>
+    ]);
   </script>
 
+  <script src="/assets/js/theme-manager.js?v=20261025_06"></script>
 </body>
 </html>
