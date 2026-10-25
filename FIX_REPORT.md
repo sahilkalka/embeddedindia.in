@@ -133,3 +133,4 @@ The 4 existing hardware case studies are preserved with valid database seeds and
 **TODO Item**:
 - Case studies currently point to `/images/placeholder-board.jpg` when real production photos are unavailable.
 - Once client NDAs permit photographic release, upload high-resolution physical PCB board photography (1200x800, JPEG, ~150KB) to `public/images/projects/` and update the project image links via the `/admin/projects` portal.
+
