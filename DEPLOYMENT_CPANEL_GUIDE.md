@@ -162,10 +162,12 @@ cd /home/jiazxebj/embeddedindia.in
 bash ./server-deploy.sh update
 ```
 
-### Run Test Suite
+### Fresh Server Installation / Full Reset
+
+If you need a 100% clean installation (creates safety backup, reinitializes database schema, seeds default content, reinstalls dependencies & compiles production CSS):
 
 ```bash
-npm test
+source /home/jiazxebj/nodevenv/embeddedindia.in/20/bin/activate
+cd /home/jiazxebj/embeddedindia.in
+bash ./server-deploy.sh fresh
 ```
-
-Validates all 36 core routes, calculators, APIs, SEO, and authentication mechanisms.

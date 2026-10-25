@@ -18,15 +18,9 @@
     "pack": "node scripts/pack-bundle.js",
     "pack:cpanel": "node scripts/pack-bundle.js",
     "server:setup": "bash server-deploy.sh",
-    "test": "jest --detectOpenHandles --forceExit",
-    "test:ui": "npm run test:admin-layout && node scripts/test-ui-viewports.js",
-    "test:admin-layout": "npm run build:css && node scripts/verify-admin-layout.js",
-    "audit:ui": "playwright test --reporter=html,list",
-    "admin:reset": "node scripts/reset-admin.js",
-    "test:responsive": "playwright test tests/responsive.spec.js",
-    "test:themes": "playwright test tests/theme-modes.spec.js",
-    "test:links": "playwright test tests/links-crawler.spec.js",
-    "test:viewports": "node scripts/test-ui-viewports.js"
+    "server:fresh": "bash server-deploy.sh fresh",
+    "server:update": "bash server-deploy.sh update",
+    "admin:reset": "node scripts/reset-admin.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
