@@ -46,6 +46,14 @@ function applyToolSeo(res, category, tool) {
   };
 }
 
+// Middleware to ensure fresh response without stale reverse-proxy / LiteSpeed caching
+router.use((req, res, next) => {
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.set('Pragma', 'no-cache');
+  res.set('X-Tools-Engine', 'v2-hubs-38');
+  next();
+});
+
 // 1. Landing Page: Displays 8 Dedicated Category Hub Tiles
 router.get('/', (req, res) => {
   const categories = toolsRegistry.getAllCategories();

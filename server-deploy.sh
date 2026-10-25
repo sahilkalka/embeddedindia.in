@@ -69,12 +69,28 @@ echo "⚙️  Deploy Mode : ${MODE}"
 echo "============================================================"
 
 # ------------------------------------------------------------------------------
-# 2. Node.js Environment (Strict Version Pinning)
+# 2. Node.js Environment (Auto-Detect Node 22, 20, 18 or System Node)
 # ------------------------------------------------------------------------------
 if ! command -v node >/dev/null 2>&1; then
   VENV_CANDIDATES=(
-    "$HOME/nodevenv/${VENV_NAME}/${NODE_VERSION}/bin/activate"
-    "/home/jiazxebj/nodevenv/${VENV_NAME}/${NODE_VERSION}/bin/activate"
+    "$HOME/nodevenv/${VENV_NAME}/22/bin/activate"
+    "$HOME/nodevenv/${VENV_NAME}/20/bin/activate"
+    "$HOME/nodevenv/${VENV_NAME}/18/bin/activate"
+    "$HOME/nodevenv/embeddedindia.in/22/bin/activate"
+    "$HOME/nodevenv/embeddedindia.in/20/bin/activate"
+    "$HOME/nodevenv/embeddedindia.in/18/bin/activate"
+    "$HOME/nodevenv/new/22/bin/activate"
+    "$HOME/nodevenv/new/20/bin/activate"
+    "$HOME/nodevenv/new/18/bin/activate"
+    "/home/jiazxebj/nodevenv/${VENV_NAME}/22/bin/activate"
+    "/home/jiazxebj/nodevenv/${VENV_NAME}/20/bin/activate"
+    "/home/jiazxebj/nodevenv/${VENV_NAME}/18/bin/activate"
+    "/home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate"
+    "/home/jiazxebj/nodevenv/embeddedindia.in/20/bin/activate"
+    "/home/jiazxebj/nodevenv/embeddedindia.in/18/bin/activate"
+    "/home/jiazxebj/nodevenv/new/22/bin/activate"
+    "/home/jiazxebj/nodevenv/new/20/bin/activate"
+    "/home/jiazxebj/nodevenv/new/18/bin/activate"
   )
   for venv in "${VENV_CANDIDATES[@]}"; do
     if [ -f "$venv" ]; then
@@ -90,7 +106,17 @@ NODE_BIN="$(command -v node || true)"
 NPM_BIN="$(command -v npm || true)"
 
 if [ -z "$NODE_BIN" ]; then
-  echo "❌ Error: Node.js ${NODE_VERSION} binary not found in $HOME/nodevenv/${VENV_NAME}/${NODE_VERSION}."
+  for candidate in /usr/local/bin/node /usr/bin/node /opt/cpanel/ea-nodejs*/bin/node; do
+    if [ -x "$candidate" ]; then
+      NODE_BIN="$candidate"
+      NPM_BIN="$(dirname "$candidate")/npm"
+      break
+    fi
+  done
+fi
+
+if [ -z "$NODE_BIN" ]; then
+  echo "❌ Error: Node.js binary could not be found."
   exit 1
 fi
 
@@ -227,6 +253,18 @@ done
 
 # Reload Passenger and PM2
 touch tmp/restart.txt
+touch "$PROJECT_DIR/tmp/restart.txt" 2>/dev/null || true
+touch /home/jiazxebj/new/tmp/restart.txt 2>/dev/null || true
+touch /home/jiazxebj/embeddedindia.in/tmp/restart.txt 2>/dev/null || true
+
+# If running from /new but production is /embeddedindia.in, sync critical app folders
+if [ -d "/home/jiazxebj/embeddedindia.in" ] && [ "$PROJECT_DIR" != "/home/jiazxebj/embeddedindia.in" ]; then
+  echo "🔄 Syncing updated templates and assets to /home/jiazxebj/embeddedindia.in..."
+  cp -R src views public package.json app.js /home/jiazxebj/embeddedindia.in/ 2>/dev/null || true
+  touch /home/jiazxebj/embeddedindia.in/tmp/restart.txt 2>/dev/null || true
+  echo "✓ Primary domain files synced and passenger touched"
+fi
+
 echo "✓ Reloaded Phusion Passenger (tmp/restart.txt)"
 
 if command -v pm2 >/dev/null 2>&1; then
