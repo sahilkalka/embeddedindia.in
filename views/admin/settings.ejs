@@ -1508,6 +1508,40 @@
               <span class="text-[10px] text-slate-400 block font-mono">728x90 Conclusion Slot</span>
             </div>
 
+            <div class="p-3.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 dark:text-white">Slot 5: Tools Top</span>
+                <%- include('../partials/theme-toggle', {
+                  name: 'ad_slot_tools_header',
+                  id: 'ad_toggle_slot_tools_header',
+                  checked: settings.ad_slot_tools_header === 'true',
+                  onChange: 'updateAdWireframePreview',
+                  onLabel: 'Active',
+                  offLabel: 'Disabled',
+                  label: 'Slot 5: Tools Top Leaderboard',
+                  showBadge: true
+                }) %>
+              </div>
+              <span class="text-[10px] text-slate-400 block font-mono">Tools Sub-Pages Top Banner</span>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-900 dark:text-white">Slot 6: Tools Footer</span>
+                <%- include('../partials/theme-toggle', {
+                  name: 'ad_slot_tools_footer',
+                  id: 'ad_toggle_slot_tools_footer',
+                  checked: settings.ad_slot_tools_footer === 'true',
+                  onChange: 'updateAdWireframePreview',
+                  onLabel: 'Active',
+                  offLabel: 'Disabled',
+                  label: 'Slot 6: Tools Mid/Footer Banner',
+                  showBadge: true
+                }) %>
+              </div>
+              <span class="text-[10px] text-slate-400 block font-mono">Tools Sub-Pages Content Slot</span>
+            </div>
+
           </div>
 
           <!-- Visual Wireframe Flow -->
@@ -1545,13 +1579,46 @@
               Slot 4: Post-Article Footer Slot (728x90) [<%= settings.ad_slot_post_footer === 'true' ? 'ACTIVE' : 'DISABLED' %>]
             </div>
 
+            <div id="ad_wf_slot_tools_h" class="p-2 rounded text-center font-bold border transition <%= settings.ad_slot_tools_header === 'true' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'border-dashed border-slate-300 dark:border-slate-700 text-slate-400' %>">
+              Slot 5: Tools Top Leaderboard (/tools sub pages) [<%= settings.ad_slot_tools_header === 'true' ? 'ACTIVE' : 'DISABLED' %>]
+            </div>
+
+            <div id="ad_wf_slot_tools_f" class="p-2 rounded text-center font-bold border transition <%= settings.ad_slot_tools_footer === 'true' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300' : 'border-dashed border-slate-300 dark:border-slate-700 text-slate-400' %>">
+              Slot 6: Tools Mid/Footer Banner (/tools sub pages) [<%= settings.ad_slot_tools_footer === 'true' ? 'ACTIVE' : 'DISABLED' %>]
+            </div>
+
             <div class="p-2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-center font-bold">
               Public Footer &amp; Copyright
             </div>
           </div>
         </div>
 
-        <!-- 5C. Root ads.txt Editor -->
+        <!-- 5C. Tools Suite Custom Ad Snippets -->
+        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4 text-xs">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+            <div>
+              <span class="font-bold text-slate-900 dark:text-white block text-sm">🛠️ Tools Sub-Pages Custom Ad Scripts &amp; Banners</span>
+              <span class="text-[11px] text-slate-500 dark:text-slate-400">Inject custom HTML, Google AdSense responsive tags, or direct partner banners into /tools sub pages. Leave empty to use default sponsored partner units.</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                Tools Top Leaderboard Custom HTML (Slot 5)
+              </label>
+              <textarea name="custom_ad_html_tools_header" rows="3" placeholder="&lt;!-- Paste custom ad banner / script for tools top slot --&gt;" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px] text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"><%= settings.custom_ad_html_tools_header || '' %></textarea>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                Tools Mid/Footer Content Custom HTML (Slot 6)
+              </label>
+              <textarea name="custom_ad_html_tools_footer" rows="3" placeholder="&lt;!-- Paste custom ad banner / script for tools content slot --&gt;" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px] text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"><%= settings.custom_ad_html_tools_footer || '' %></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5D. Root ads.txt Editor -->
         <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2 text-xs">
           <div class="flex items-center justify-between">
             <span class="font-bold text-slate-800 dark:text-slate-200 uppercase">ads.txt Content (Served live at /ads.txt)</span>
@@ -2858,7 +2925,9 @@
       { toggleId: 'ad_toggle_slot1', wfId: 'ad_wf_slot1', label: 'Slot 1: Blog Top Leaderboard (728x90)' },
       { toggleId: 'ad_toggle_slot2', wfId: 'ad_wf_slot2', label: 'Slot 2: In-Article Body' },
       { toggleId: 'ad_toggle_slot3', wfId: 'ad_wf_slot3', label: 'Slot 3: Sticky Sidebar (300x250)' },
-      { toggleId: 'ad_toggle_slot4', wfId: 'ad_wf_slot4', label: 'Slot 4: Post-Article Footer Slot' }
+      { toggleId: 'ad_toggle_slot4', wfId: 'ad_wf_slot4', label: 'Slot 4: Post-Article Footer Slot' },
+      { toggleId: 'ad_toggle_slot_tools_header', wfId: 'ad_wf_slot_tools_h', label: 'Slot 5: Tools Top Leaderboard' },
+      { toggleId: 'ad_toggle_slot_tools_footer', wfId: 'ad_wf_slot_tools_f', label: 'Slot 6: Tools Mid/Footer Banner' }
     ];
 
     slots.forEach(s => {
