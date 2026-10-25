@@ -70,6 +70,37 @@
   flex-shrink: 0 !important;
   white-space: nowrap !important;
 }
+
+#copilot-widget-container {
+  position: fixed !important;
+  bottom: 5rem !important;
+  right: 1.25rem !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: 9999 !important;
+}
+@media (min-width: 768px) {
+  #copilot-widget-container {
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+  }
+}
+
+#mobile-cta-bar {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  top: auto !important;
+  z-index: 9990 !important;
+}
+@media (min-width: 768px) {
+  #mobile-cta-bar {
+    display: none !important;
+  }
+}
+
 #copilot-drawer {
   width: 360px !important;
   max-width: calc(100vw - 2rem) !important;

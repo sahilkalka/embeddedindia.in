@@ -22,10 +22,10 @@
 <section class="py-20 bg-slate-50 dark:bg-[#13221f]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="flex flex-col lg:flex-row gap-8 items-start w-full">
       
       <!-- Sticky Navigation Sidebar on LG -->
-      <aside class="hidden lg:block lg:col-span-3 sticky top-28 space-y-4">
+      <aside class="hidden lg:block w-72 shrink-0 sticky top-28 space-y-4">
         <nav aria-label="Services Navigation" class="p-5 bg-white dark:bg-brand-surface rounded-3xl border border-slate-200 dark:border-brand-border shadow-sm space-y-2">
           <p class="text-xs font-black uppercase text-slate-400 tracking-wider mb-3">Disciplines</p>
           <a href="#hardware" class="flex items-center space-x-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-brand-500 dark:hover:text-accent p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition">
@@ -52,10 +52,10 @@
       </aside>
 
       <!-- Main Services Column -->
-      <div class="lg:col-span-9 space-y-16">
+      <div class="flex-1 min-w-0 w-full space-y-16">
         
         <!-- Service Category 1: Hardware Development & Design -->
-        <div id="hardware" class="spotlight-card reveal-on-scroll bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-md scroll-mt-28">
+        <div id="hardware" class="spotlight-card w-full bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-md scroll-mt-28">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-100 dark:border-brand-border">
             <div>
               <span class="text-xs font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Discipline 01</span>
@@ -110,7 +110,7 @@
         </div>
 
         <!-- Service Category 2: Embedded Software & Firmware Development -->
-        <div id="firmware" class="spotlight-card reveal-on-scroll delay-100 bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-md scroll-mt-28">
+        <div id="firmware" class="spotlight-card w-full bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-md scroll-mt-28">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-100 dark:border-brand-border">
             <div>
               <span class="text-xs font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Discipline 02</span>
@@ -165,7 +165,7 @@
         </div>
 
         <!-- Service Category 3: Connectivity & IoT Solutions, Automotive & Edge -->
-        <div id="connectivity" class="spotlight-card reveal-on-scroll delay-200 bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-md scroll-mt-28">
+        <div id="connectivity" class="spotlight-card w-full bg-white dark:bg-brand-surface rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-brand-border shadow-md scroll-mt-28">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-8 border-b border-slate-100 dark:border-brand-border">
             <div>
               <span class="text-xs font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Discipline 03</span>

@@ -184,14 +184,14 @@
 
   <!-- Top Announcement Bar / Global Promo Bar (Slot 5) -->
   <% if (settings.promo_banner_active === 'true' || settings.ad_slot_promo_bar === 'true') { %>
-    <aside aria-label="Announcement" class="bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white text-xs sm:text-sm py-1.5 px-4 text-left sm:text-center font-bold flex items-center justify-between sm:justify-center space-x-2 shadow-sm border-b border-black/10 dark:border-white/10">
-      <div class="flex items-center space-x-2">
-        <span class="bg-white/20 text-white px-2 py-0.5 rounded-full text-[10px] tracking-wider uppercase font-black animate-pulse">New</span>
-        <span class="text-white drop-shadow-sm font-bold"><%= settings.promo_banner_title || 'Engineering Feasibility Consultation Available' %></span>
+    <aside aria-label="Announcement" class="bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white text-xs py-1.5 px-3 sm:px-4 text-center font-bold flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 shadow-sm border-b border-black/10 dark:border-white/10">
+      <div class="flex items-center space-x-1.5">
+        <span class="bg-white/20 text-white px-1.5 py-0.5 rounded-full text-[9px] tracking-wider uppercase font-black animate-pulse flex-shrink-0">New</span>
+        <span class="text-white drop-shadow-sm font-bold text-[11px] sm:text-xs"><%= settings.promo_banner_title || 'Engineering Feasibility Consultation Available' %></span>
       </div>
-      <a href="<%= settings.promo_banner_url || '/contact' %>" class="underline hover:text-white/80 text-white font-black ml-2 min-h-[44px] inline-flex items-center group drop-shadow-sm">
+      <a href="<%= settings.promo_banner_url || '/contact' %>" class="underline hover:text-white/80 text-white font-black whitespace-nowrap text-[11px] sm:text-xs inline-flex items-center group drop-shadow-sm">
         <span><%= settings.promo_banner_cta || 'Book Consultation' %></span>
-        <span class="inline-block transform group-hover:translate-x-1 transition ml-1">&rarr;</span>
+        <span class="inline-block transform group-hover:translate-x-1 transition ml-0.5">&rarr;</span>
       </a>
     </aside>
   <% } %>
@@ -401,15 +401,9 @@
         </div>
 
         <!-- Desktop CTA -->
-        <% if (locals.currentUser) { %>
-          <a href="/admin" class="hidden sm:inline-flex items-center min-h-[42px] px-4 py-2 border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white font-bold rounded-xl text-xs sm:text-sm hover:border-brand-500 transition active:scale-95 shadow-sm whitespace-nowrap ml-1">
-            Admin Panel
-          </a>
-        <% } else { %>
-          <a href="/contact" class="btn-shimmer hidden sm:inline-flex items-center min-h-[42px] px-4 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap ml-1">
-            <span>Request Quote &rarr;</span>
-          </a>
-        <% } %>
+        <a href="/contact" class="btn-shimmer hidden sm:inline-flex items-center min-h-[42px] px-4 py-2 bg-gradient-to-r from-brand-600 via-brand-500 to-accent text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition shadow-brand-500/20 hover:shadow-brand-500/35 active:scale-95 transform hover:-translate-y-0.5 whitespace-nowrap ml-1">
+          <span>Request Quote &rarr;</span>
+        </a>
 
 
 
