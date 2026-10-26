@@ -1,94 +1,11 @@
-// src/services/themeEngine.js
-
-const PREDEFINED_PALETTES = {
-  'cyber-emerald': {
-    id: 'cyber-emerald',
-    name: 'Cyber Emerald',
-    bgPrimary: '#0b1412',
-    bgSurface: '#13221e',
-    textPrimary: '#f1f5f9',
-    textMuted: '#94a3b8',
-    accentPrimary: '#059669',
-    accentSecondary: '#55a630',
-    borderColor: '#1e3831',
-    swatchHex: '#007f5f'
-  },
-  'quantum-cyan': {
-    id: 'quantum-cyan',
-    name: 'Quantum Cyan',
-    bgPrimary: '#08101a',
-    bgSurface: '#0f1d2e',
-    textPrimary: '#f8fafc',
-    textMuted: '#94a3b8',
-    accentPrimary: '#0ea5e9',
-    accentSecondary: '#06b6d4',
-    borderColor: '#172a42',
-    swatchHex: '#0284c7'
-  },
-  'titanium-slate': {
-    id: 'titanium-slate',
-    name: 'Titanium Slate',
-    bgPrimary: '#090d16',
-    bgSurface: '#0f172a',
-    textPrimary: '#f8fafc',
-    textMuted: '#94a3b8',
-    accentPrimary: '#38bdf8',
-    accentSecondary: '#64748b',
-    borderColor: '#334155',
-    swatchHex: '#475569'
-  },
-  'solar-amber': {
-    id: 'solar-amber',
-    name: 'Solar Amber',
-    bgPrimary: '#18181b',
-    bgSurface: '#27272a',
-    textPrimary: '#fafafa',
-    textMuted: '#a1a1aa',
-    accentPrimary: '#f59e0b',
-    accentSecondary: '#fbbf24',
-    borderColor: '#3f3f46',
-    swatchHex: '#d97706'
-  },
-  'vscode-theme': {
-    id: 'vscode-theme',
-    name: 'VS Code Inspired',
-    bgPrimary: '#1E1E1E',
-    bgSurface: '#252526',
-    textPrimary: '#CCCCCC',
-    textMuted: '#9D9D9D',
-    accentPrimary: '#007ACC',
-    accentSecondary: '#3794FF',
-    borderColor: '#3E3E42',
-    swatchHex: '#007ACC'
-  },
-  'clean-light': {
-    id: 'clean-light',
-    name: 'Clean Enterprise',
-    bgPrimary: '#f8fafc',
-    bgSurface: '#ffffff',
-    textPrimary: '#0f172a',
-    textMuted: '#64748b',
-    accentPrimary: '#2563eb',
-    accentSecondary: '#3b82f6',
-    borderColor: '#e2e8f0',
-    swatchHex: '#2563eb'
-  }
-};
-
-// Aliases for backward compatibility
-const PALETTE_ALIASES = {
-  'supernova-violet': 'vscode-theme',
-  'vscode': 'vscode-theme',
-  'emerald': 'cyber-emerald',
-  'pcb-emerald-green': 'cyber-emerald',
-  'cyan': 'quantum-cyan',
-  'silicon-dark-blue': 'quantum-cyan',
-  'spacegrey': 'titanium-slate',
-  'slate': 'titanium-slate',
-  'automotive-slate-red': 'titanium-slate',
-  'industrial-amber-charcoal': 'solar-amber',
-  'clean-light-enterprise': 'clean-light'
-};
+// Fixed appearance presets. Palette editing is no longer part of Settings.
+const colorThemes = require('../data/colorThemes');
+const PREDEFINED_PALETTES = Object.fromEntries(colorThemes.map(preset => [preset.key, {
+  id: preset.key, name: preset.name, bgPrimary: preset.background, bgSurface: preset.surface,
+  textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: preset.accent,
+  accentSecondary: preset.secondary, borderColor: '#334155', swatchHex: preset.accent
+}]));
+const PALETTE_ALIASES = { emerald:'cyber-emerald', ocean:'vscode-theme', violet:'quantum-cyan', amber:'solar-amber', rose:'titanium-slate', cyan:'quantum-cyan', slate:'titanium-slate', 'clean-light':'vscode-theme' };
 
 function getAvailablePaletteKey(settings = {}, preferredKey = 'cyber-emerald', excludedKey = null) {
   const preferred = PALETTE_ALIASES[preferredKey] || preferredKey;
@@ -102,46 +19,10 @@ function getAvailablePaletteKey(settings = {}, preferredKey = 'cyber-emerald', e
 }
 
 function resolveTheme(settings = {}) {
-  let activeKey = settings.active_theme_palette || 'cyber-emerald';
-  if (PALETTE_ALIASES[activeKey]) {
-    activeKey = PALETTE_ALIASES[activeKey];
-  }
-  if (settings[`palette_deleted_${activeKey}`] === 'true') {
-    activeKey = getAvailablePaletteKey(settings) || 'cyber-emerald';
-  }
-
-  let palette;
-  if (activeKey === 'custom') {
-    palette = {
-      id: 'custom',
-      name: settings.custom_palette_name || 'Custom Hex Palette',
-      bgPrimary: settings.palette_bg_primary || '#0b1412',
-      bgSurface: settings.palette_bg_surface || '#13221e',
-      textPrimary: settings.palette_text_primary || '#f1f5f9',
-      textMuted: settings.palette_text_muted || '#94a3b8',
-      accentPrimary: settings.palette_accent_primary || '#059669',
-      accentSecondary: settings.palette_accent_secondary || '#34d399',
-      borderColor: settings.palette_border_color || '#1e3831',
-      swatchHex: settings.palette_accent_primary || '#059669'
-    };
-  } else {
-    palette = { ...(PREDEFINED_PALETTES[activeKey] || PREDEFINED_PALETTES['cyber-emerald']) };
-    if (settings[`palette_override_${activeKey}_bgPrimary`]) {
-      palette.bgPrimary = settings[`palette_override_${activeKey}_bgPrimary`];
-    }
-    if (settings[`palette_override_${activeKey}_bgSurface`]) {
-      palette.bgSurface = settings[`palette_override_${activeKey}_bgSurface`];
-    }
-    if (settings[`palette_override_${activeKey}_accentPrimary`]) {
-      palette.accentPrimary = settings[`palette_override_${activeKey}_accentPrimary`];
-    }
-    if (settings[`palette_override_${activeKey}_accentSecondary`]) {
-      palette.accentSecondary = settings[`palette_override_${activeKey}_accentSecondary`];
-    }
-    if (settings[`palette_override_${activeKey}_textPrimary`]) {
-      palette.textPrimary = settings[`palette_override_${activeKey}_textPrimary`];
-    }
-  }
+  const themes = require('../data/colorThemes');
+  const preset = themes[0];
+  const activeKey = preset.key;
+  const palette = { id: activeKey, name: preset.name, bgPrimary: preset.background, bgSurface: preset.surface, textPrimary: '#f1f5f9', textMuted: '#94a3b8', accentPrimary: preset.accent, accentSecondary: preset.secondary, borderColor: '#334155', swatchHex: preset.accent };
 
   const headingFont = settings.heading_font || 'Inter';
   const bodyFont = settings.body_font || 'Inter';

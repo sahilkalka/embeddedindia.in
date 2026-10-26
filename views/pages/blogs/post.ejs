@@ -24,14 +24,8 @@
             <img src="<%= settings.sponsor_banner_img %>" alt="<%= settings.sponsor_banner_alt || 'Sponsor' %>" class="max-h-20 mx-auto rounded-lg">
             <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 block mt-1"><%= settings.sponsor_banner_text || '' %></span>
           </a>
-        <% } else if (settings.enable_adsense === 'true' && settings.adsense_pub_id) { %>
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="<%= settings.adsense_pub_id %>"
-               data-ad-slot="<%= settings.adsense_header_slot || '1234567890' %>"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <% } else if (canShowAd(settings, settings.adsense_header_slot)) { %>
+<%- include('../../partials/ad-slot', { slot: settings.adsense_header_slot, format: 'auto' }) %>
         <% } %>
       </div>
     <% } %>
@@ -94,13 +88,8 @@
                 <img src="<%= settings.sponsor_banner_img %>" alt="<%= settings.sponsor_banner_alt || 'Sponsor' %>" class="max-h-24 mx-auto rounded-lg shadow-sm">
                 <p class="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-2"><%= settings.sponsor_banner_text || '' %></p>
               </a>
-            <% } else if (settings.enable_adsense === 'true' && settings.adsense_pub_id) { %>
-              <ins class="adsbygoogle"
-                   style="display:block"
-                   data-ad-client="<%= settings.adsense_pub_id %>"
-                   data-ad-slot="<%= settings.adsense_footer_slot || '1234567890' %>"
-                   data-ad-format="autorelaxed"></ins>
-              <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <% } else if (canShowAd(settings, settings.adsense_footer_slot)) { %>
+<%- include('../../partials/ad-slot', { slot: settings.adsense_footer_slot, format: 'auto' }) %>
             <% } %>
           </div>
         <% } %>
@@ -136,13 +125,8 @@
                   <h4 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 transition"><%= settings.sponsor_banner_alt || 'Featured Sponsor' %></h4>
                   <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1"><%= settings.sponsor_banner_text || '' %></p>
                 </a>
-              <% } else if (settings.enable_adsense === 'true' && settings.adsense_pub_id) { %>
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="<%= settings.adsense_pub_id %>"
-                     data-ad-slot="<%= settings.adsense_sidebar_slot || '1234567890' %>"
-                     data-ad-format="vertical"></ins>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+              <% } else if (canShowAd(settings, settings.adsense_sidebar_slot)) { %>
+<%- include('../../partials/ad-slot', { slot: settings.adsense_sidebar_slot, format: 'vertical' }) %>
               <% } else { %>
                 <div class="p-6 border-2 border-dashed border-slate-200 dark:border-brand-border rounded-2xl text-xs text-slate-400">
                   <p class="font-bold">Sidebar Ad Slot Active</p>

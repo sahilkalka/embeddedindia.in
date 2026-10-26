@@ -16,24 +16,48 @@
   let conversationHistory = [];
   let isOpen = false;
 
+  let drawerAnimation;
   function toggleCopilot(open) {
     isOpen = typeof open === 'boolean' ? open : !isOpen;
-    if (isOpen) {
-      drawer.classList.remove('hidden', 'translate-y-8', 'opacity-0', 'pointer-events-none');
-      drawer.classList.add('translate-y-0', 'opacity-100');
-      triggerBtn.classList.add('scale-90');
-      if (input) input.focus();
-    } else {
-      drawer.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
-      setTimeout(() => {
-        if (!isOpen) drawer.classList.add('hidden');
-      }, 350);
-      triggerBtn.classList.remove('scale-90');
-    }
+    const wasHidden = drawer.classList.contains('hidden');
+    const current = getComputedStyle(drawer);
+    const from = { opacity: wasHidden ? 0 : current.opacity, transform: wasHidden ? 'translateY(28px) scale(0.92)' : current.transform };
+    if (drawerAnimation) drawerAnimation.cancel();
+    drawer.classList.remove('hidden', 'translate-y-8', 'opacity-0', 'pointer-events-none');
+    drawer.style.transformOrigin = 'bottom right';
+    drawer.style.transition = 'none';
+    drawer.style.pointerEvents = isOpen ? 'auto' : 'none';
+    drawer.inert = !isOpen;
+    drawer.setAttribute('aria-hidden', String(!isOpen));
+    triggerBtn.setAttribute('aria-expanded', String(isOpen));
+    triggerBtn.setAttribute('aria-controls', 'copilot-drawer');
+    triggerBtn.classList.toggle('scale-90', isOpen);
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const frames = isOpen ? [from, { opacity: 1, transform: 'translateY(-7px) scale(1.015)', offset: 0.7 }, { opacity: 1, transform: 'translateY(0) scale(1)' }] : [from, { opacity: 1, transform: 'translateY(-4px) scale(1.01)', offset: 0.2 }, { opacity: 0, transform: 'translateY(24px) scale(0.94)' }];
+    drawerAnimation = drawer.animate(frames, { duration: reducedMotion ? 1 : isOpen ? 480 : 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+    drawerAnimation.onfinish = () => {
+      if (isOpen) { if (input) input.focus({ preventScroll: true }); }
+      else { drawer.classList.add('hidden'); triggerBtn.focus({ preventScroll: true }); }
+    };
   }
-
-  triggerBtn.addEventListener('click', () => toggleCopilot(true));
+  triggerBtn.addEventListener('click', () => toggleCopilot(!isOpen));
   if (closeBtn) closeBtn.addEventListener('click', () => toggleCopilot(false));
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && isOpen) toggleCopilot(false); });
+
+  const promptBar = document.getElementById('copilot-prompts');
+  const previousPrompt = document.getElementById('copilot-prompts-prev');
+  const nextPrompt = document.getElementById('copilot-prompts-next');
+  if (promptBar && previousPrompt && nextPrompt) {
+    const updatePromptArrows = () => {
+      previousPrompt.disabled = promptBar.scrollLeft < 2;
+      nextPrompt.disabled = promptBar.scrollLeft + promptBar.clientWidth >= promptBar.scrollWidth - 2;
+    };
+    previousPrompt.addEventListener('click', () => promptBar.scrollBy({ left: -promptBar.clientWidth * 0.8, behavior: 'smooth' }));
+    nextPrompt.addEventListener('click', () => promptBar.scrollBy({ left: promptBar.clientWidth * 0.8, behavior: 'smooth' }));
+    promptBar.addEventListener('scroll', updatePromptArrows);
+    new ResizeObserver(updatePromptArrows).observe(promptBar);
+    updatePromptArrows();
+  }
 
   // Quick Prompt Chips
   promptChips.forEach(chip => {

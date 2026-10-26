@@ -20,7 +20,8 @@
     "server:setup": "bash server-deploy.sh",
     "server:fresh": "bash server-deploy.sh fresh",
     "server:update": "bash server-deploy.sh update",
-    "admin:reset": "node scripts/reset-admin.js"
+    "admin:reset": "node scripts/reset-admin.js",
+    "test:improvement-plan": "node scripts/test-improvement-plan.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

@@ -1,4 +1,6 @@
 // src/middleware/seo.js
+const { parseFaqs } = require('../services/faqs');
+const { canShowAd } = require('../services/ads');
 const prisma = require('../services/db');
 const { resolveTheme } = require('../services/themeEngine');
 
@@ -40,9 +42,10 @@ async function seoMiddleware(req, res, next) {
   const defaultTitle = settings.site_title_default || 'Embedded System Design & Development Services in India';
   const siteName = settings.site_name || 'Embedded India';
   const siteDescription = settings.site_description_default || 'Embedded System Design & Development Services in India, from concept to production. Specializing in IoT, microcontrollers, and hardware/firmware solutions.';
-  const defaultKeywords = settings.site_keywords_default || 'embedded systems india, PCB design bangalore, firmware development, IoT edge computing, microcontroller programming, hardware engineering';
+  const defaultKeywords = settings.site_keywords_default || 'embedded systems india, PCB design hyderabad, firmware development, IoT edge computing, microcontroller programming, hardware engineering';
 
   res.locals.seo = {
+    robots: isAdminRoute ? 'noindex, nofollow' : 'index, follow',
     title: defaultTitle,
     siteName: siteName,
     description: siteDescription,
@@ -61,7 +64,7 @@ async function seoMiddleware(req, res, next) {
       address: {
         '@type': 'PostalAddress',
         addressCountry: 'IN',
-        streetAddress: settings.contact_address || 'Bangalore, Hyderabad, Pune, India'
+        streetAddress: settings.contact_address || 'Hyderabad, India'
       },
       contactPoint: {
         '@type': 'ContactPoint',
@@ -78,6 +81,7 @@ async function seoMiddleware(req, res, next) {
       const overrides = JSON.parse(settings.seo_route_overrides);
       if (overrides[currentPath]) {
         const routeMeta = overrides[currentPath];
+        if (routeMeta.robots) res.locals.seo.robots = routeMeta.robots;
         if (routeMeta.title) res.locals.seo.title = routeMeta.title;
         if (routeMeta.description) res.locals.seo.description = routeMeta.description;
         if (routeMeta.keywords) res.locals.seo.keywords = routeMeta.keywords;
@@ -90,6 +94,9 @@ async function seoMiddleware(req, res, next) {
     }
   }
 
+  try { res.locals.customFaqs = parseFaqs(settings.custom_faqs); } catch { res.locals.customFaqs = []; }
+  res.locals.colorThemes = require('../data/colorThemes');
+  res.locals.canShowAd = canShowAd;
   res.locals.settings = settings;
   res.locals.theme = theme;
   res.locals.currentPath = currentPath;

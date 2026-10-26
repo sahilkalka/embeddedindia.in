@@ -1,6 +1,6 @@
 <!-- Floating "Ask EI Copilot" AI Hardware Engineering Assistant -->
 <% if (settings.enable_copilot !== 'false') { %>
-<div id="copilot-widget-container" class="fixed bottom-20 md:bottom-6 right-5 md:right-6 z-50 flex flex-col items-end pointer-events-auto" style="position: fixed !important; bottom: 5rem !important; right: 1.25rem !important; top: auto !important; left: auto !important; z-index: 9999 !important;">
+<div id="copilot-widget-container" class="fixed bottom-20 md:bottom-6 right-5 md:right-6 z-50 flex flex-col items-end pointer-events-auto">
   
   <!-- Copilot Chat Drawer Panel (Compact Window) -->
   <div id="copilot-drawer" class="hidden translate-y-8 opacity-0 pointer-events-none transition-all duration-300 max-h-[82vh] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden mb-3.5" style="width: 360px !important; max-width: calc(100vw - 2rem) !important;">
@@ -27,11 +27,16 @@
     </div>
 
     <!-- Quick Suggestion Chips (Horizontal Scrollable, Never Overflowing) -->
-    <div class="px-3 py-2 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200/70 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-[11px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden shrink-0 w-full">
+    <div class="copilot-prompt-strip">
+      <button type="button" id="copilot-prompts-prev" aria-label="Scroll suggestions left" class="copilot-prompt-arrow">‹</button>
+    <div id="copilot-prompts" tabindex="0" role="region" aria-label="Suggested questions" class="px-3 py-2 bg-slate-50 dark:bg-slate-950/50 border-b border-slate-200/70 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-[11px] shrink-0 w-full">
       <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs leading-none inline-flex items-center gap-1.5" data-prompt="Choose the best MCU for a BLE sensor with 3-year coin cell life">🔋 Choose MCU for BLE sensor</button>
       <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs" data-prompt="Calculate IPC-2221 trace width for 5A on external layer with 1oz copper">📐 IPC-2221 Trace Width</button>
       <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs" data-prompt="Compare FreeRTOS vs Zephyr RTOS for an industrial IoT gateway project">⚡ FreeRTOS vs Zephyr</button>
       <button type="button" class="copilot-chip shrink-0 flex-shrink-0 min-w-max whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold hover:border-brand-500 hover:text-brand-600 dark:hover:text-accent transition active:scale-95 shadow-xs" data-prompt="I need a turnkey quote for an automotive CAN-FD device.">🚗 Turnkey Quote</button>
+    </div>
+
+      <button type="button" id="copilot-prompts-next" aria-label="Scroll suggestions right" class="copilot-prompt-arrow">›</button>
     </div>
 
     <!-- Messages Scroll Area -->

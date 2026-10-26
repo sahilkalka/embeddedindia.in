@@ -2,11 +2,8 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/jiazxebj/new
-    - /bin/mkdir -p $DEPLOYPATH/tmp
-    - /bin/chmod +x ./server-deploy.sh $DEPLOYPATH/server-deploy.sh 2>/dev/null || true
-    - /bin/touch $DEPLOYPATH/tmp/restart.txt
-    - /bin/touch /home/jiazxebj/embeddedindia.in/tmp/restart.txt 2>/dev/null || true
-    - if [ -d "/home/jiazxebj/embeddedindia.in" ] && [ "$DEPLOYPATH" != "/home/jiazxebj/embeddedindia.in" ]; then /bin/cp -R src views public package.json app.js /home/jiazxebj/embeddedindia.in/ 2>/dev/null || true; /bin/touch /home/jiazxebj/embeddedindia.in/tmp/restart.txt 2>/dev/null || true; fi
-    - /bin/bash ./server-deploy.sh new update || /bin/bash $DEPLOYPATH/server-deploy.sh update || true
-    - /bin/touch $DEPLOYPATH/tmp/restart.txt
-    - /bin/touch /home/jiazxebj/embeddedindia.in/tmp/restart.txt 2>/dev/null || true
+    - /bin/mkdir -p "$DEPLOYPATH/tmp" "$DEPLOYPATH/prisma"
+    - if [ "$(pwd -P)" != "$DEPLOYPATH" ]; then /bin/cp -R src views public scripts package.json package-lock.json app.js server-deploy.sh tailwind.config.js "$DEPLOYPATH/"; /bin/cp prisma/schema.prisma "$DEPLOYPATH/prisma/schema.prisma"; fi
+    - /bin/chmod +x "$DEPLOYPATH/server-deploy.sh"
+    - /bin/bash "$DEPLOYPATH/server-deploy.sh" new update
+    - /bin/touch "$DEPLOYPATH/tmp/restart.txt"

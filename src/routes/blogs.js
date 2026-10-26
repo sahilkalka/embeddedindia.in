@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../services/db');
+const { canShowAd, renderAd } = require('../services/ads');
+const { JSDOM } = require('jsdom');
 const { renderMarkdown } = require('../services/markdown');
 
 // Taxonomy mapping for core engineering guides
@@ -27,28 +29,16 @@ function normalizePost(post) {
   return p;
 }
 
-function injectInArticleAd(html, settings = {}) {
-  if (settings.ad_slot_in_article !== 'true') return html;
+async function injectInArticleAd(html, settings = {}) {
+  if (settings.ad_slot_in_article === 'false') return html;
+  if (settings.ad_slot_in_article !== 'true' && !canShowAd(settings, settings.adsense_blog_inline_slot || settings.adsense_in_article_slot)) return html;
 
   const targetP = Math.max(1, parseInt(settings.ad_in_article_p_index, 10) || 3);
-  let pCount = 0;
-  let splitIndex = -1;
-  const regex = /<\/p>/gi;
-  let match;
-
-  while ((match = regex.exec(html)) !== null) {
-    pCount++;
-    if (pCount === targetP) {
-      splitIndex = match.index + match[0].length;
-      break;
-    }
-  }
-
-  if (splitIndex === -1 && pCount > 0) {
-    splitIndex = html.lastIndexOf('</p>') + 4;
-  }
-
-  if (splitIndex === -1) return html;
+  // Only split between top-level paragraphs, never inside a list, table or code block.
+  const fragment = JSDOM.fragment(html);
+  const paragraphs = Array.from(fragment.children).filter(node => node.tagName === 'P');
+  if (!paragraphs.length) return html;
+  const anchor = paragraphs[Math.min(targetP, paragraphs.length) - 1];
 
   let adHtml = '';
   if (settings.carbon_serve_id && settings.enable_carbon_ads === 'true') {
@@ -72,22 +62,15 @@ function injectInArticleAd(html, settings = {}) {
         <span class="block mb-2 text-[10px] uppercase font-bold tracking-wider text-slate-400">Advertisement</span>
         ${settings.custom_ad_html_in_article}
       </div>`;
-  } else if (settings.enable_adsense === 'true' && settings.adsense_pub_id) {
-    adHtml = `
-      <div class="my-8 p-4 bg-white dark:bg-brand-surface rounded-2xl border border-slate-200 dark:border-brand-border text-center not-prose ad-slot-container">
-        <span class="block mb-2 text-[10px] uppercase font-bold tracking-wider text-slate-400">Advertisement</span>
-        <ins class="adsbygoogle"
-             style="display:block; text-align:center;"
-             data-ad-layout="in-article"
-             data-ad-format="fluid"
-             data-ad-client="${settings.adsense_pub_id}"
-             data-ad-slot="${settings.adsense_in_article_slot || '1234567890'}"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-      </div>`;
+  } else if (canShowAd(settings, settings.adsense_blog_inline_slot || settings.adsense_in_article_slot)) {
+    adHtml = await renderAd(settings, settings.adsense_blog_inline_slot || settings.adsense_in_article_slot, 'fluid');
   }
 
   if (!adHtml) return html;
-  return html.slice(0, splitIndex) + adHtml + html.slice(splitIndex);
+  anchor.after(JSDOM.fragment(adHtml));
+  const container = fragment.ownerDocument.createElement('div');
+  container.append(fragment);
+  return container.innerHTML;
 }
 
 // GET /blogs - Blog index with categories, search & pagination
@@ -195,7 +178,7 @@ router.get('/:slug', async (req, res) => {
     let renderedHtml = renderMarkdown(post.contentMarkdown);
 
     // Auto-inject in-article ad slot if configured in Settings
-    renderedHtml = injectInArticleAd(renderedHtml, res.locals.settings || {});
+    renderedHtml = await injectInArticleAd(renderedHtml, res.locals.settings || {});
 
     // Fetch related articles
     const rawRelated = await prisma.post.findMany({

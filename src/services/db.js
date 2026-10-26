@@ -356,6 +356,7 @@ const sqlitePrisma = {
   setting: createModelHandler('Setting'),
   analytics: createModelHandler('Analytics'),
   calculatorStat: createModelHandler('CalculatorStat'),
+  testimonial: createModelHandler('Testimonial'),
 
   async $disconnect() {
     if (sqliteDb) {

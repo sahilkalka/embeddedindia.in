@@ -67,7 +67,11 @@
     </div>
 
     <!-- Bottom CTA -->
-    <div class="bg-gradient-to-r from-brand-900 to-brand-800 rounded-3xl p-8 text-white border border-brand-700 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
+    
+        <!-- AdSense: Tool Sub-Page Banner Ad -->
+        <%- include('../../partials/ad-slot', { slot: settings.adsense_tools_bottom_slot, format: 'auto' }) %>
+
+        <div class="bg-gradient-to-r from-brand-900 to-brand-800 rounded-3xl p-8 text-white border border-brand-700 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
       <div>
         <h3 class="text-xl font-bold">Need Custom Embedded Firmware or Driver Architecture?</h3>
         <p class="text-xs text-slate-300 mt-1 max-w-xl">

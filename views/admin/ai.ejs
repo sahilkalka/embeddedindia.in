@@ -1,17 +1,19 @@
 <%- include('layout_top') %>
+<%- include('partials/settings-styles') %>
+<div class="settings-workspace admin-ai-workspace flex flex-col lg:flex-row rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<%- include('partials/settings-nav') %>
+<div class="settings-content min-w-0 flex-1">
 
-<div class="w-full space-y-8 mx-auto">
+<section id="ai-engine" class="settings-section p-6 sm:p-8 space-y-6">
   
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div class="module-heading flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4 gap-3">
     <div>
-      <h1 class="text-2xl font-black text-slate-900 dark:text-white flex items-center space-x-2">
+      <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
         <span>🤖 AI Model Configuration &amp; Technical Blog Engine</span>
-      </h1>
-      <p class="text-xs text-slate-500 mt-1">Configure NVIDIA NIM, OpenAI, Google Gemini, or Local Ollama models to auto-generate engineering articles</p>
+      </h2>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure NVIDIA NIM, OpenAI, Google Gemini, or Local Ollama models to auto-generate engineering articles</p>
     </div>
-    <span class="inline-flex items-center px-3 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 rounded-full text-xs font-bold uppercase tracking-wider">
-      Automated CMS Engine
-    </span>
+    <%- include('partials/module-save-button', { label: 'Save AI Configuration', formId: 'aiConfigForm' }) %>
   </div>
 
   <% if (saved) { %>
@@ -21,9 +23,9 @@
   <% } %>
 
   <!-- AI Model Settings Form -->
-  <form action="/admin/ai" method="POST" class="space-y-6">
+  <form id="aiConfigForm" action="/admin/ai" method="POST" class="space-y-6">
     
-    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
+    <div class="bg-slate-50 dark:bg-brand-dark rounded-2xl p-5 border border-slate-200 dark:border-brand-border space-y-5">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
         <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
           1. AI Provider &amp; Model Credentials
@@ -113,7 +115,7 @@
   </form>
 
   <!-- Technical Article Generator Studio -->
-  <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
+  <div class="bg-slate-50 dark:bg-brand-dark rounded-2xl p-5 border border-slate-200 dark:border-brand-border space-y-5">
     <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
       <div>
         <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
@@ -121,7 +123,7 @@
         </h2>
         <p class="text-xs text-slate-500 mt-0.5">Produces in-depth embedded engineering guides with code snippets, schematics, and DFM rules</p>
       </div>
-      <span class="text-[10px] bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-extrabold px-2 py-0.5 rounded uppercase">
+      <span class="drafting-status shrink-0 whitespace-nowrap text-[10px] bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 font-extrabold px-2 py-0.5 rounded uppercase">
         Live Drafting
       </span>
     </div>
@@ -191,7 +193,7 @@
 
   <!-- 3. Automated Scheduled Blog Publishing Engine & Topic Queue -->
   <form action="/admin/ai" method="POST" class="space-y-6">
-    <div class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+    <div class="bg-slate-50 dark:bg-brand-dark rounded-2xl p-5 border border-slate-200 dark:border-brand-border space-y-6">
       
       <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4 gap-3">
         <div>
@@ -199,7 +201,7 @@
             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               3. Automated Scheduled Blog Publishing Engine
             </h2>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase <%= schedulerSettings.enabled ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' %>">
+            <span class="scheduler-status shrink-0 whitespace-nowrap px-2 py-0.5 rounded-full text-[10px] font-black uppercase <%= schedulerSettings.enabled ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' %>">
               <%= schedulerSettings.enabled ? '● Active' : '○ Paused' %>
             </span>
           </div>
@@ -344,7 +346,7 @@
     </div>
   </form>
 
-</div>
+</section>
 
 <script>
   // 1. Provider presets handler
@@ -647,4 +649,5 @@
   }
 </script>
 
+</div></div>
 <%- include('layout_bottom') %>

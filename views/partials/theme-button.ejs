@@ -1,75 +1,28 @@
-<% const wrapperId = locals.wrapperId || 'palette-dropdown-wrapper'; %>
-<% const btnId = locals.btnId || 'palette-dropdown-btn'; %>
-<% const menuId = locals.menuId || 'palette-dropdown-menu'; %>
-<% const chevronId = locals.chevronId || 'palette-chevron'; %>
-<% const activeDotId = locals.activeDotId || 'active-scheme-dot'; %>
-<% const activeNameId = locals.activeNameId || 'active-palette-name'; %>
-<% const showSearch = locals.showSearch === true; %>
-
-<!-- Shared Theme & Accent Colors Grouped Pill -->
-<div class="relative inline-flex items-center theme-dropdown-wrapper flex-shrink-0" id="<%= wrapperId %>" style="display: inline-flex !important;">
-  <div role="group" aria-label="Search and appearance" class="theme-pill-container flex items-stretch rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition">
-    <% if (showSearch) { %>
-      <!-- Search Button (Icon on Top, Text Below) -->
-      <button id="header-search-btn" type="button" aria-label="<%= locals.searchLabel || 'Search (Ctrl/Cmd+K)' %>" title="Search (Ctrl/Cmd+K)" class="nav-icon-link group flex flex-col items-center justify-center min-w-[44px] sm:min-w-[56px] py-1 sm:py-1.5 px-1.5 sm:px-2.5 rounded-l-xl text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 cursor-pointer">
-        <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <span class="hidden sm:inline text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Search</span>
-      </button>
-      <div class="theme-pill-divider w-[1px] bg-slate-200 dark:bg-slate-700 self-stretch my-1.5"></div>
-    <% } %>
-
-    <!-- Theme Mode Toggle Button (Icon on Top, Text Below) -->
-    <button id="theme-toggle" type="button" aria-label="Toggle theme mode" title="Toggle dark/light mode" class="theme-toggle-btn nav-icon-link group flex flex-col items-center justify-center min-w-[44px] sm:min-w-[56px] py-1 sm:py-1.5 px-1.5 sm:px-2.5 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition duration-200 <%= showSearch ? '' : 'rounded-l-xl' %> cursor-pointer">
-      <div class="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
-        <!-- Moon Icon (for Light mode) -->
-        <svg id="theme-toggle-dark-icon" class="theme-dark-icon w-5 h-5 text-slate-700 dark:text-slate-200 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-        </svg>
-        <!-- Sun Icon (for Dark mode) -->
-        <svg id="theme-toggle-light-icon" class="theme-light-icon hidden w-5 h-5 text-amber-400 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-        </svg>
+<%
+const wrapperId = locals.wrapperId || 'palette-dropdown-wrapper';
+const btnId = locals.btnId || 'palette-dropdown-btn';
+const menuId = (locals.menuId || 'palette-dropdown-menu') + '-appearance';
+%>
+<div id="<%= wrapperId %>" class="appearance-control">
+  <% if (locals.showSearch) { %>
+  <button id="header-search-btn" type="button" aria-label="<%= locals.searchLabel || 'Search' %>" title="Search" class="appearance-search">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+  </button>
+  <% } %>
+  <button id="<%= btnId %>" type="button" aria-label="Appearance" aria-expanded="false" aria-controls="<%= menuId %>" class="appearance-trigger">
+    <svg class="appearance-mode-moon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20.4 15.4A9 9 0 0 1 8.6 3.6 9 9 0 1 0 20.4 15.4Z"/></svg>
+    <svg class="appearance-mode-sun" aria-hidden="true" hidden width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+    <span class="appearance-current-color" aria-hidden="true"></span>
+  </button>
+  <div id="<%= menuId %>" class="appearance-panel" hidden inert aria-label="Appearance settings">
+    <div class="appearance-panel-content">
+      <label class="appearance-mode"><span>Night mode</span><input id="theme-mode-switch" type="checkbox" role="switch" aria-label="Night mode"><span class="appearance-switch-track" aria-hidden="true"></span></label>
+      <div class="appearance-palettes">
+        <% colorThemes.forEach(preset => { %>
+        <button type="button" class="appearance-palette" data-scheme="<%= preset.key %>" aria-label="<%= preset.name %>" aria-pressed="false"><span class="appearance-swatch" style="--swatch:<%= preset.accent %>"><span class="appearance-check" aria-hidden="true">✓</span></span><span><%= preset.label || preset.name %></span></button>
+        <% }); %>
       </div>
-      <span class="hidden sm:inline text-xs font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Theme</span>
-      <span id="theme-toggle-label" class="theme-label sr-only">Dark mode</span>
-    </button>
-
-    <!-- Divider Line -->
-    <div class="theme-pill-divider w-[1px] bg-slate-200 dark:bg-slate-700 self-stretch my-1.5"></div>
-
-    <!-- Expandable Chevron Dropdown Trigger (Downward Arrow) -->
-    <button id="<%= btnId %>" type="button" aria-label="Palette colors" aria-expanded="false" title="Expand color palettes" class="theme-dropdown-btn flex items-center justify-center px-2 py-1 text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-r-xl transition cursor-pointer">
-      <svg id="<%= chevronId %>" class="theme-chevron w-4 h-4 transition-transform duration-200 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-      </svg>
-    </button>
-  </div>
-
-  <!-- Active scheme dot (helper) -->
-  <span id="<%= activeDotId %>" class="active-scheme-dot hidden"></span>
-
-  <!-- Horizontal Palette Expansion: Opens cleanly below Search and Theme button -->
-  <div id="<%= menuId %>" class="theme-dropdown-menu hidden absolute right-0 top-full mt-2 rounded-xl shadow-xl px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 whitespace-nowrap flex flex-row items-center gap-1.5 animate-in fade-in zoom-in-95 duration-150" style="z-index: 99999; flex-direction: row !important; align-items: center !important; gap: 6px !important; top: calc(100% + 8px) !important; right: 0 !important;">
-    <!-- Small Circular Color Pickers in Horizontal Row -->
-    <button type="button" data-scheme="cyber-emerald" title="Cyber Emerald" style="background-color: #007f5f !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-      <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-    </button>
-    <button type="button" data-scheme="vscode-theme" title="VS Code Inspired" style="background-color: #007ACC !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-      <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-    </button>
-    <button type="button" data-scheme="solar-amber" title="Solar Amber" style="background-color: #d97706 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-      <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-    </button>
-    <button type="button" data-scheme="quantum-cyan" title="Quantum Cyan" style="background-color: #0284c7 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-      <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-    </button>
-    <button type="button" data-scheme="titanium-slate" title="Titanium Slate" style="background-color: #475569 !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-      <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-    </button>
-    <button type="button" data-scheme="clean-light" title="Clean Enterprise" style="background-color: #2563eb !important; width: 15px !important; height: 15px !important; min-width: 15px !important; min-height: 15px !important; max-width: 15px !important; max-height: 15px !important; padding: 0 !important; border-radius: 9999px !important;" class="palette-btn rounded-full hover:scale-125 active:scale-95 transition flex items-center justify-center shadow-xs cursor-pointer border border-white/30 focus:outline-none flex-shrink-0">
-      <span class="scheme-check hidden text-white text-[8px] font-black select-none leading-none">✓</span>
-    </button>
+    </div>
   </div>
 </div>
+<script id="appearance-presets" type="application/json"><%- JSON.stringify(colorThemes).replace(/</g, '\u003c') %></script>

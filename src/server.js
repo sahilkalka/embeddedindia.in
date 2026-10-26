@@ -120,7 +120,7 @@ app.use(session({
 
 // Static files directory
 app.use(express.static(path.join(__dirname, '../public'), {
-  maxAge: '7d',
+  maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0,
   etag: true,
   lastModified: true
 }));
@@ -199,14 +199,65 @@ app.use((req, res, next) => {
 // 1. Homepage
 app.get('/', async (req, res) => {
   try {
-    const recentPosts = await prisma.post.findMany({
-      where: { status: 'published' },
-      orderBy: { publishedAt: 'desc' },
-      take: 3
-    });
-    res.render('pages/index', { recentPosts });
+    const [recentPosts, testimonials] = await Promise.all([
+      prisma.post.findMany({
+        where: { status: 'published' },
+        orderBy: { publishedAt: 'desc' },
+        take: 3
+      }),
+      prisma.testimonial.findMany({
+        where: { isApproved: true },
+        orderBy: { createdAt: 'desc' },
+        take: 6
+      })
+    ]);
+    res.render('pages/index', { recentPosts, testimonials });
   } catch (err) {
-    res.render('pages/index', { recentPosts: [] });
+    res.render('pages/index', { recentPosts: [], testimonials: [] });
+  }
+});
+
+// 1b. Public Client Review Submission
+app.get('/submit-review', (req, res) => {
+  res.locals.seo.title = 'Share Your Experience - Embedded India';
+  res.locals.seo.description = 'Submit a client review for Embedded India hardware and firmware engineering services.';
+  res.render('pages/submit-review', { successMsg: null, errorMsg: null });
+});
+
+app.post('/submit-review', async (req, res) => {
+  res.locals.seo.title = 'Share Your Experience - Embedded India';
+  res.locals.seo.description = 'Submit a client review for Embedded India hardware and firmware engineering services.';
+  
+  const { name, role, company, quote, rating, website_trap } = req.body;
+  if (website_trap) {
+    return res.render('pages/submit-review', { successMsg: 'Thank you for your feedback!', errorMsg: null });
+  }
+  if (!name || !role || !quote) {
+    return res.render('pages/submit-review', { successMsg: null, errorMsg: 'Please fill out all required fields marked with *.' });
+  }
+
+  try {
+    await prisma.testimonial.create({
+      data: {
+        name: String(name).trim().substring(0, 100),
+        role: String(role).trim().substring(0, 150),
+        company: company ? String(company).trim().substring(0, 100) : null,
+        quote: String(quote).trim().substring(0, 1000),
+        rating: Math.min(5, Math.max(1, parseInt(rating, 10) || 5)),
+        isApproved: false,
+        source: 'customer'
+      }
+    });
+    res.render('pages/submit-review', { 
+      successMsg: 'Thank you! Your review has been submitted and will appear on the homepage once verified by our engineering desk.', 
+      errorMsg: null 
+    });
+  } catch (err) {
+    console.error('Review submit error:', err);
+    res.render('pages/submit-review', { 
+      successMsg: null, 
+      errorMsg: 'An error occurred while saving your review. Please try again.' 
+    });
   }
 });
 
@@ -214,7 +265,7 @@ app.get('/', async (req, res) => {
 app.get('/services', (req, res) => {
   res.locals.seo.title = 'Services - Embedded India';
   res.locals.seo.description = 'Comprehensive hardware design, firmware development, BSP, IoT edge computing, and automotive embedded system services.';
-  res.render('pages/services');
+  res.render('pages/services', { services: servicesData });
 });
 
 // 2b. Service Detail Pages

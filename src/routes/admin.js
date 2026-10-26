@@ -1,5 +1,6 @@
 // src/routes/admin.js
 const express = require('express');
+const { parseFaqs } = require('../services/faqs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const slugify = require('slugify');
@@ -492,9 +493,36 @@ router.get('/settings', async (req, res) => {
 router.post('/settings', async (req, res) => {
   try {
     const fields = { ...req.body };
+    if (Object.prototype.hasOwnProperty.call(fields, 'custom_faqs')) {
+      try { fields.custom_faqs = JSON.stringify(parseFaqs(fields.custom_faqs)); }
+      catch (error) { return res.status(400).json({ success: false, error: error.message }); }
+    }
     const activeTab = fields._active_tab || '';
     delete fields._active_tab;
 
+    for (const key of Object.keys(fields).filter(key => /^adsense_.*_slot$/.test(key))) {
+      fields[key] = String(fields[key]).trim();
+      if (fields[key] && !/^\d{10}$/.test(fields[key])) {
+        return res.status(400).json({ success: false, error: 'AdSense slot IDs must contain exactly 10 digits.' });
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(fields, 'adsense_pub_id')) {
+      fields.adsense_pub_id = String(fields.adsense_pub_id).trim();
+      if (fields.adsense_pub_id && !/^ca-pub-\d{16}$/.test(fields.adsense_pub_id)) {
+        return res.status(400).json({ success: false, error: 'Enter a valid AdSense publisher ID (ca-pub- followed by 16 digits).' });
+      }
+    }
+    if (Object.prototype.hasOwnProperty.call(fields, 'calendly_url')) {
+      fields.calendly_url = String(fields.calendly_url).trim();
+      if (fields.calendly_url) {
+        try {
+          const bookingUrl = new URL(fields.calendly_url);
+          if (bookingUrl.protocol !== 'https:' || bookingUrl.username || bookingUrl.password) throw new Error('Invalid URL');
+        } catch {
+          return res.status(400).json({ success: false, error: 'Meeting booking URL must be a valid HTTPS address.' });
+        }
+      }
+    }
     if (Object.prototype.hasOwnProperty.call(fields, 'meta_pixel_id')) {
       fields.meta_pixel_id = String(fields.meta_pixel_id).trim();
       if (fields.meta_pixel_id && !/^\d{5,20}$/.test(fields.meta_pixel_id)) {
@@ -1228,6 +1256,136 @@ router.post('/ai/optimize-seo', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.json({ success: false, error: err.message });
+  }
+});
+
+
+// ====================================================================
+// TESTIMONIALS & CUSTOMER REVIEWS CRUD
+// ====================================================================
+
+// GET /admin/testimonials - List testimonials
+router.get('/testimonials', requireAuth, async (req, res) => {
+  try {
+    const testimonials = await prisma.testimonial.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    res.render('admin/testimonials/index', {
+      testimonials,
+      currentPath: '/admin/testimonials'
+    });
+  } catch (err) {
+    console.error('Error fetching testimonials:', err);
+    res.render('admin/testimonials/index', {
+      testimonials: [],
+      currentPath: '/admin/testimonials'
+    });
+  }
+});
+
+// GET /admin/testimonials/new - Create new form
+router.get('/testimonials/new', requireAuth, (req, res) => {
+  res.render('admin/testimonials/edit', {
+    testimonial: null,
+    currentPath: '/admin/testimonials'
+  });
+});
+
+// POST /admin/testimonials - Create testimonial
+router.post('/testimonials', requireAuth, async (req, res) => {
+  try {
+    const { name, role, company, quote, rating, isApproved } = req.body;
+    if (!name || !role || !quote) {
+      return res.status(400).send('Name, role, and quote are required.');
+    }
+    await prisma.testimonial.create({
+      data: {
+        name: String(name).trim().substring(0, 100),
+        role: String(role).trim().substring(0, 150),
+        company: company ? String(company).trim().substring(0, 100) : null,
+        quote: String(quote).trim().substring(0, 1000),
+        rating: Math.min(5, Math.max(1, parseInt(rating, 10) || 5)),
+        isApproved: isApproved === 'true' || isApproved === '1' || isApproved === true,
+        source: 'admin'
+      }
+    });
+    res.redirect('/admin/testimonials');
+  } catch (err) {
+    console.error('Error creating testimonial:', err);
+    res.status(500).send('Error creating testimonial: ' + err.message);
+  }
+});
+
+// GET /admin/testimonials/:id/edit - Edit form
+router.get('/testimonials/:id/edit', requireAuth, async (req, res) => {
+  try {
+    const testimonial = await prisma.testimonial.findUnique({
+      where: { id: req.params.id }
+    });
+    if (!testimonial) {
+      return res.redirect('/admin/testimonials');
+    }
+    res.render('admin/testimonials/edit', {
+      testimonial,
+      currentPath: '/admin/testimonials'
+    });
+  } catch (err) {
+    console.error('Error fetching testimonial for edit:', err);
+    res.redirect('/admin/testimonials');
+  }
+});
+
+// POST /admin/testimonials/:id - Update testimonial
+router.post('/testimonials/:id', requireAuth, async (req, res) => {
+  try {
+    const { name, role, company, quote, rating, isApproved } = req.body;
+    await prisma.testimonial.update({
+      where: { id: req.params.id },
+      data: {
+        name: String(name).trim().substring(0, 100),
+        role: String(role).trim().substring(0, 150),
+        company: company ? String(company).trim().substring(0, 100) : null,
+        quote: String(quote).trim().substring(0, 1000),
+        rating: Math.min(5, Math.max(1, parseInt(rating, 10) || 5)),
+        isApproved: isApproved === 'true' || isApproved === '1' || isApproved === true
+      }
+    });
+    res.redirect('/admin/testimonials');
+  } catch (err) {
+    console.error('Error updating testimonial:', err);
+    res.status(500).send('Error updating testimonial: ' + err.message);
+  }
+});
+
+// POST /admin/testimonials/:id/toggle-approve - Toggle approval
+router.post('/testimonials/:id/toggle-approve', requireAuth, async (req, res) => {
+  try {
+    const item = await prisma.testimonial.findUnique({
+      where: { id: req.params.id }
+    });
+    if (item) {
+      await prisma.testimonial.update({
+        where: { id: req.params.id },
+        data: { isApproved: !item.isApproved }
+      });
+    }
+    res.redirect('/admin/testimonials');
+  } catch (err) {
+    console.error('Error toggling approval:', err);
+    res.redirect('/admin/testimonials');
+  }
+});
+
+// POST /admin/testimonials/:id/delete - Delete testimonial
+router.post('/testimonials/:id/delete', requireAuth, async (req, res) => {
+  try {
+    await prisma.testimonial.delete({
+      where: { id: req.params.id }
+    });
+    res.redirect('/admin/testimonials');
+  } catch (err) {
+    console.error('Error deleting testimonial:', err);
+    res.redirect('/admin/testimonials');
   }
 });
 

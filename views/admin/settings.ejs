@@ -1,173 +1,6 @@
 <%- include('layout_top') %>
 
-<style>
-  .settings-workspace {
-    overflow: hidden;
-    background: #fff;
-  }
-  .dark .settings-workspace { background: var(--bg-surface, #13221e); }
-  .settings-taskbar {
-    display: flex;
-    flex-direction: column;
-    background: transparent;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 0.75rem;
-  }
-  .dark .settings-taskbar { border-color: #334155; }
-  .settings-content { min-width: 0; }
-  :root {
-    --bg-muted: #cbd5e1;
-  }
-  .dark {
-    --bg-muted: #334155;
-  }
-  .theme-toggle-switch {
-    transition: background-color 0.25s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  .theme-toggle-switch.is-checked {
-    background-color: var(--accent-primary, #059669) !important;
-  }
-  .theme-toggle-switch.is-unchecked {
-    background-color: var(--bg-muted, #cbd5e1) !important;
-  }
-  .settings-section {
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    overflow: hidden !important;
-  }
-  .settings-nav-btn {
-    display: flex;
-    min-height: 3.5rem;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    border-radius: 0.75rem;
-    padding: 0.45rem 0.25rem;
-    color: #64748b;
-    font-size: 0.72rem;
-    font-weight: 700;
-    line-height: 1.2;
-    text-align: center;
-    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
-  }
-  .dark .settings-nav-btn { color: #cbd5e1; }
-  .settings-nav-btn:hover { background: var(--bg-primary, #f1f5f9); color: var(--accent-primary, #059669); }
-  .settings-nav-btn.is-active {
-    background: var(--accent-primary, #059669);
-    color: #fff;
-    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent-primary, #059669) 24%, transparent);
-  }
-  .settings-nav-btn:focus-visible {
-    outline: 2px solid var(--accent-primary, #059669);
-    outline-offset: 2px;
-  }
-  .settings-nav-icon { font-size: 1.2rem; line-height: 1; }
-  .settings-nav-label {
-    max-width: 100%;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
-    word-break: break-word;
-  }
-  .palette-picker-panel {
-    border: 1px solid #e2e8f0;
-    border-radius: 1rem;
-    padding: 0.875rem;
-    background: #f8fafc;
-    color: #0f172a;
-  }
-  .palette-picker-heading { color: #0f172a !important; }
-  .palette-card {
-    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.2s ease;
-    will-change: transform;
-  }
-  .palette-card:hover {
-    transform: translateY(-4px) scale(1.03);
-  }
-  .palette-card:active {
-    transform: scale(0.97);
-  }
-  .palette-picker-panel .palette-card {
-    background: #fff;
-    border-color: #e2e8f0;
-    color: #0f172a;
-  }
-  .palette-picker-panel .palette-card-title { color: #0f172a !important; }
-  .palette-picker-panel .palette-card-divider { border-color: #e2e8f0; }
-  .palette-picker-panel .palette-card-edit {
-    background: #f1f5f9;
-    color: #0f172a;
-  }
-  .palette-picker-panel .palette-card-edit:hover { border-color: var(--accent-primary, #059669); }
-  .palette-picker-panel .palette-card-active {
-    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, #fff);
-  }
-  .palette-picker-panel .palette-drawer {
-    background: #fff;
-    border-color: #e2e8f0;
-    color: #0f172a;
-  }
-  .palette-picker-panel .palette-drawer-heading { color: var(--accent-primary, #059669); }
-  .palette-picker-panel .palette-drawer-muted { color: #64748b; }
-  .palette-picker-panel .palette-drawer-divider { border-color: #e2e8f0; }
-  .palette-picker-panel .palette-drawer-input {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    color: #0f172a;
-  }
-  .dark .palette-picker-panel {
-    border-color: var(--border-color, #334155);
-    background: var(--bg-primary, #0f172a);
-    color: var(--text-primary, #f8fafc);
-  }
-  .dark .palette-picker-heading,
-  .dark .palette-picker-panel .palette-card-title { color: var(--text-primary, #f8fafc) !important; }
-  .dark .palette-picker-panel .palette-card {
-    background: var(--bg-surface, #1e293b);
-    border-color: var(--border-color, #334155);
-    color: var(--text-primary, #f8fafc);
-  }
-  .dark .palette-picker-panel .palette-card-divider,
-  .dark .palette-picker-panel .palette-drawer-divider { border-color: var(--border-color, #334155); }
-  .dark .palette-picker-panel .palette-card-edit,
-  .dark .palette-picker-panel .palette-drawer-input {
-    background: var(--bg-primary, #0f172a);
-    border-color: var(--border-color, #334155);
-    color: var(--text-primary, #f8fafc);
-  }
-  .dark .palette-picker-panel .palette-card-active {
-    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, var(--bg-surface, #1e293b));
-  }
-  .dark .palette-picker-panel .palette-drawer {
-    background: var(--bg-surface, #1e293b);
-    border-color: var(--border-color, #334155);
-    color: var(--text-primary, #f8fafc);
-  }
-  .dark .palette-picker-panel .palette-drawer-muted { color: var(--text-muted, #94a3b8); }
-  .dark .palette-picker-panel .palette-drawer-input { color: var(--text-primary, #f8fafc); }
-  .palette-card-active {
-    border-color: var(--palette-accent, var(--accent-primary, #059669)) !important;
-    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, transparent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 40%, transparent), 0 8px 24px -4px color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 30%, transparent) !important;
-  }
-  @media (min-width: 1024px) {
-    .settings-workspace { min-height: 38rem; }
-    .settings-taskbar {
-      width: 7.5rem;
-      flex-shrink: 0;
-      border-bottom: 0;
-      border-right: 1px solid #e2e8f0;
-      padding: 1rem 0.75rem;
-    }
-    .dark .settings-taskbar { border-color: #334155; }
-    .settings-content { flex: 1; }
-    .settings-nav-btn { min-height: 3.75rem; font-size: 0.72rem; }
-  }
-</style>
+<%- include('partials/settings-styles') %>
 
 <div class="w-full mx-auto space-y-6 pb-20">
 
@@ -186,46 +19,7 @@
 
   <!-- Taskbar-style settings navigation -->
   <div class="settings-workspace flex flex-col lg:flex-row rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
-    <aside id="settingsLeftSidebar" class="settings-taskbar flex-shrink-0">
-      <div class="hidden lg:flex flex-col items-center gap-1 border-b border-slate-200 dark:border-slate-700 pb-3 mb-2">
-        <div class="w-9 h-9 rounded-xl bg-brand-500 text-white flex items-center justify-center font-black text-xs shadow-sm">EI</div>
-        <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400">SETTINGS</span>
-      </div>
-      <nav class="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-1 gap-1.5" id="settings-sidebar-nav" aria-label="Settings modules">
-        <button type="button" data-settings-tab="theme-engine" aria-label="Themes" title="Themes &amp; Palettes" aria-current="page" class="settings-nav-btn is-active">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">palette</span>
-          <span class="settings-nav-label">Themes</span>
-        </button>
-        <button type="button" data-settings-tab="site-customizer" aria-label="Customizer" title="Site Customizer" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">tune</span>
-          <span class="settings-nav-label">Customizer</span>
-        </button>
-        <button type="button" data-settings-tab="feature-flags" aria-label="Flags and preview" title="Feature Flags &amp; Preview" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">flag</span>
-          <span class="settings-nav-label">Flags &amp; Live</span>
-        </button>
-        <button type="button" data-settings-tab="seo-scripts" aria-label="Dynamic SEO" title="Dynamic SEO &amp; AI" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">query_stats</span>
-          <span class="settings-nav-label">SEO</span>
-        </button>
-        <button type="button" data-settings-tab="monetization-ads" aria-label="Monetization" title="Monetization &amp; Ads" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">payments</span>
-          <span class="settings-nav-label">Monetization</span>
-        </button>
-        <button type="button" data-settings-tab="newsletter-config" aria-label="Newsletter" title="Newsletter Configuration" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">mail</span>
-          <span class="settings-nav-label">Newsletter</span>
-        </button>
-        <button type="button" data-settings-tab="smtp-settings" aria-label="SMTP and routing" title="SMTP &amp; Recipient Routing" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">outgoing_mail</span>
-          <span class="settings-nav-label">SMTP</span>
-        </button>
-        <button type="button" data-settings-tab="team-accounts" aria-label="Staff accounts" title="Staff Accounts &amp; Access" class="settings-nav-btn">
-          <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">group</span>
-          <span class="settings-nav-label">Staff</span>
-        </button>
-      </nav>
-    </aside>
+    <%- include('partials/settings-nav') %>
 
     <!-- RIGHT CONTENT AREA -->
     <div class="settings-content flex-1 min-w-0">
@@ -233,585 +27,8 @@
     <!-- ============================================================== -->
     <!-- MODULE 1: DYNAMIC THEME & COLOR PALETTE ENGINE (SIDE-BY-SIDE) -->
     <!-- ============================================================== -->
-    <section id="theme-engine" class="settings-section bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
-      
-      <form class="settings-module-form space-y-6" action="/admin/settings" method="POST" data-module="Theme &amp; Palettes">
-        <input type="hidden" name="_active_tab" value="theme-engine">
-
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4 gap-3">
-          <div>
-            <h2 class="text-lg font-black text-slate-900 dark:text-white flex items-center space-x-2">
-              <span>🎨 Dynamic Theme &amp; Color Palette Engine</span>
-            </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Select a unified palette on the left to immediately preview real-time component updates on the right. Preview night mode is local and does not change the live site.</p>
-          </div>
-          <div class="flex items-center space-x-2 flex-shrink-0">
-            <button type="submit" title="Save Theme &amp; Palettes" aria-label="Save Theme &amp; Palettes" class="nav-icon-link group flex flex-col items-center justify-center min-w-[56px] sm:min-w-[62px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer flex-shrink-0">
-              <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">save</span>
-              <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Save</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 2-COLUMN SPLIT: LEFT LIST OF PALETTES (5 cols) | RIGHT STICKY PREVIEW (7 cols) -->
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
-          
-          <!-- LEFT COLUMN: VERTICAL LIST OF PALETTE CARDS -->
-          <div class="palette-picker-panel xl:col-span-5 space-y-3.5">
-            <label class="palette-picker-heading block text-xs font-bold uppercase tracking-wider mb-2">
-              Choose Active Public &amp; Admin Palette:
-            </label>
-
-<% 
-            const PALETTES_LIST = [
-              {
-                key: 'cyber-emerald',
-                num: '1',
-                name: 'Cyber Emerald',
-                badge: 'Default B2B',
-                badgeClass: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
-                borderActiveClass: 'border-brand-500 bg-brand-50/20 dark:bg-brand-900/20 ring-2 ring-brand-500/20',
-                radioClass: 'text-brand-500 focus:ring-brand-500',
-                activeLabelColor: 'text-brand-600 dark:text-accent',
-                defaults: { bgPrimary: '#0b1412', bgSurface: '#13221e', accentPrimary: '#059669', accentSecondary: '#55a630', textPrimary: '#f1f5f9', borderColor: '#1e3831' },
-                isActive: (!settings.active_theme_palette || settings.active_theme_palette === 'cyber-emerald' || settings.active_theme_palette === 'emerald' || settings.active_theme_palette === 'pcb-emerald-green')
-              },
-              {
-                key: 'quantum-cyan',
-                num: '2',
-                name: 'Quantum Cyan',
-                badge: 'Quantum',
-                badgeClass: 'bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300',
-                borderActiveClass: 'border-sky-500 bg-sky-50/20 dark:bg-sky-950/20 ring-2 ring-sky-500/20',
-                radioClass: 'text-sky-500 focus:ring-sky-500',
-                activeLabelColor: 'text-sky-600 dark:text-sky-400',
-                defaults: { bgPrimary: '#08101a', bgSurface: '#0f1d2e', accentPrimary: '#0ea5e9', accentSecondary: '#06b6d4', textPrimary: '#f8fafc', borderColor: '#172a42' },
-                isActive: (settings.active_theme_palette === 'quantum-cyan' || settings.active_theme_palette === 'cyan' || settings.active_theme_palette === 'silicon-dark-blue')
-              },
-              {
-                key: 'titanium-slate',
-                num: '3',
-                name: 'Titanium Slate',
-                badge: 'Precision',
-                badgeClass: 'bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-300',
-                borderActiveClass: 'border-slate-500 bg-slate-100/50 dark:bg-slate-800/40 ring-2 ring-slate-500/20',
-                radioClass: 'text-slate-600 focus:ring-slate-600',
-                activeLabelColor: 'text-slate-700 dark:text-slate-300',
-                defaults: { bgPrimary: '#090d16', bgSurface: '#0f172a', accentPrimary: '#38bdf8', accentSecondary: '#64748b', textPrimary: '#f8fafc', borderColor: '#334155' },
-                isActive: (settings.active_theme_palette === 'titanium-slate' || settings.active_theme_palette === 'slate' || settings.active_theme_palette === 'spacegrey' || settings.active_theme_palette === 'automotive-slate-red')
-              },
-              {
-                key: 'solar-amber',
-                num: '4',
-                name: 'Solar Amber',
-                badge: 'Industrial',
-                badgeClass: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300',
-                borderActiveClass: 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/20 ring-2 ring-amber-500/20',
-                radioClass: 'text-amber-500 focus:ring-amber-500',
-                activeLabelColor: 'text-amber-600 dark:text-amber-400',
-                defaults: { bgPrimary: '#18181b', bgSurface: '#27272a', accentPrimary: '#f59e0b', accentSecondary: '#fbbf24', textPrimary: '#fafafa', borderColor: '#3f3f46' },
-                isActive: (settings.active_theme_palette === 'solar-amber' || settings.active_theme_palette === 'industrial-amber-charcoal')
-              },
-              {
-                key: 'vscode-theme',
-                num: '5',
-                name: 'VS Code Inspired',
-                badge: 'Developer',
-                badgeClass: 'bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300',
-                borderActiveClass: 'border-sky-500 bg-sky-50/20 dark:bg-sky-950/20 ring-2 ring-sky-500/20',
-                radioClass: 'text-sky-500 focus:ring-sky-500',
-                activeLabelColor: 'text-sky-600 dark:text-sky-400',
-                defaults: { bgPrimary: '#1E1E1E', bgSurface: '#252526', accentPrimary: '#007ACC', accentSecondary: '#3794FF', textPrimary: '#CCCCCC', borderColor: '#3E3E42' },
-                isActive: (settings.active_theme_palette === 'vscode-theme' || settings.active_theme_palette === 'supernova-violet')
-              },
-              {
-                key: 'clean-light',
-                num: '6',
-                name: 'Clean Enterprise',
-                badge: 'Enterprise',
-                badgeClass: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300',
-                borderActiveClass: 'border-blue-600 bg-blue-50/20 dark:bg-blue-950/20 ring-2 ring-blue-500/20',
-                radioClass: 'text-blue-600 focus:ring-blue-600',
-                activeLabelColor: 'text-blue-600 dark:text-blue-400',
-                defaults: { bgPrimary: '#f8fafc', bgSurface: '#ffffff', accentPrimary: '#2563eb', accentSecondary: '#3b82f6', textPrimary: '#0f172a', borderColor: '#e2e8f0' },
-                isActive: (settings.active_theme_palette === 'clean-light' || settings.active_theme_palette === 'clean-light-enterprise')
-              }
-            ];
-            %>
-
-            <% let customPalettes = [];
-            if (settings.custom_palettes_json) {
-              try { customPalettes = JSON.parse(settings.custom_palettes_json); } catch(e){}
-            }
-            customPalettes.forEach((cp, idx) => {
-              PALETTES_LIST.push({
-                key: cp.key,
-                num: String(7 + idx),
-                name: cp.name,
-                badge: cp.badge || 'Custom',
-                badgeClass: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300',
-                borderActiveClass: 'border-brand-500 bg-brand-50/20 dark:bg-brand-900/20 ring-2 ring-brand-500/20',
-                radioClass: 'text-brand-500 focus:ring-brand-500',
-                activeLabelColor: 'text-brand-600 dark:text-accent',
-                defaults: cp.defaults,
-                isActive: (settings.active_theme_palette === cp.key)
-              });
-            });
-
-            const AVAILABLE_PALETTES = PALETTES_LIST.filter(p => settings[`palette_deleted_${p.key}`] !== 'true'); %>
-            <% const DELETED_PALETTES = PALETTES_LIST.filter(p => settings[`palette_deleted_${p.key}`] === 'true'); %>
-            <% AVAILABLE_PALETTES.forEach(p => {
-              const curBgP = settings['palette_override_' + p.key + '_bgPrimary'] || p.defaults.bgPrimary;
-              const curBgS = settings['palette_override_' + p.key + '_bgSurface'] || p.defaults.bgSurface;
-              const curAcP = settings['palette_override_' + p.key + '_accentPrimary'] || p.defaults.accentPrimary;
-              const curAcS = settings['palette_override_' + p.key + '_accentSecondary'] || p.defaults.accentSecondary;
-              const curTxP = settings['palette_override_' + p.key + '_textPrimary'] || p.defaults.textPrimary;
-            %>
-            <div data-palette-card="<%= p.key %>" style="--palette-accent: <%= curAcP %>" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= p.isActive ? 'palette-card-active' : 'border-slate-200 dark:border-brand-border bg-white dark:bg-brand-surface hover:border-slate-300' %>" onclick="selectPalette('<%= p.key %>')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" aria-label="<%= p.name %>" name="active_theme_palette" value="<%= p.key %>" <%= p.isActive ? 'checked' : '' %> onchange="selectPalette('<%= p.key %>')" class="w-4 h-4 <%= p.radioClass %>">
-                  <span class="palette-card-title text-xs font-black"><%= p.num %>. <%= p.name %></span>
-                </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold <%= p.badgeClass %>"><%= p.badge %></span>
-              </div>
-              <div class="palette-card-divider flex items-center justify-between mt-3 pt-2 border-t">
-                <div class="flex items-center space-x-1.5">
-                  <span class="swatch-bg w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:<%= curBgP %>" title="BG: <%= curBgP %>"></span>
-                  <span class="swatch-surface w-5 h-5 rounded-md shadow-xs border border-white/20" style="background:<%= curBgS %>" title="Surface: <%= curBgS %>"></span>
-                  <span class="swatch-primary w-5 h-5 rounded-md shadow-xs" style="background:<%= curAcP %>" title="Primary: <%= curAcP %>"></span>
-                  <span class="swatch-secondary w-5 h-5 rounded-md shadow-xs" style="background:<%= curAcS %>" title="Secondary: <%= curAcS %>"></span>
-                  <span class="swatch-text w-5 h-5 rounded-md shadow-xs border border-slate-300 dark:border-slate-700" style="background:<%= curTxP %>" title="Text: <%= curTxP %>"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold <%= p.activeLabelColor %> <%= p.isActive ? '' : 'hidden' %>">✓ Active</span>
-                  <button type="button" onclick="event.stopPropagation(); togglePaletteDrawer('<%= p.key %>');" class="nav-icon-link group flex flex-col items-center justify-center min-w-[48px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs transition cursor-pointer flex-shrink-0" title="Edit Palette">
-                    <span class="material-symbols-rounded text-base transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">edit</span>
-                    <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Edit</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Inline Expandable Palette Color Drawer -->
-              <div id="drawer-<%= p.key %>" class="palette-drawer hidden mt-3 p-4 rounded-2xl border space-y-3.5 shadow-xl animate-in fade-in zoom-in-95 duration-200" onclick="event.stopPropagation();">
-                <div class="palette-drawer-divider flex items-center justify-between border-b pb-2">
-                  <div class="flex items-center space-x-2">
-                    <span class="palette-drawer-heading text-xs font-black uppercase tracking-wider">
-                      🎨 Edit <%= p.name %> Colors
-                    </span>
-                    <span class="palette-drawer-muted text-[10px] font-mono">Live Binding</span>
-                  </div>
-                  <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="palette-drawer-muted text-xs hover:opacity-75 p-1 rounded-lg">✕</button>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                  <div>
-                    <label class="palette-drawer-muted block font-semibold mb-1">Canvas BG</label>
-                    <div class="flex items-center space-x-1">
-                      <input type="color" id="picker_<%= p.key %>_bgPrimary" value="<%= curBgP %>" onchange="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_bgPrimary" value="<%= curBgP %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgPrimary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="palette-drawer-muted block font-semibold mb-1">Surface</label>
-                    <div class="flex items-center space-x-1">
-                      <input type="color" id="picker_<%= p.key %>_bgSurface" value="<%= curBgS %>" onchange="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_bgSurface" value="<%= curBgS %>" oninput="onDrawerColorChange('<%= p.key %>', 'bgSurface', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="palette-drawer-muted block font-semibold mb-1">Primary Accent</label>
-                    <div class="flex items-center space-x-1">
-                      <input type="color" id="picker_<%= p.key %>_accentPrimary" value="<%= curAcP %>" onchange="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_accentPrimary" value="<%= curAcP %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentPrimary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="palette-drawer-muted block font-semibold mb-1">Secondary Accent</label>
-                    <div class="flex items-center space-x-1">
-                      <input type="color" id="picker_<%= p.key %>_accentSecondary" value="<%= curAcS %>" onchange="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_accentSecondary" value="<%= curAcS %>" oninput="onDrawerColorChange('<%= p.key %>', 'accentSecondary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
-                    </div>
-                  </div>
-
-                  <div class="sm:col-span-2">
-                    <label class="palette-drawer-muted block font-semibold mb-1">Text Primary</label>
-                    <div class="flex items-center space-x-1">
-                      <input type="color" id="picker_<%= p.key %>_textPrimary" value="<%= curTxP %>" onchange="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="w-7 h-7 rounded border border-slate-600 bg-transparent cursor-pointer">
-                      <input type="text" id="hex_<%= p.key %>_textPrimary" value="<%= curTxP %>" oninput="onDrawerColorChange('<%= p.key %>', 'textPrimary', this.value)" class="palette-drawer-input w-full px-2 py-1 rounded border font-mono text-[11px]">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="palette-drawer-divider flex items-center justify-between pt-2.5 border-t">
-                  <div class="flex items-center gap-2">
-                    <button type="button" onclick="event.stopPropagation(); resetPalette('<%= p.key %>')" class="nav-icon-link group flex flex-col items-center justify-center min-w-[50px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs transition cursor-pointer flex-shrink-0" title="Restore original colors">
-                      <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">restart_alt</span>
-                      <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Reset</span>
-                    </button>
-                    <button type="button" onclick="event.stopPropagation(); deletePalette('<%= p.key %>')" class="nav-icon-link group flex flex-col items-center justify-center min-w-[50px] py-1 px-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 shadow-xs transition cursor-pointer flex-shrink-0" title="Remove this palette from the picker">
-                      <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">delete</span>
-                      <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Delete</span>
-                    </button>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <button type="button" onclick="closePaletteDrawer('<%= p.key %>')" class="nav-icon-link group flex flex-col items-center justify-center min-w-[50px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs transition cursor-pointer flex-shrink-0">
-                      <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">close</span>
-                      <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Cancel</span>
-                    </button>
-                    <button type="button" onclick="savePaletteChanges('<%= p.key %>')" title="Save Palette Changes" aria-label="Save Palette Changes" class="nav-icon-link group flex flex-col items-center justify-center min-w-[50px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer flex-shrink-0">
-                      <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">save</span>
-                      <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Save</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <% }); %>
-            <% if (DELETED_PALETTES.length) { %>
-              <div class="p-4 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-brand-dark">
-                <h3 class="text-xs font-black text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  <span class="material-symbols-rounded text-base" aria-hidden="true">palette</span>
-                  Removed palettes
-                </h3>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Restore a palette to bring back its original colors.</p>
-                <div class="flex flex-wrap gap-2 mt-3">
-                  <% DELETED_PALETTES.forEach(p => { %>
-                    <button type="button" onclick="resetPalette('<%= p.key %>')" class="nav-icon-link group flex flex-col items-center justify-center min-w-[68px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:border-brand-500 shadow-xs transition cursor-pointer">
-                      <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">restore</span>
-                      <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Restore <%= p.name %></span>
-                    </button>
-                  <% }); %>
-                </div>
-              </div>
-            <% } %>
-            <!-- 7. Custom Hex Engine Card -->
-            <% const isCustom = (settings.active_theme_palette === 'custom'); %>
-            <div data-palette-card="custom" style="--palette-accent: <%= settings.palette_accent_primary || '#059669' %>" class="palette-card p-4 rounded-2xl border-2 transition cursor-pointer <%= isCustom ? 'palette-card-active' : 'border-slate-200 dark:border-brand-border hover:border-slate-300' %>" onclick="selectPalette('custom')">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2.5">
-                  <input type="radio" aria-label="Custom palette" name="active_theme_palette" value="custom" <%= isCustom ? 'checked' : '' %> onchange="selectPalette('custom')" class="w-4 h-4 text-purple-600 focus:ring-purple-600">
-                  <span class="text-xs font-black text-slate-900 dark:text-white">7. Custom Hex Engine</span>
-                </div>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300">Customized</span>
-              </div>
-              <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100 dark:border-slate-800">
-                <div class="flex items-center space-x-1.5">
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-400" id="chip_bg_primary" style="background:<%= settings.palette_bg_primary || '#0b1412' %>"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-400" id="chip_bg_surface" style="background:<%= settings.palette_bg_surface || '#11221e' %>"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-400" id="chip_accent_primary" style="background:<%= settings.palette_accent_primary || '#059669' %>"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-400" id="chip_accent_secondary" style="background:<%= settings.palette_accent_secondary || '#55a630' %>"></span>
-                  <span class="w-5 h-5 rounded-md shadow-xs border border-slate-400" id="chip_text_primary" style="background:<%= settings.palette_text_primary || '#f1f5f9' %>"></span>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <span class="palette-active-label text-[10px] font-bold text-purple-600 dark:text-purple-400 <%= isCustom ? '' : 'hidden' %>">✓ Active</span>
-                  <span class="text-[10px] text-purple-600 dark:text-purple-400 font-bold">Live Hexes</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- ADD NEW COLOR SCHEME BUTTON -->
-            <div class="pt-2 flex items-center justify-between">
-              <button type="button" onclick="openCreatePaletteModal()" class="nav-icon-link group flex flex-col items-center justify-center min-w-[76px] py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer flex-shrink-0">
-                <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">add_circle</span>
-                <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">New Scheme</span>
-              </button>
-              <span class="text-[11px] text-slate-400">Custom palettes persist to database and sync live</span>
-            </div>
-
-            <!-- MODAL: ADD NEW COLOR SCHEME -->
-            <div id="createPaletteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-                  <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center space-x-2">
-                    <span>🎨</span> <span>Create Custom Color Scheme</span>
-                  </h3>
-                  <button type="button" onclick="closeCreatePaletteModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-                </div>
-
-                <div class="space-y-3 text-xs">
-                  <div>
-                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Scheme Name *</label>
-                    <input type="text" id="new_palette_name" placeholder="e.g. Nordic Frost, Cyberpunk Neon" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:ring-1 focus:ring-brand-500">
-                  </div>
-
-                  <div>
-                    <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Badge Tag</label>
-                    <input type="text" id="new_palette_badge" placeholder="e.g. Minimalist, Dark" value="Custom" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-semibold focus:ring-1 focus:ring-brand-500">
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-3 pt-2">
-                    <div>
-                      <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Primary Accent</label>
-                      <div class="flex items-center space-x-1.5">
-                        <input type="color" id="picker_new_accentPrimary" value="#0ea5e9" onchange="document.getElementById('input_new_accentPrimary').value = this.value" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
-                        <input type="text" id="input_new_accentPrimary" value="#0ea5e9" oninput="document.getElementById('picker_new_accentPrimary').value = this.value" class="w-full px-2 py-1.5 rounded-lg border text-xs font-mono">
-                      </div>
-                    </div>
-                    <div>
-                      <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Secondary Accent</label>
-                      <div class="flex items-center space-x-1.5">
-                        <input type="color" id="picker_new_accentSecondary" value="#38bdf8" onchange="document.getElementById('input_new_accentSecondary').value = this.value" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
-                        <input type="text" id="input_new_accentSecondary" value="#38bdf8" oninput="document.getElementById('picker_new_accentSecondary').value = this.value" class="w-full px-2 py-1.5 rounded-lg border text-xs font-mono">
-                      </div>
-                    </div>
-                    <div>
-                      <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Main Background</label>
-                      <div class="flex items-center space-x-1.5">
-                        <input type="color" id="picker_new_bgPrimary" value="#090d16" onchange="document.getElementById('input_new_bgPrimary').value = this.value" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
-                        <input type="text" id="input_new_bgPrimary" value="#090d16" oninput="document.getElementById('picker_new_bgPrimary').value = this.value" class="w-full px-2 py-1.5 rounded-lg border text-xs font-mono">
-                      </div>
-                    </div>
-                    <div>
-                      <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Card / Surface</label>
-                      <div class="flex items-center space-x-1.5">
-                        <input type="color" id="picker_new_bgSurface" value="#111827" onchange="document.getElementById('input_new_bgSurface').value = this.value" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
-                        <input type="text" id="input_new_bgSurface" value="#111827" oninput="document.getElementById('picker_new_bgSurface').value = this.value" class="w-full px-2 py-1.5 rounded-lg border text-xs font-mono">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Primary Text</label>
-                    <div class="flex items-center space-x-1.5">
-                      <input type="color" id="picker_new_textPrimary" value="#f8fafc" onchange="document.getElementById('input_new_textPrimary').value = this.value" class="w-8 h-8 rounded border border-slate-300 cursor-pointer">
-                      <input type="text" id="input_new_textPrimary" value="#f8fafc" oninput="document.getElementById('picker_new_textPrimary').value = this.value" class="w-full px-2 py-1.5 rounded-lg border text-xs font-mono">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <button type="button" onclick="closeCreatePaletteModal()" class="nav-icon-link group flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs transition cursor-pointer">
-                    <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">close</span>
-                    <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Cancel</span>
-                  </button>
-                  <button type="button" onclick="submitCreatePalette()" title="Save Scheme" aria-label="Save Scheme" class="nav-icon-link group flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer">
-                    <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">save</span>
-                    <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Save</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- CUSTOM HEX ENGINE FINE-TUNING BOX -->
-            <div id="customHexEditorBox" class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                  🔧 Fine-Tune Custom Hex Values
-                </span>
-                <span class="text-[10px] text-slate-500 font-mono">Injected into CSS :root</span>
-              </div>
-
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-                <div>
-                  <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Canvas BG</label>
-                  <div class="flex items-center space-x-1">
-                    <input type="color" aria-label="Primary background color" id="picker_palette_bg_primary" value="<%= settings.palette_bg_primary || '#0b1412' %>" onchange="syncColorInput('palette_bg_primary', this.value)" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-700 cursor-pointer">
-                    <input type="text" aria-label="Primary background hex value" id="palette_bg_primary" name="palette_bg_primary" value="<%= settings.palette_bg_primary || '#0b1412' %>" oninput="syncColorPicker('picker_palette_bg_primary', this.value)" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Surface</label>
-                  <div class="flex items-center space-x-1">
-                    <input type="color" aria-label="Surface background color" id="picker_palette_bg_surface" value="<%= settings.palette_bg_surface || '#13221e' %>" onchange="syncColorInput('palette_bg_surface', this.value)" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-700 cursor-pointer">
-                    <input type="text" aria-label="Surface background hex value" id="palette_bg_surface" name="palette_bg_surface" value="<%= settings.palette_bg_surface || '#13221e' %>" oninput="syncColorPicker('picker_palette_bg_surface', this.value)" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Primary Accent</label>
-                  <div class="flex items-center space-x-1">
-                    <input type="color" aria-label="Primary accent color" id="picker_palette_accent_primary" value="<%= settings.palette_accent_primary || '#059669' %>" onchange="syncColorInput('palette_accent_primary', this.value)" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-700 cursor-pointer">
-                    <input type="text" aria-label="Primary accent hex value" id="palette_accent_primary" name="palette_accent_primary" value="<%= settings.palette_accent_primary || '#059669' %>" oninput="syncColorPicker('picker_palette_accent_primary', this.value)" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Secondary Accent</label>
-                  <div class="flex items-center space-x-1">
-                    <input type="color" aria-label="Secondary accent color" id="picker_palette_accent_secondary" value="<%= settings.palette_accent_secondary || '#55a630' %>" onchange="syncColorInput('palette_accent_secondary', this.value)" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-700 cursor-pointer">
-                    <input type="text" aria-label="Secondary accent hex value" id="palette_accent_secondary" name="palette_accent_secondary" value="<%= settings.palette_accent_secondary || '#55a630' %>" oninput="syncColorPicker('picker_palette_accent_secondary', this.value)" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
-                  </div>
-                </div>
-
-                <div class="sm:col-span-2">
-                  <label class="block font-semibold text-slate-600 dark:text-slate-400 mb-1">Text Primary</label>
-                  <div class="flex items-center space-x-1">
-                    <input type="color" aria-label="Primary text color" id="picker_palette_text_primary" value="<%= settings.palette_text_primary || '#f1f5f9' %>" onchange="syncColorInput('palette_text_primary', this.value)" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-700 cursor-pointer">
-                    <input type="text" aria-label="Primary text hex value" id="palette_text_primary" name="palette_text_primary" value="<%= settings.palette_text_primary || '#f1f5f9' %>" oninput="syncColorPicker('picker_palette_text_primary', this.value)" class="w-full px-2 py-1 rounded bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 font-mono text-[11px]">
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Micro-interaction Bounce Level -->
-            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-2 text-xs">
-              <label class="block font-bold text-slate-700 dark:text-slate-300">Micro-Interaction Bounce Level</label>
-              <select aria-label="Animation intensity" name="theme_bounce_intensity" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-900 dark:text-white">
-                <option value="bouncy" <%= settings.theme_bounce_intensity === 'bouncy' || !settings.theme_bounce_intensity ? 'selected' : '' %>>Modern Bouncy (Spring Physics cubic-bezier)</option>
-                <option value="subtle" <%= settings.theme_bounce_intensity === 'subtle' ? 'selected' : '' %>>Subtle Smooth (Cubic Ease)</option>
-                <option value="none" <%= settings.theme_bounce_intensity === 'none' ? 'selected' : '' %>>Minimalist (Standard Transitions)</option>
-              </select>
-            </div>
-            <script>
-              (function() {
-                try {
-                  const curTheme = localStorage.getItem('color-palette') || document.documentElement.getAttribute('data-palette');
-                  if (curTheme) {
-                    const canonicalMap = {
-                      'emerald': 'cyber-emerald',
-                      'pcb-emerald-green': 'cyber-emerald',
-                      'cyan': 'quantum-cyan',
-                      'silicon-dark-blue': 'quantum-cyan',
-                      'slate': 'titanium-slate',
-                      'spacegrey': 'titanium-slate',
-                      'automotive-slate-red': 'titanium-slate',
-                      'amber': 'solar-amber',
-                      'industrial-amber-charcoal': 'solar-amber',
-                      'vscode': 'vscode-theme',
-                      'supernova-violet': 'vscode-theme',
-                      'clean-light-enterprise': 'clean-light'
-                    };
-                    const key = canonicalMap[curTheme] || curTheme;
-                    const radio = document.querySelector('input[name="active_theme_palette"][value="' + key + '"]');
-                    if (radio) {
-                      document.querySelectorAll('input[name="active_theme_palette"]').forEach(r => r.checked = false);
-                      radio.checked = true;
-                      document.querySelectorAll('.palette-card').forEach(card => {
-                        const isMatch = card.dataset.paletteCard === key;
-                        card.classList.toggle('palette-card-active', isMatch);
-                        card.classList.toggle('border-slate-200', !isMatch);
-                        card.classList.toggle('dark:border-brand-border', !isMatch);
-                        card.classList.toggle('hover:border-slate-300', !isMatch);
-                        const lbl = card.querySelector('.palette-active-label');
-                        if (lbl) lbl.classList.toggle('hidden', !isMatch);
-                      });
-                    }
-                  }
-                } catch(e) {}
-              })();
-            </script>
-          </div>
-
-          <!-- RIGHT COLUMN: STICKY LIVE PREVIEW CANVAS (7 cols) -->
-          <div class="xl:col-span-7 sticky top-20 space-y-4">
-            
-            <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3 shadow-lg">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
-                  <span>🖥️ Live Theme Preview Window</span>
-                  <span id="previewPaletteNameBadge" class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold">Cyber Emerald</span>
-                </span>
-                <div class="flex items-center gap-2">
-                  <span id="previewModeLabel" class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Night preview</span>
-                  <button type="button" id="themePreviewModeToggle" aria-label="Turn off night mode for theme preview" aria-pressed="true" onclick="toggleThemePreviewMode()" class="nav-icon-link group flex flex-col items-center justify-center min-w-[56px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer">
-                    <span id="themePreviewModeIcon" class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">dark_mode</span>
-                    <span id="themePreviewModeText" class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Night on</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Preview Canvas Mockup -->
-              <div id="liveThemePreviewBox" class="p-6 rounded-2xl border transition-all duration-300 space-y-4 shadow-xl" style="background: #0b1412; border-color: #1e3831;">
-                
-                <!-- Mock Header Bar inside preview -->
-                <div class="preview-header flex items-center justify-between pb-3 border-b" style="border-color: rgba(255,255,255,0.1);">
-                  <div class="flex items-center space-x-2">
-                    <div class="w-6 h-6 rounded-md p-1 flex items-center justify-center font-black text-xs text-white" id="prevBrandIcon" style="background: #059669;">
-                      ▲
-                    </div>
-                    <span class="text-xs font-black" id="prevBrandName" style="color: #f1f5f9;">
-                      Embedded <span id="prevBrandAccent" style="color: #059669;">India</span>
-                    </span>
-                  </div>
-                  <div id="prevNav" class="flex items-center space-x-3 text-[11px] font-semibold" style="color: #94a3b8;">
-                    <span id="prevNavLink" class="font-bold underline" style="color: #059669;">Home</span>
-                    <span>Services</span>
-                    <span>Projects</span>
-                    <span>Tools</span>
-                  </div>
-                </div>
-
-                <!-- Mock Hero Card inside preview -->
-                <div id="prevSubCard" class="p-5 rounded-xl border transition-all space-y-3" style="background: #13221e; border-color: #1e3831;">
-                  <div class="flex items-center justify-between">
-                    <span id="prevPillTag" class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full" style="background: rgba(5,150,105,0.2); color: #059669; border: 1px solid rgba(5,150,105,0.3);">
-                      Live Radar: LAB ONLINE
-                    </span>
-                    <span id="prevMetaText" class="text-[10px] font-mono" style="color: #94a3b8;">
-                      HIL Telemetry: 100% PASS
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 id="prevTitle" class="text-sm font-black tracking-tight" style="color: #f1f5f9;">
-                      Think Big. <span id="prevTitleAccent" style="color: #059669;">We Engineer</span> Hardware.
-                    </h3>
-                    <p id="prevDesc" class="text-xs mt-1" style="color: #94a3b8;">
-                      From high-speed multi-layer PCB design to deterministic RTOS firmware.
-                    </p>
-                  </div>
-
-                  <div class="flex items-center space-x-2 pt-1">
-                    <button type="button" id="prevBtnPrimary" class="px-3.5 py-1.5 rounded-lg text-xs font-black text-white shadow-sm transition active:scale-95" style="background: #00664c; color: #ffffff;">
-                      Request Quote &rarr;
-                    </button>
-                    <button type="button" id="prevBtnSecondary" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition border active:scale-95" style="background: transparent; color: #0369a1; border-color: rgba(3,105,161,0.4);">
-                      Explore Hub
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Color Swatch Breakdown Matrix -->
-                <div class="grid grid-cols-5 gap-2 pt-1 text-[10px] font-mono text-center">
-                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
-                    <span class="block font-bold">BG</span>
-                    <span id="swatchBgText">#0b1412</span>
-                  </div>
-                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
-                    <span class="block font-bold">Surface</span>
-                    <span id="swatchSurfaceText">#13221e</span>
-                  </div>
-                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
-                    <span class="block font-bold">Primary</span>
-                    <span id="swatchPrimaryText">#059669</span>
-                  </div>
-                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
-                    <span class="block font-bold">Secondary</span>
-                    <span id="swatchSecondaryText">#55a630</span>
-                  </div>
-                  <div class="preview-swatch p-1.5 rounded bg-black/40 text-slate-300 border border-white/5">
-                    <span class="block font-bold">Text</span>
-                    <span id="swatchTextText">#f1f5f9</span>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- Module Save Action -->
-              <div class="pt-2 flex items-center justify-between">
-                <span class="text-[11px] text-slate-400">Clicking save persists this palette across all public and admin pages</span>
-                <button type="submit" title="Save Theme &amp; Palettes" aria-label="Save Theme &amp; Palettes" class="nav-icon-link group flex flex-col items-center justify-center min-w-[56px] sm:min-w-[62px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer flex-shrink-0">
-                  <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">save</span>
-                  <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Save</span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </form>
-    </section>
-
-    <!-- ============================================================== -->
-    <!-- MODULE 2: NO-CODE SITE CUSTOMIZER & BANGALORE LAB EVENTS -->
-    <!-- ============================================================== -->
-    <section id="site-customizer" class="settings-section hidden bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
+    <%- include('partials/faq-manager') %>
+<section id="site-customizer" class="settings-section hidden bg-white dark:bg-brand-surface rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-6">
       
       <form class="settings-module-form space-y-6" action="/admin/settings" method="POST" data-module="Customizer &amp; Events">
         <input type="hidden" name="_active_tab" value="site-customizer">
@@ -988,12 +205,13 @@
               <span class="text-[10px] text-slate-400">Primary public email displayed across contact page, footer, and inquiry forms</span>
             </div>
 
-            <!-- 2. Engineering Centers -->
+            <div class="sm:col-span-2"><label for="calendly_url" class="block font-bold text-slate-800 dark:text-slate-200 mb-1">Meeting booking URL</label><input type="url" id="calendly_url" name="calendly_url" value="<%= settings.calendly_url || '' %>" placeholder="https://calendly.com/your-team/architecture-review" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs"><span class="text-[10px] text-slate-500">Leave blank to hide the booking card. Use your own HTTPS booking page.</span></div>
+<!-- 2. Engineering Centers -->
             <div>
               <label class="block font-bold text-slate-800 dark:text-slate-200 mb-1 flex items-center space-x-1.5">
                 <span>🏢 Engineering Centers</span>
               </label>
-              <input type="text" id="contact_address" name="contact_address" value="<%= settings.contact_address || 'Bangalore / Hyderabad / Pune, India' %>" placeholder="Bangalore / Hyderabad / Pune, India" class="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500">
+              <input type="text" id="contact_address" name="contact_address" value="<%= settings.contact_address || 'Hyderabad, India' %>" placeholder="Hyderabad, India" class="w-full px-3.5 py-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs text-slate-900 dark:text-white focus:ring-1 focus:ring-brand-500">
               <span class="text-[10px] text-slate-400">Physical lab locations shown in Contact, Footer, and Schema.org SEO data</span>
             </div>
 
@@ -1064,6 +282,7 @@
               { key: 'section_projects_enabled', num: '6', title: 'Featured Projects', desc: 'Curated hardware case studies and real-world designs', val: settings.section_projects_enabled },
               { key: 'section_tools_enabled', num: '7', title: 'Engineering Tools Hub', desc: 'Interactive calculators: Trace Width, Battery Life, Antenna', val: settings.section_tools_enabled },
               { key: 'section_blog_enabled', num: '8', title: 'Technical Blog', desc: 'Latest technical articles, firmware guides, and whitepapers', val: settings.section_blog_enabled },
+              { key: 'section_process_enabled', num: '8b', title: 'How We Work', desc: 'Four-step engagement process', val: settings.section_process_enabled },
               { key: 'section_testimonials_enabled', num: '9', title: 'Testimonials & Trust', desc: 'OEM client testimonials and lab certification badges', val: settings.section_testimonials_enabled },
               { key: 'section_faq_enabled', num: '10', title: 'FAQ Accordion', desc: 'Frequently asked engineering & manufacturing questions', val: settings.section_faq_enabled },
               { key: 'section_cta_enabled', num: '11', title: 'Feasibility Consultation CTA Banner', desc: 'High-conversion bottom RFQ banner linking to /contact', val: settings.section_cta_enabled }
@@ -1103,7 +322,7 @@
           </div>
 
           <!-- RIGHT: LIVE HOMEPAGE PREVIEW IFRAME WITH RESPONSIVE TOOLBAR -->
-          <div class="xl:col-span-7 sticky top-20 space-y-3" style="width: 100%; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box;">
+          <div class="homepage-preview-panel xl:col-span-7 sticky top-20 space-y-3" style="width: 100%; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box;">
             
             <!-- Toolbar -->
             <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
@@ -1133,7 +352,7 @@
 
             <!-- Iframe Container Mockup -->
             <div id="iframeScaleContainer" class="w-full flex justify-center items-start overflow-hidden rounded-2xl transition-all duration-300" style="min-height: 640px; width: 100%; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box;">
-              <div id="iframeViewportWrapper" class="mx-auto transition-all duration-300 rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 shadow-2xl bg-white dark:bg-slate-950 flex flex-col flex-shrink-0" style="width: 100%; max-width: 100%; height: 640px; box-sizing: border-box;">
+              <div id="iframeViewportWrapper" class="mx-auto rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 shadow-2xl bg-white dark:bg-slate-950 flex flex-col flex-shrink-0" style="width: 100%; max-width: 100%; height: 640px; box-sizing: border-box;">
               
               <!-- Browser Mock Address Bar -->
               <div class="h-8 bg-slate-200 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 px-3 flex items-center justify-between text-[11px] font-mono text-slate-500">
@@ -1150,12 +369,12 @@
               </div>
 
               <!-- Real Homepage Iframe -->
-              <iframe id="liveHomepageIframe" src="/?preview=1" class="w-full flex-grow border-0"></iframe>
+              <iframe id="liveHomepageIframe" title="Live homepage preview" src="/?preview=1" class="w-full flex-grow border-0"></iframe>
               </div>
             </div>
 
             <div class="flex items-center justify-between text-xs text-slate-400 px-1">
-              <span>Preview reflects live site structure and active database feature flags.</span>
+              <span>Scaled to fit: Desktop 1440 × 900, Tablet 768 × 1024, Mobile 390 × 844. The preview uses saved settings.</span>
               <button type="submit" title="Save Feature Flags" aria-label="Save Feature Flags" class="nav-icon-link group flex flex-col items-center justify-center min-w-[56px] sm:min-w-[62px] py-1.5 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition cursor-pointer flex-shrink-0">
                 <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">save</span>
                 <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Save</span>
@@ -1351,10 +570,18 @@
 
             <div>
               <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">AdSense Publisher ID</label>
-              <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || 'ca-pub-2644536267352236' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
+              <input type="text" id="adsense_pub_id" name="adsense_pub_id" value="<%= settings.adsense_pub_id || '' %>" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono">
             </div>
 
-            <button type="button" id="btnValidateAd" class="nav-icon-link group flex flex-col items-center justify-center w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition active:scale-95 cursor-pointer">
+            <p class="text-xs text-slate-500 dark:text-slate-400">Ads run only on tools and blogs. Blank slots stay hidden. Copy real slot IDs from your AdSense account. Existing placement switches control optional header and footer ads.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div><label for="adsense_tools_top_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Tools top banner slot ID</label><input id="adsense_tools_top_slot" name="adsense_tools_top_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_tools_top_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div>
+<div><label for="adsense_tools_bottom_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Tools bottom banner slot ID</label><input id="adsense_tools_bottom_slot" name="adsense_tools_bottom_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_tools_bottom_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div>
+<div><label for="adsense_tools_sidebar_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Tool sidebar slot ID</label><input id="adsense_tools_sidebar_slot" name="adsense_tools_sidebar_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_tools_sidebar_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div>
+<div><label for="adsense_blog_inline_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Blog in-article slot ID</label><input id="adsense_blog_inline_slot" name="adsense_blog_inline_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_blog_inline_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div>
+<div><label for="adsense_sidebar_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Blog sidebar slot ID</label><input id="adsense_sidebar_slot" name="adsense_sidebar_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_sidebar_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div>
+<div><label for="adsense_header_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Blog header (optional) slot ID</label><input id="adsense_header_slot" name="adsense_header_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_header_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div>
+<div><label for="adsense_footer_slot" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1">Blog footer (optional) slot ID</label><input id="adsense_footer_slot" name="adsense_footer_slot" inputmode="numeric" pattern="[0-9]{10}" value="<%= settings.adsense_footer_slot || '' %>" placeholder="10-digit slot ID" class="w-full px-3 py-2 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-xs font-mono"></div></div>
+<button type="button" id="btnValidateAd" class="nav-icon-link group flex flex-col items-center justify-center w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-600 transition active:scale-95 cursor-pointer">
               <span class="material-symbols-rounded text-xl transition-transform duration-200 group-hover:scale-110 flex-shrink-0" aria-hidden="true">verified</span>
               <span class="text-[11px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Validate ID &amp; Sync ads.txt</span>
             </button>
@@ -1964,71 +1191,8 @@
   // ====================================================================
   // 1. PALETTES DATA DEFINITIONS FOR PREVIEW & EDITING
   // ====================================================================
-  const PALETTE_DEFINITIONS = {
-    'cyber-emerald': {
-      name: 'Cyber Emerald',
-      bgPrimary: '<%= settings["palette_override_cyber-emerald_bgPrimary"] || "#0b1412" %>',
-      bgSurface: '<%= settings["palette_override_cyber-emerald_bgSurface"] || "#13221e" %>',
-      accentPrimary: '<%= settings["palette_override_cyber-emerald_accentPrimary"] || "#059669" %>',
-      accentSecondary: '<%= settings["palette_override_cyber-emerald_accentSecondary"] || "#55a630" %>',
-      textPrimary: '<%= settings["palette_override_cyber-emerald_textPrimary"] || "#f1f5f9" %>',
-      textMuted: '#94a3b8',
-      borderColor: '#1e3831'
-    },
-    'quantum-cyan': {
-      name: 'Quantum Cyan',
-      bgPrimary: '<%= settings["palette_override_quantum-cyan_bgPrimary"] || "#08101a" %>',
-      bgSurface: '<%= settings["palette_override_quantum-cyan_bgSurface"] || "#0f1d2e" %>',
-      accentPrimary: '<%= settings["palette_override_quantum-cyan_accentPrimary"] || "#0ea5e9" %>',
-      accentSecondary: '<%= settings["palette_override_quantum-cyan_accentSecondary"] || "#06b6d4" %>',
-      textPrimary: '<%= settings["palette_override_quantum-cyan_textPrimary"] || "#f8fafc" %>',
-      textMuted: '#94a3b8',
-      borderColor: '#172a42'
-    },
-    'titanium-slate': {
-      name: 'Titanium Slate',
-      bgPrimary: '<%= settings["palette_override_titanium-slate_bgPrimary"] || "#090d16" %>',
-      bgSurface: '<%= settings["palette_override_titanium-slate_bgSurface"] || "#0f172a" %>',
-      accentPrimary: '<%= settings["palette_override_titanium-slate_accentPrimary"] || "#38bdf8" %>',
-      accentSecondary: '<%= settings["palette_override_titanium-slate_accentSecondary"] || "#64748b" %>',
-      textPrimary: '<%= settings["palette_override_titanium-slate_textPrimary"] || "#f8fafc" %>',
-      textMuted: '#94a3b8',
-      borderColor: '#334155'
-    },
-    'solar-amber': {
-      name: 'Solar Amber',
-      bgPrimary: '<%= settings["palette_override_solar-amber_bgPrimary"] || "#18181b" %>',
-      bgSurface: '<%= settings["palette_override_solar-amber_bgSurface"] || "#27272a" %>',
-      accentPrimary: '<%= settings["palette_override_solar-amber_accentPrimary"] || "#f59e0b" %>',
-      accentSecondary: '<%= settings["palette_override_solar-amber_accentSecondary"] || "#fbbf24" %>',
-      textPrimary: '<%= settings["palette_override_solar-amber_textPrimary"] || "#fafafa" %>',
-      textMuted: '#a1a1aa',
-      borderColor: '#3f3f46'
-    },
-    'supernova-violet': {
-      name: 'Supernova Violet',
-      bgPrimary: '<%= settings["palette_override_supernova-violet_bgPrimary"] || "#0f0c1b" %>',
-      bgSurface: '<%= settings["palette_override_supernova-violet_bgSurface"] || "#18142a" %>',
-      accentPrimary: '<%= settings["palette_override_supernova-violet_accentPrimary"] || "#a855f7" %>',
-      accentSecondary: '<%= settings["palette_override_supernova-violet_accentSecondary"] || "#c084fc" %>',
-      textPrimary: '<%= settings["palette_override_supernova-violet_textPrimary"] || "#faf5ff" %>',
-      textMuted: '#c084fc',
-      borderColor: '#3b2d54'
-    },
-    'clean-light': {
-      name: 'Clean Enterprise',
-      bgPrimary: '<%= settings["palette_override_clean-light_bgPrimary"] || "#f8fafc" %>',
-      bgSurface: '<%= settings["palette_override_clean-light_bgSurface"] || "#ffffff" %>',
-      accentPrimary: '<%= settings["palette_override_clean-light_accentPrimary"] || "#2563eb" %>',
-      accentSecondary: '<%= settings["palette_override_clean-light_accentSecondary"] || "#3b82f6" %>',
-      textPrimary: '<%= settings["palette_override_clean-light_textPrimary"] || "#0f172a" %>',
-      textMuted: '#64748b',
-      borderColor: '#e2e8f0'
-    }
-  };
-
-  // Map settings module metadata for titles and breadcrumbs
   const MODULE_METADATA = {
+    'faq-manager': { title: 'Homepage FAQs', icon: 'quiz', breadcrumb: 'FAQs', subtitle: 'Manage additional homepage questions and answers.' },
     'theme-engine': {
       title: 'Dynamic Theme & Color Palette Engine',
       icon: 'palette',
@@ -2086,144 +1250,10 @@
   // ====================================================================
   // INLINE PALETTE DRAWER CONTROLLERS (EXPAND, EDIT, SAVE, DELETE)
   // ====================================================================
-  function togglePaletteDrawer(key) {
-    const drawer = document.getElementById('drawer-' + key);
-    if (!drawer) return;
-
-    const isHidden = drawer.classList.contains('hidden');
-    // Close other drawers
-    document.querySelectorAll('.palette-drawer').forEach(d => d.classList.add('hidden'));
-
-    if (isHidden) {
-      // Sync drawer color inputs with current PALETTE_DEFINITIONS
-      const p = PALETTE_DEFINITIONS[key];
-      if (p) {
-        syncDrawerInput(key, 'bgPrimary', p.bgPrimary);
-        syncDrawerInput(key, 'bgSurface', p.bgSurface);
-        syncDrawerInput(key, 'accentPrimary', p.accentPrimary);
-        syncDrawerInput(key, 'accentSecondary', p.accentSecondary);
-        syncDrawerInput(key, 'textPrimary', p.textPrimary);
-      }
-      drawer.classList.remove('hidden');
-      selectPalette(key);
-    }
-  }
-
-  function closePaletteDrawer(key) {
-    const drawer = document.getElementById('drawer-' + key);
-    if (drawer) drawer.classList.add('hidden');
-  }
-
-  function syncDrawerInput(key, prop, value) {
-    const picker = document.getElementById('picker_' + key + '_' + prop);
-    const hex = document.getElementById('hex_' + key + '_' + prop);
-    if (picker) picker.value = value;
-    if (hex) hex.value = value;
-  }
-
-    function onDrawerColorChange(key, prop, value) {
-    if (!PALETTE_DEFINITIONS[key]) return;
-    PALETTE_DEFINITIONS[key][prop] = value;
-    syncDrawerInput(key, prop, value);
-
-    // Update card swatches directly using classes
-    const card = document.querySelector(`[data-palette-card="${key}"]`);
-    if (card) {
-      if (prop === 'bgPrimary') {
-        const el = card.querySelector('.swatch-bg');
-        if (el) el.style.background = value;
-      } else if (prop === 'bgSurface') {
-        const el = card.querySelector('.swatch-surface');
-        if (el) el.style.background = value;
-      } else if (prop === 'accentPrimary') {
-        card.style.setProperty('--palette-accent', value);
-        const el = card.querySelector('.swatch-primary');
-        if (el) el.style.background = value;
-      } else if (prop === 'accentSecondary') {
-        const el = card.querySelector('.swatch-secondary');
-        if (el) el.style.background = value;
-      } else if (prop === 'textPrimary') {
-        const el = card.querySelector('.swatch-text');
-        if (el) el.style.background = value;
-      }
-    }
-
-    // Select palette and re-render preview canvas
-    selectPalette(key);
-  }
-
-  async function savePaletteChanges(key) {
-    const p = PALETTE_DEFINITIONS[key];
-    if (!p) return;
-
-    const payload = {
-      active_theme_palette: key,
-      _active_tab: 'theme-engine'
-    };
-    payload['palette_override_' + key + '_bgPrimary'] = p.bgPrimary;
-    payload['palette_override_' + key + '_bgSurface'] = p.bgSurface;
-    payload['palette_override_' + key + '_accentPrimary'] = p.accentPrimary;
-    payload['palette_override_' + key + '_accentSecondary'] = p.accentSecondary;
-    payload['palette_override_' + key + '_textPrimary'] = p.textPrimary;
-
-    try {
-      const res = await fetch('/admin/settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || 'Unable to save palette.');
-      showToast('✅ Saved custom hexes for ' + p.name + '!');
-      closePaletteDrawer(key);
-    } catch(err) {
-      alert('Error saving palette: ' + err.message);
-    }
-  }
-
-  async function updatePaletteState(key, action) {
-    const response = await fetch(`/admin/settings/palettes/${encodeURIComponent(key)}/${action}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
-    const data = await response.json();
-    if (!response.ok || !data.success) throw new Error(data.error || 'Palette update failed.');
-  }
-
-  async function resetPalette(key) {
-    const p = PALETTE_DEFINITIONS[key];
-    if (!p) return;
-    if (!confirm(`Restore ${p.name} to its original colors and make it available again?`)) return;
-    try {
-      await updatePaletteState(key, 'reset');
-      window.location.hash = 'theme-engine';
-      window.location.reload();
-    } catch (err) {
-      alert('Unable to restore palette: ' + err.message);
-    }
-  }
-
-  async function deletePalette(key) {
-    const p = PALETTE_DEFINITIONS[key];
-    if (!p || !confirm(`Remove ${p.name} from the available palettes? You can restore it later.`)) return;
-    try {
-      await updatePaletteState(key, 'delete');
-      window.location.hash = 'theme-engine';
-      window.location.reload();
-    } catch (err) {
-      alert('Unable to delete palette: ' + err.message);
-    }
-  }
-
-  window.switchSettingsSection = function(sectionId) {
+  window.switchSettingsSection = function(sectionId, updateUrl = true) {
     const HASH_ALIASES = {
+      'theme-engine': 'site-customizer',
+      'theme-engine.': 'site-customizer',
       'seo': 'seo-scripts',
       'newsletter': 'newsletter-config',
       'smtp': 'smtp-settings',
@@ -2267,325 +1297,22 @@
     });
 
     // 4. Update URL Hash seamlessly
-    if (history.replaceState) {
+    if (history.replaceState && updateUrl) {
       history.replaceState(null, null, '#' + sectionId);
     }
 
-    // 5. Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Keep the current scroll position when switching settings panels.
   };
   const switchSettingsSection = window.switchSettingsSection;
 
   // Listen for hashchange to switch settings tabs
   window.addEventListener('hashchange', () => {
-    const hash = window.location.hash ? window.location.hash.substring(1) : 'theme-engine';
+    const hash = window.location.hash ? window.location.hash.substring(1) : 'site-customizer';
     switchSettingsSection(hash);
   });
 
   // ====================================================================
   // 3. PALETTE SELECTION & PREVIEW RENDERING
-  // ====================================================================
-  let themePreviewNightMode = true;
-  let selectedPreviewPaletteKey = 'cyber-emerald';
-
-  function toggleThemePreviewMode() {
-    themePreviewNightMode = !themePreviewNightMode;
-    const toggle = document.getElementById('themePreviewModeToggle');
-    const label = document.getElementById('previewModeLabel');
-    const text = document.getElementById('themePreviewModeText');
-    const icon = document.getElementById('themePreviewModeIcon');
-    if (toggle) {
-      toggle.setAttribute('aria-pressed', String(themePreviewNightMode));
-      toggle.setAttribute(
-        'aria-label',
-        themePreviewNightMode ? 'Turn off night mode for theme preview' : 'Turn on night mode for theme preview'
-      );
-    }
-    if (label) label.textContent = themePreviewNightMode ? 'Night preview' : 'Day preview';
-    if (text) text.textContent = themePreviewNightMode ? 'Night on' : 'Night off';
-    if (icon) icon.textContent = themePreviewNightMode ? 'dark_mode' : 'light_mode';
-    renderPreviewCanvas(selectedPreviewPaletteKey);
-  }
-
-  function selectPalette(key) {
-    const canonicalMap = {
-      'emerald': 'cyber-emerald',
-      'pcb-emerald-green': 'cyber-emerald',
-      'cyan': 'quantum-cyan',
-      'silicon-dark-blue': 'quantum-cyan',
-      'slate': 'titanium-slate',
-      'spacegrey': 'titanium-slate',
-      'automotive-slate-red': 'titanium-slate',
-      'amber': 'solar-amber',
-      'industrial-amber-charcoal': 'solar-amber',
-      'vscode': 'vscode-theme',
-      'supernova-violet': 'vscode-theme',
-      'clean-light-enterprise': 'clean-light'
-    };
-    const canonKey = canonicalMap[key] || key;
-    selectedPreviewPaletteKey = canonKey;
-    // 1. Update radio input
-    const radio = document.querySelector(`input[name="active_theme_palette"][value="${canonKey}"]`);
-    if (radio) radio.checked = true;
-
-    // 2. Update visual card accents and active badges
-    document.querySelectorAll('.palette-card').forEach(card => {
-      const isMatch = card.dataset.paletteCard === canonKey;
-      const activeLabel = card.querySelector('.palette-active-label');
-      card.classList.toggle('palette-card-active', isMatch);
-      card.classList.toggle('border-slate-200', !isMatch);
-      card.classList.toggle('dark:border-brand-border', !isMatch);
-      card.classList.toggle('hover:border-slate-300', !isMatch);
-      if (activeLabel) activeLabel.classList.toggle('hidden', !isMatch);
-    });
-
-    // 3. Render preview canvas
-    renderPreviewCanvas(canonKey);
-
-    // 4. Dynamically bind live dashboard CSS variables with ThemeManager
-    if (window.ThemeManager) {
-      if (canonKey === 'custom' && typeof window.ThemeManager.registerCustomPalette === 'function') {
-        const bgP = document.getElementById('palette_bg_primary')?.value || '#0b1412';
-        const bgS = document.getElementById('palette_bg_surface')?.value || '#13221e';
-        const acP = document.getElementById('palette_accent_primary')?.value || '#059669';
-        const acS = document.getElementById('palette_accent_secondary')?.value || '#55a630';
-        const txP = document.getElementById('palette_text_primary')?.value || '#f1f5f9';
-        window.ThemeManager.registerCustomPalette('custom', {
-          name: 'Custom Hex Engine',
-          badge: 'CUSTOM',
-          hex: acP,
-          dark: {
-            '--bg-primary': bgP,
-            '--bg-surface': bgS,
-            '--accent-primary': acP,
-            '--primary-color': acP,
-            '--secondary-color': acS,
-            '--text-primary': txP,
-            '--border-color': '#27443d'
-          },
-          light: {
-            '--bg-primary': '#f8fafc',
-            '--bg-surface': '#ffffff',
-            '--accent-primary': acP,
-            '--primary-color': acP,
-            '--secondary-color': acS,
-            '--text-primary': '#0f172a',
-            '--border-color': '#e2e8f0'
-          }
-        });
-      }
-      if (typeof window.ThemeManager.applyPalette === 'function') {
-        window.ThemeManager.applyPalette(canonKey);
-      }
-    }
-  }
-
-  window.selectPalette = selectPalette;
-  window.syncSettingsPaletteCards = function(key) {
-    const canonicalMap = {
-      'emerald': 'cyber-emerald',
-      'pcb-emerald-green': 'cyber-emerald',
-      'cyan': 'quantum-cyan',
-      'silicon-dark-blue': 'quantum-cyan',
-      'slate': 'titanium-slate',
-      'spacegrey': 'titanium-slate',
-      'automotive-slate-red': 'titanium-slate',
-      'amber': 'solar-amber',
-      'industrial-amber-charcoal': 'solar-amber',
-      'vscode': 'vscode-theme',
-      'supernova-violet': 'vscode-theme',
-      'clean-light-enterprise': 'clean-light'
-    };
-    const canonKey = canonicalMap[key] || key;
-    selectedPreviewPaletteKey = canonKey;
-    const radio = document.querySelector(`input[name="active_theme_palette"][value="${canonKey}"]`);
-    if (radio) radio.checked = true;
-    document.querySelectorAll('.palette-card').forEach(card => {
-      const isMatch = card.dataset.paletteCard === canonKey;
-      const activeLabel = card.querySelector('.palette-active-label');
-      card.classList.toggle('palette-card-active', isMatch);
-      card.classList.toggle('border-slate-200', !isMatch);
-      card.classList.toggle('dark:border-brand-border', !isMatch);
-      card.classList.toggle('hover:border-slate-300', !isMatch);
-      if (activeLabel) activeLabel.classList.toggle('hidden', !isMatch);
-    });
-    renderPreviewCanvas(canonKey);
-  };
-
-  function renderPreviewCanvas(key) {
-    selectedPreviewPaletteKey = key;
-    let p = PALETTE_DEFINITIONS[key];
-    if (key === 'custom' || !p) {
-      const bgP = document.getElementById('palette_bg_primary')?.value || '#0b1412';
-      const bgS = document.getElementById('palette_bg_surface')?.value || '#13221e';
-      const acP = document.getElementById('palette_accent_primary')?.value || '#059669';
-      const acS = document.getElementById('palette_accent_secondary')?.value || '#55a630';
-      const txP = document.getElementById('palette_text_primary')?.value || '#f1f5f9';
-
-      p = {
-        name: 'Custom Hex Engine',
-        bgPrimary: bgP,
-        bgSurface: bgS,
-        accentPrimary: acP,
-        accentSecondary: acS,
-        textPrimary: txP,
-        textMuted: '#94a3b8',
-        borderColor: '#27443d'
-      };
-
-      // Also update chips
-      const chipBg = document.getElementById('chip_bg_primary');
-      const chipSurf = document.getElementById('chip_bg_surface');
-      const chipAcP = document.getElementById('chip_accent_primary');
-      const chipAcS = document.getElementById('chip_accent_secondary');
-      const chipTx = document.getElementById('chip_text_primary');
-      if (chipBg) chipBg.style.backgroundColor = bgP;
-      if (chipSurf) chipSurf.style.backgroundColor = bgS;
-      if (chipAcP) chipAcP.style.backgroundColor = acP;
-      if (chipAcS) chipAcS.style.backgroundColor = acS;
-      if (chipTx) chipTx.style.backgroundColor = txP;
-    }
-
-    const previewPalette = themePreviewNightMode ? p : {
-      ...p,
-      bgPrimary: '#f8fafc',
-      bgSurface: '#ffffff',
-      textPrimary: '#0f172a',
-      textMuted: '#475569',
-      borderColor: '#e2e8f0'
-    };
-    const box = document.getElementById('liveThemePreviewBox');
-    if (!box) return;
-
-    box.style.backgroundColor = previewPalette.bgPrimary;
-    box.style.borderColor = previewPalette.borderColor;
-
-    const badge = document.getElementById('previewPaletteNameBadge');
-    if (badge) badge.innerText = p.name;
-
-    const previewHeader = box.querySelector('.preview-header');
-    if (previewHeader) previewHeader.style.borderColor = previewPalette.borderColor;
-    const nav = document.getElementById('prevNav');
-    if (nav) nav.style.color = previewPalette.textMuted;
-
-    const brandIcon = document.getElementById('prevBrandIcon');
-    if (brandIcon) brandIcon.style.backgroundColor = previewPalette.accentPrimary;
-
-    const brandAccent = document.getElementById('prevBrandAccent');
-    if (brandAccent) brandAccent.style.color = previewPalette.accentPrimary;
-
-    const brandName = document.getElementById('prevBrandName');
-    if (brandName) brandName.style.color = previewPalette.textPrimary;
-
-    const navLink = document.getElementById('prevNavLink');
-    if (navLink) navLink.style.color = previewPalette.accentPrimary;
-
-    const subCard = document.getElementById('prevSubCard');
-    if (subCard) {
-      subCard.style.backgroundColor = previewPalette.bgSurface;
-      subCard.style.borderColor = previewPalette.borderColor;
-    }
-
-    const pillTag = document.getElementById('prevPillTag');
-    if (pillTag) {
-      pillTag.style.backgroundColor = previewPalette.accentPrimary + '26';
-      pillTag.style.color = previewPalette.accentPrimary;
-      pillTag.style.borderColor = previewPalette.accentPrimary + '4d';
-    }
-
-    const metaText = document.getElementById('prevMetaText');
-    if (metaText) metaText.style.color = previewPalette.textMuted;
-    const title = document.getElementById('prevTitle');
-    if (title) title.style.color = previewPalette.textPrimary;
-
-    const titleAccent = document.getElementById('prevTitleAccent');
-    if (titleAccent) titleAccent.style.color = previewPalette.accentPrimary;
-
-    const desc = document.getElementById('prevDesc');
-    if (desc) desc.style.color = previewPalette.textMuted;
-
-    function getContrastColor(hexColor) {
-      if (!hexColor || typeof hexColor !== 'string') return '#ffffff';
-      const hex = hexColor.replace('#', '');
-      if (hex.length === 6) {
-        const r = parseInt(hex.substr(0, 2), 16);
-        const g = parseInt(hex.substr(2, 2), 16);
-        const b = parseInt(hex.substr(4, 2), 16);
-        const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-        return yiq >= 128 ? '#0f172a' : '#ffffff';
-      }
-      return '#ffffff';
-    }
-
-    const btnPrimary = document.getElementById('prevBtnPrimary');
-    if (btnPrimary) {
-      btnPrimary.style.backgroundColor = previewPalette.accentPrimary;
-      btnPrimary.style.color = getContrastColor(previewPalette.accentPrimary);
-    }
-
-    const btnSecondary = document.getElementById('prevBtnSecondary');
-    if (btnSecondary) {
-      btnSecondary.style.color = themePreviewNightMode ? '#38bdf8' : '#0369a1';
-      btnSecondary.style.borderColor = themePreviewNightMode ? 'rgba(56, 189, 248, 0.4)' : 'rgba(3, 105, 161, 0.4)';
-    }
-
-    box.querySelectorAll('.preview-swatch').forEach(swatch => {
-      swatch.style.backgroundColor = themePreviewNightMode ? 'rgba(0, 0, 0, 0.4)' : '#f1f5f9';
-      swatch.style.color = themePreviewNightMode ? '#cbd5e1' : '#334155';
-      swatch.style.borderColor = themePreviewNightMode ? 'rgba(255, 255, 255, 0.05)' : '#e2e8f0';
-    });
-
-    // Update Swatch text
-    const sBg = document.getElementById('swatchBgText');
-    const sSurf = document.getElementById('swatchSurfaceText');
-    const sPri = document.getElementById('swatchPrimaryText');
-    const sSec = document.getElementById('swatchSecondaryText');
-    const sTx = document.getElementById('swatchTextText');
-    if (sBg) sBg.innerText = p.bgPrimary;
-    if (sSurf) sSurf.innerText = p.bgSurface;
-    if (sPri) sPri.innerText = p.accentPrimary;
-    if (sSec) sSec.innerText = p.accentSecondary;
-    if (sTx) sTx.innerText = p.textPrimary;
-  }
-
-  function editPaletteHexes(key) {
-    const p = PALETTE_DEFINITIONS[key];
-    if (!p) return;
-
-    syncColorInput('palette_bg_primary', p.bgPrimary);
-    syncColorInput('palette_bg_surface', p.bgSurface);
-    syncColorInput('palette_accent_primary', p.accentPrimary);
-    syncColorInput('palette_accent_secondary', p.accentSecondary);
-    syncColorInput('palette_text_primary', p.textPrimary);
-
-    selectPalette('custom');
-
-    const editorBox = document.getElementById('customHexEditorBox');
-    if (editorBox) {
-      editorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      editorBox.classList.add('ring-2', 'ring-purple-500');
-      setTimeout(() => editorBox.classList.remove('ring-2', 'ring-purple-500'), 1500);
-    }
-  }
-
-  function syncColorInput(inputId, hex) {
-    const input = document.getElementById(inputId);
-    if (input) input.value = hex;
-    const picker = document.getElementById('picker_' + inputId);
-    if (picker) picker.value = hex;
-    renderPreviewCanvas('custom');
-  }
-
-  function syncColorPicker(pickerId, hex) {
-    if (/^#[0-9A-F]{6}$/i.test(hex)) {
-      const picker = document.getElementById(pickerId);
-      if (picker) picker.value = hex;
-      renderPreviewCanvas('custom');
-    }
-  }
-
-  // ====================================================================
-  // 4. BANGALORE LAB EVENT PREVIEW
   // ====================================================================
   function updateEventPreview() {
     const enabled = document.getElementById('lab_event_enabled')?.value === 'true';
@@ -2607,77 +1334,29 @@
   // 5. FEATURE FLAGS TOGGLES & HOMEPAGE LIVE PREVIEW IFRAME CONTROLS
   // ====================================================================
   let currentViewportMode = '100%';
-
-  function setIframeViewport(width) {
-    currentViewportMode = width;
-    const wrapper = document.getElementById('iframeViewportWrapper');
-    const scaleContainer = document.getElementById('iframeScaleContainer');
-    if (!wrapper || !scaleContainer) return;
-
-    // Update active button state
-    const btnD = document.getElementById('vp-btn-desktop');
-    const btnT = document.getElementById('vp-btn-tablet');
-    const btnM = document.getElementById('vp-btn-mobile');
-
-    const inactiveVpClass = 'nav-icon-link group flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-bold';
-    const activeVpClass = 'nav-icon-link group flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl border border-brand-500/30 bg-brand-500/15 text-brand-600 dark:text-accent font-bold transition shadow-xs';
-
-    [btnD, btnT, btnM].forEach(b => {
-      if (b) {
-        b.className = inactiveVpClass;
-      }
+  function setIframeViewport(mode) {
+    currentViewportMode = mode;
+    [['desktop', '100%'], ['tablet', '768px'], ['mobile', '390px']].forEach(([name, value]) => {
+      const button = document.getElementById('vp-btn-' + name);
+      if (button) { button.setAttribute('aria-pressed', String(mode === value)); button.classList.toggle('viewport-selected', mode === value); }
     });
-
-    if (width === '100%') {
-      if (btnD) btnD.className = activeVpClass;
-      wrapper.style.width = '100%';
-      wrapper.style.maxWidth = '100%';
-      wrapper.style.transform = 'none';
-      wrapper.style.left = '0';
-      wrapper.style.margin = '0 auto';
-      wrapper.style.removeProperty('--preview-scale');
-      scaleContainer.style.height = '640px';
-    } else if (width === '768px') {
-      if (btnT) btnT.className = activeVpClass;
-      applyScaledViewport(768);
-    } else if (width === '390px') {
-      if (btnM) btnM.className = activeVpClass;
-      applyScaledViewport(390);
-    }
+    applyScaledViewport(mode === '100%' ? 1440 : parseInt(mode, 10));
   }
-
   function applyScaledViewport(targetWidth) {
     const wrapper = document.getElementById('iframeViewportWrapper');
-    const scaleContainer = document.getElementById('iframeScaleContainer');
-    if (!wrapper || !scaleContainer) return;
-
-    const availWidth = scaleContainer.clientWidth || scaleContainer.offsetWidth || 0;
-    wrapper.style.position = 'relative';
-    wrapper.style.left = '50%';
-    wrapper.style.margin = '0';
-    wrapper.style.width = targetWidth + 'px';
-    wrapper.style.maxWidth = 'none';
-    wrapper.style.transformOrigin = 'top center';
-
-    if (availWidth > 0 && availWidth < targetWidth) {
-      const scale = Math.min(1, (availWidth - 8) / targetWidth);
-      wrapper.style.setProperty('--preview-scale', scale);
-      wrapper.style.transform = `translateX(-50%) scale(${scale})`;
-      scaleContainer.style.height = Math.round(640 * scale) + 'px';
-    } else {
-      wrapper.style.setProperty('--preview-scale', '1');
-      wrapper.style.transform = 'translateX(-50%)';
-      scaleContainer.style.height = '640px';
-    }
+    const stage = document.getElementById('iframeScaleContainer');
+    const iframe = document.getElementById('liveHomepageIframe');
+    if (!wrapper || !stage || !iframe || !stage.clientWidth) return;
+    const scale = Math.min(1, stage.clientWidth / (targetWidth + 4));
+    const frameHeight = targetWidth === 390 ? 844 : targetWidth === 768 ? 1024 : 900;
+    const totalHeight = frameHeight + 36;
+    Object.assign(wrapper.style, { position: 'absolute', left: '50%', top: '0', margin: '0', width: (targetWidth + 4) + 'px', maxWidth: 'none', height: totalHeight + 'px', transformOrigin: 'top center', transform: 'translateX(-50%) scale(' + scale + ')' });
+    Object.assign(iframe.style, { width: targetWidth + 'px', height: frameHeight + 'px', flex: 'none' });
+    Object.assign(stage.style, { height: Math.ceil(totalHeight * scale) + 'px', minHeight: '0' });
   }
-
-  window.addEventListener('resize', () => {
-    if (currentViewportMode === '768px') {
-      applyScaledViewport(768);
-    } else if (currentViewportMode === '390px') {
-      applyScaledViewport(390);
-    }
-  });
+  const previewStage = document.getElementById('iframeScaleContainer');
+  if (previewStage) new ResizeObserver(() => setIframeViewport(currentViewportMode)).observe(previewStage);
+  window.addEventListener('resize', () => setIframeViewport(currentViewportMode));
 
   async function toggleSectionFlag(flagName, btn) {
     const input = document.getElementById('input_' + flagName);
@@ -3091,7 +1770,7 @@
     // 1. Navigation Buttons click delegation (Sidebar & Mobile)
     document.addEventListener('click', (e) => {
       const navBtn = e.target.closest('.settings-nav-btn');
-      if (navBtn) {
+      if (navBtn && navBtn.hasAttribute('data-settings-tab')) {
         e.preventDefault();
         const tab = navBtn.getAttribute('data-settings-tab');
         if (tab && window.switchSettingsSection) {
@@ -3099,41 +1778,6 @@
         }
       }
     });
-
-    // 2. Palette cards click delegation
-    document.querySelectorAll('.palette-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        // If clicking on an edit button, let its handler handle it
-        if (e.target.closest('button')) return;
-        const key = card.dataset.paletteCard;
-        if (key) selectPalette(key);
-      });
-    });
-
-    // 2. Initial palette preview render - read current theme and set as Choose Active Public & Admin Palette
-    function resolveCurrentThemeKey() {
-      const stored = localStorage.getItem('color-palette');
-      const docPalette = document.documentElement.getAttribute('data-palette');
-      const rawTheme = stored || docPalette || '<%= settings.active_theme_palette || "cyber-emerald" %>';
-      const canonicalMap = {
-        'emerald': 'cyber-emerald',
-        'pcb-emerald-green': 'cyber-emerald',
-        'cyan': 'quantum-cyan',
-        'silicon-dark-blue': 'quantum-cyan',
-        'slate': 'titanium-slate',
-        'spacegrey': 'titanium-slate',
-        'automotive-slate-red': 'titanium-slate',
-        'amber': 'solar-amber',
-        'industrial-amber-charcoal': 'solar-amber',
-        'vscode': 'vscode-theme',
-        'supernova-violet': 'vscode-theme',
-        'clean-light-enterprise': 'clean-light'
-      };
-      return canonicalMap[rawTheme] || rawTheme;
-    }
-
-    const activePalette = resolveCurrentThemeKey();
-    selectPalette(activePalette);
 
     // 2. Previews initializations
     updateEventPreview();
@@ -3143,8 +1787,8 @@
     calculateSeoScore();
 
     // 4. Determine initial active section based on URL hash or default to 'theme-engine'
-    const initialHash = window.location.hash ? window.location.hash.substring(1) : 'theme-engine';
-    switchSettingsSection(initialHash || 'theme-engine');
+    const initialHash = window.location.hash ? window.location.hash.substring(1) : 'site-customizer';
+    switchSettingsSection(initialHash || 'site-customizer', false);
 
     // 5. AdSense pub validator
     const btnValidateAd = document.getElementById('btnValidateAd');

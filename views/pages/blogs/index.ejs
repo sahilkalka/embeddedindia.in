@@ -62,14 +62,17 @@
         <% } %>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <% posts.forEach(post => { %>
-            <article class="bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-lg group">
+          <% posts.forEach(post => {
+ const tones = ['border-t-emerald-500', 'border-t-sky-500', 'border-t-violet-500', 'border-t-amber-500'];
+ const tone = tones[Array.from(post.category || '').reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % tones.length];
+ %>
+            <article class="border-t-4 <%= tone %> bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-500 dark:hover:border-accent transition duration-300 shadow-sm hover:shadow-lg group">
               <div>
                 <div class="flex items-center justify-between text-xs text-slate-700 dark:text-slate-300 mb-3">
                   <a href="/blogs?category=<%= encodeURIComponent(post.category) %>" class="px-2.5 py-0.5 rounded-full bg-brand-50 dark:bg-brand-900/60 text-brand-700 dark:text-accent font-semibold hover:underline">
                     <%= post.category %>
                   </a>
-                  <span><%= post.readingTime %> min read</span>
+                  <span class="shrink-0 ml-2 px-2 py-1 rounded-lg bg-slate-100 dark:bg-brand-dark font-bold"><%= post.readingTime || 1 %> min read</span>
                 </div>
 
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-brand-500 dark:group-hover:text-accent transition line-clamp-2 leading-snug">
@@ -81,7 +84,11 @@
                 </p>
               </div>
 
-              <div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2 mt-5 text-xs text-slate-600 dark:text-slate-300">
+<span aria-hidden="true" class="w-8 h-8 shrink-0 rounded-full bg-brand-50 dark:bg-brand-900 text-brand-700 dark:text-accent flex items-center justify-center font-bold"><%= (post.author || 'Embedded India').split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase() %></span>
+<span><%= post.author || 'Embedded India Engineering Team' %></span>
+</div>
+<div class="mt-6 pt-4 border-t border-slate-100 dark:border-brand-border/60 flex items-center justify-between text-xs">
                 <span class="text-slate-400"><%= post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Draft' %></span>
                 <a href="/blogs/<%= post.slug %>" class="font-bold text-brand-500 dark:text-accent group-hover:translate-x-1 transition inline-flex items-center">
                   Read Guide &rarr;
@@ -122,6 +129,7 @@
           </a>
         </div>
 
+        <%- include('../../partials/ad-slot', { slot: settings.adsense_sidebar_slot, format: 'auto' }) %>
         <!-- Calculators Sidebar Card -->
         <div class="bg-white dark:bg-brand-surface rounded-3xl p-6 border border-slate-200 dark:border-brand-border shadow-sm">
           <h3 class="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-brand-border pb-2">

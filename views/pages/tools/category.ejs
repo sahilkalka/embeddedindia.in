@@ -1,7 +1,7 @@
 <%- include('../../layouts/header') %>
 
 <!-- Sticky Breadcrumbs Bar with Return to Tools Suite Action -->
-<div class="bg-slate-50 dark:bg-[#0c1614] border-b border-slate-200 dark:border-brand-border sticky top-16 z-30 backdrop-blur-md bg-opacity-90 dark:bg-opacity-90">
+<div class="tool-breadcrumbs bg-slate-50 dark:bg-[#0c1614] border-b border-slate-200 dark:border-brand-border sticky top-16 z-30 backdrop-blur-md bg-opacity-90 dark:bg-opacity-90">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
     <div class="flex items-center justify-between gap-4">
       <nav class="flex items-center text-xs font-medium text-slate-500 dark:text-slate-400 space-x-2 overflow-x-auto no-scrollbar whitespace-nowrap" aria-label="Breadcrumb">
@@ -124,18 +124,9 @@
             <div class="ad-slot-tools-header w-full overflow-hidden flex justify-center">
               <%- settings.custom_ad_html_tools_header %>
             </div>
-          <% } else if (settings.enable_adsense === 'true' && settings.adsense_pub_id) { %>
-            <div class="w-full max-w-4xl p-2 rounded-2xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-center shadow-xs">
-              <span class="text-[10px] font-mono uppercase text-slate-400 block mb-1">Sponsored Advertisement</span>
-              <ins class="adsbygoogle"
-                   style="display:block"
-                   data-ad-client="<%= settings.adsense_pub_id %>"
-                   data-ad-slot="1000000001"
-                   data-ad-format="auto"
-                   data-full-width-responsive="true"></ins>
-              <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-          <% } else { %>
+          <% } else if (canShowAd(settings, settings.adsense_tools_top_slot)) { %>
+<%- include('../../partials/ad-slot', { slot: settings.adsense_tools_top_slot, format: 'auto' }) %>
+<% } else { %>
             <!-- Default Sponsored / Partner Ad Placeholder -->
             <div class="w-full max-w-4xl p-4 rounded-2xl bg-white dark:bg-brand-surface border border-dashed border-slate-300 dark:border-brand-border text-center shadow-xs">
               <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2.5 bg-slate-50 dark:bg-brand-dark/70 rounded-xl border border-slate-200/60 dark:border-brand-border/40">
@@ -158,13 +149,19 @@
         </div>
       <% } %>
 
-      <!-- Active Tool Component Dynamic Injection -->
+      <div class="tool-ad-layout <%= canShowAd(settings, settings.adsense_tools_sidebar_slot) ? 'tool-ad-layout-enabled' : '' %>">
+<div class="min-w-0">
+<!-- Active Tool Component Dynamic Injection -->
       <section id="interactive-tool" class="relative">
         <%- include('components/' + activeTool.slug) %>
       </section>
 
-      <!-- ============================================================ -->
-      <!-- AD PLACEHOLDER SLOT: TOOLS MID/FOOTER (Controlled by Admin) -->
+      </div>
+<% if (canShowAd(settings, settings.adsense_tools_sidebar_slot)) { %>
+<aside class="tool-ad-sidebar" aria-label="Sponsored content"><div class="sticky top-24"><%- include('../../partials/ad-slot', { slot: settings.adsense_tools_sidebar_slot, format: 'vertical' }) %></div></aside>
+<% } %>
+</div>
+<!-- AD PLACEHOLDER SLOT: TOOLS MID/FOOTER (Controlled by Admin) -->
       <!-- ============================================================ -->
       <% if (settings.ad_slot_tools_footer === 'true') { %>
         <div class="w-full my-6 flex justify-center">
@@ -172,18 +169,9 @@
             <div class="ad-slot-tools-footer w-full overflow-hidden flex justify-center">
               <%- settings.custom_ad_html_tools_footer %>
             </div>
-          <% } else if (settings.enable_adsense === 'true' && settings.adsense_pub_id) { %>
-            <div class="w-full max-w-4xl p-2 rounded-2xl bg-white dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-center shadow-xs">
-              <span class="text-[10px] font-mono uppercase text-slate-400 block mb-1">Sponsored Advertisement</span>
-              <ins class="adsbygoogle"
-                   style="display:block"
-                   data-ad-client="<%= settings.adsense_pub_id %>"
-                   data-ad-slot="1000000002"
-                   data-ad-format="auto"
-                   data-full-width-responsive="true"></ins>
-              <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            </div>
-          <% } else { %>
+          <% } else if (canShowAd(settings, settings.adsense_tools_bottom_slot)) { %>
+<%- include('../../partials/ad-slot', { slot: settings.adsense_tools_bottom_slot, format: 'auto' }) %>
+<% } else { %>
             <!-- Default Mid-Page Content Sponsor Placeholder -->
             <div class="w-full max-w-4xl p-4 rounded-2xl bg-white dark:bg-brand-surface border border-dashed border-slate-300 dark:border-brand-border text-center shadow-xs">
               <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 bg-slate-50 dark:bg-brand-dark/70 rounded-xl border border-slate-200/60 dark:border-brand-border/40">

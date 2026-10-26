@@ -91,7 +91,7 @@
           </a>
           <a href="/tools" class="w-full sm:w-auto px-7 py-3.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-extrabold rounded-xl border border-slate-300 dark:border-slate-600 transition shadow-sm text-center flex items-center justify-center space-x-2 text-sm active:scale-95">
             <span>Explore Tools</span>
-            <span class="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-black px-2 py-0.5 rounded uppercase">8 Tools</span>
+            <span class="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-black px-2 py-0.5 rounded uppercase">38+ Tools</span>
           </a>
         </div>
 
@@ -121,13 +121,9 @@
 
       <!-- Right Column: Circuit Canvas & Interactive Bring-Up Console -->
       <div class="relative w-full">
-        <!-- Floating Glassmorphic Status Pill (Top) -->
-        <div class="hidden sm:flex absolute -top-5 -left-4 z-20 items-center space-x-2 px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-xl text-[11px] font-black text-slate-900 dark:text-white backdrop-blur-md animate-float-slow">
-          <span class="w-2.5 h-2.5 rounded-full bg-accent animate-ping"></span>
-          <span>IPC-A-610 Class 3 SMT Standards</span>
-        </div>
 
-        <div class="relative w-full h-[320px] md:h-[420px] lg:h-[500px] bg-slate-950 rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 text-white overflow-hidden flex flex-col justify-between">
+
+        <div id="hero-console" class="relative w-full h-[320px] md:h-[420px] lg:h-[500px] bg-slate-950 rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 text-white overflow-hidden flex flex-col justify-between">
           <canvas id="circuitNodesCanvas" class="absolute inset-0 w-full h-full pointer-events-auto z-0 opacity-40"></canvas>
           <div class="relative z-10 flex flex-col h-full justify-between">
         
@@ -143,10 +139,10 @@
           <span>Live HIL Telemetry Active</span>
         </div>
 
-        <div class="relative mx-auto max-w-md lg:max-w-none bg-slate-950 rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 text-white overflow-hidden">
+        <div class="hero-console-panel relative mx-auto max-w-md lg:max-w-none bg-slate-950 rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-800 text-white overflow-hidden">
           
           <!-- Console Header & Tab Bar -->
-          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div class="hero-console-header flex items-center justify-between pb-4 border-b border-slate-800">
             <div class="flex items-center space-x-2">
               <div class="w-3 h-3 rounded-full bg-red-500"></div>
               <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -219,6 +215,7 @@ void init_embedded_system(void) {
   </div>
 </section>
 <% } %>
+<%- include('../partials/trust-bar') %>
 
 <% if (settings.section_sandbox_enabled !== "false") { %>
 
@@ -232,7 +229,7 @@ void init_embedded_system(void) {
         <span><%= settings.lab_event_label || 'LAB ACTIVE' %></span>
       </span>
       <span class="text-slate-300 font-semibold truncate text-[11px] sm:text-xs">
-        <%= settings.lab_status_text || 'Bangalore Hardware Prototyping Lab: Online • SMT Lines 1-4 Active' %>
+        <%= settings.lab_status_text || 'Hyderabad Hardware Prototyping Lab: Online • SMT Lines 1-4 Active' %>
       </span>
     </div>
     <div class="flex items-center space-x-5 text-slate-400 font-semibold text-[11px] w-full md:w-auto justify-between md:justify-end">
@@ -388,7 +385,7 @@ void init_embedded_system(void) {
           Featured Projects &amp; Live Case Studies
         </h2>
         <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Explore real-world turnkey electronic hardware, RTOS firmware, and IoT devices engineered in our Bangalore lab.
+          Explore real-world turnkey electronic hardware, RTOS firmware, and IoT devices engineered in our Hyderabad lab.
         </p>
       </div>
       <div class="mt-4 md:mt-0">
@@ -576,6 +573,82 @@ void init_embedded_system(void) {
 </section>
 <% } %>
 
+
+
+<!-- How We Work: 4-Step Process Section -->
+<% if (settings.section_process_enabled !== 'false') { %>
+<section data-mobile-process class="py-20 bg-white dark:bg-[#0d1715] border-b border-slate-200/80 dark:border-brand-border/60 transition-colors">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-3xl mx-auto mb-16">
+      <span class="px-3 py-1 bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent rounded-full text-xs font-bold uppercase tracking-wider">
+        Our Engagement Model
+      </span>
+      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+        How we work with you
+      </h2>
+      <p class="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300">
+        A transparent, milestone-driven process — from your first call to full IP handover. No lock-in, no surprises.
+      </p>
+    </div>
+
+    <div class="relative">
+      <div class="hidden lg:block absolute top-10 left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-transparent via-brand-500/40 to-transparent"></div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="relative flex flex-col items-center text-center px-4">
+          <div class="w-20 h-20 rounded-2xl bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/30 mb-6 flex-shrink-0">
+            <span class="text-white text-3xl font-black font-mono">01</span>
+          </div>
+          <h3 class="text-base font-black text-slate-900 dark:text-white mb-2">Discovery Call</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Free 30-minute architecture review with our principal engineer. We discuss your product concept, operating environment, and feasibility — no commitment required.
+          </p>
+          <span class="mt-4 text-[10px] font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Free · No Commitment</span>
+        </div>
+
+        <div class="relative flex flex-col items-center text-center px-4">
+          <div class="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-brand-surface border-2 border-brand-500/30 flex items-center justify-center shadow-md mb-6 flex-shrink-0">
+            <span class="text-brand-500 dark:text-accent text-3xl font-black font-mono">02</span>
+          </div>
+          <h3 class="text-base font-black text-slate-900 dark:text-white mb-2">NDA + Proposal</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            We execute a mutual NDA before reviewing your schematics or IP. A detailed technical proposal with BOM estimates and milestone timeline follows within 24 business hours.
+          </p>
+          <span class="mt-4 text-[10px] font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Within 24h · NDA-Protected</span>
+        </div>
+
+        <div class="relative flex flex-col items-center text-center px-4">
+          <div class="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-brand-surface border-2 border-brand-500/30 flex items-center justify-center shadow-md mb-6 flex-shrink-0">
+            <span class="text-brand-500 dark:text-accent text-3xl font-black font-mono">03</span>
+          </div>
+          <h3 class="text-base font-black text-slate-900 dark:text-white mb-2">Design + Validation</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Iterative hardware design sprints with regular review checkpoints. Automated HIL testing and DFM reviews are built into every milestone before board spin.
+          </p>
+          <span class="mt-4 text-[10px] font-bold text-brand-500 dark:text-accent uppercase tracking-wider">Transparent · Iterative</span>
+        </div>
+
+        <div class="relative flex flex-col items-center text-center px-4">
+          <div class="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-brand-surface border-2 border-brand-500/30 flex items-center justify-center shadow-md mb-6 flex-shrink-0">
+            <span class="text-brand-500 dark:text-accent text-3xl font-black font-mono">04</span>
+          </div>
+          <h3 class="text-base font-black text-slate-900 dark:text-white mb-2">IP Handover</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            You receive 100% ownership of all Gerber files, native CAD sources (Altium/KiCad), firmware repositories, BOM, and test reports. Zero vendor lock-in.
+          </p>
+          <span class="mt-4 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">100% IP Ownership · Zero Lock-in</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-14 text-center">
+      <a href="/contact" class="btn-shimmer inline-flex items-center space-x-2 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-black rounded-xl shadow-lg shadow-brand-500/25 transition transform hover:-translate-y-0.5 active:scale-95 text-sm">
+        <span>Start with a Free Discovery Call →</span>
+      </a>
+    </div>
+  </div>
+</section>
+<% } %>
 
 <!-- Smart Cost & Turnaround Engineering Estimator -->
 <% if (settings.section_estimator_enabled !== 'false') { %>
@@ -819,7 +892,7 @@ void init_embedded_system(void) {
         Client Testimonials
       </span>
       <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-        Trusted by Tier-1 OEM Engineers
+        Engineering partnerships, in their words
       </h2>
       <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">
         What technology leaders and engineering directors say about partnering with Embedded India.
@@ -827,35 +900,36 @@ void init_embedded_system(void) {
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between">
-        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
-          "Embedded India delivered our multi-layer CAN-FD ECU prototype in under 4 weeks with zero board respins. Their DFM review caught 3 critical footprint errors early."
-        </p>
-        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <p class="text-xs font-bold text-slate-900 dark:text-white">Rajesh K.</p>
-          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">VP Hardware Engineering, EV Powertrain</span>
+      <% 
+      const displayTestimonials = locals.testimonials || [];
+      displayTestimonials.forEach(function(t) { %>
+      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-500 transition">
+        <div>
+          <div class="flex items-center space-x-0.5 mb-4">
+            <% for(let i = 0; i < (t.rating || 5); i++) { %>
+            <svg class="w-4 h-4 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <% } %>
+            <span class="text-[10px] text-slate-500 dark:text-slate-400 ml-2 font-bold"><%= t.rating || 5 %>.0 / 5</span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">"<%= t.quote %>"</p>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60 flex items-center justify-between">
+          <div>
+            <span aria-hidden="true" class="inline-flex w-8 h-8 rounded-full bg-brand-50 dark:bg-brand-900 text-brand-700 dark:text-accent items-center justify-center font-bold mb-2"><%= (t.name || 'Client').split(/\s+/).slice(0,2).map(part => part[0]).join('').toUpperCase() %></span>
+            <p class="text-xs font-bold text-slate-900 dark:text-white"><%= t.name %></p>
+            <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium"><%= t.role %><% if (t.company) { %> · <%= t.company %><% } %></span>
+          </div>
+          <span class="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold rounded-full flex-shrink-0">Published review</span>
         </div>
       </div>
-
-      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between">
-        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
-          "Their low-power firmware architecture squeezed 3.5 years of battery life from a 1200mAh coin cell on our LoRaWAN agricultural asset trackers."
-        </p>
-        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <p class="text-xs font-bold text-slate-900 dark:text-white">Vikram S.</p>
-          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">CTO, Smart Agri IoT</span>
-        </div>
-      </div>
-
-      <div class="bg-slate-50 dark:bg-brand-surface rounded-3xl p-8 border border-slate-200 dark:border-brand-border shadow-sm flex flex-col justify-between">
-        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
-          "Seamless HIL testing automation that gave our functional safety audit team 100% test branch coverage for ISO 26262 ASIL-B compliance."
-        </p>
-        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-brand-border/60">
-          <p class="text-xs font-bold text-slate-900 dark:text-white">Anand M.</p>
-          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">Principal Embedded Architect, Automotive</span>
-        </div>
-      </div>
+      <% }); %>
+    </div>
+    <% if (!displayTestimonials.length) { %><p class="text-center text-sm text-slate-600 dark:text-slate-300">Worked with our team? Share your engineering experience below.</p><% } %>
+    <div class="mt-10 text-center">
+      <a href="/submit-review" class="inline-flex items-center space-x-1.5 px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-brand-surface border border-slate-200 dark:border-brand-border text-xs font-bold text-brand-600 dark:text-accent hover:border-brand-500 transition">
+        <span>⭐ Worked with Embedded India? Share your experience</span>
+        <span>&rarr;</span>
+      </a>
     </div>
   </div>
 </section>
@@ -907,6 +981,52 @@ void init_embedded_system(void) {
           Yes. We partner with ISO 9001 and IATF 16949 certified EMS facilities across Bangalore, Pune, and Noida for pilot runs and high-volume production with custom automated factory test jigs.
         </p>
       </details>
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>Do you sign NDAs before reviewing our schematics or design files?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          Yes, absolutely. We execute a mutual Non-Disclosure Agreement (NDA) before any confidential design data, schematics, or IP is shared. This is standard practice on all engagements from the first technical review onward.
+        </p>
+      </details>
+
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>What happens if the first PCB board spin has an error?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          Our rigorous DFM review and automated HIL verification process is designed to catch errors before any board is fabricated. In the rare event that a design issue requires a board re-spin, we include one revision cycle at no additional layout charge within the original project scope.
+        </p>
+      </details>
+
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>Can you work with our existing Altium Designer or KiCad project files?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          Yes. We work natively in both Altium Designer and KiCad. We can continue an existing partially-completed schematic or layout, or perform a full re-architecture review starting from your existing project files. All deliverables are returned in your preferred CAD format.
+        </p>
+      </details>
+
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer list-none flex items-center justify-between">
+          <span>Is there a minimum order quantity for prototype manufacturing?</span>
+          <span class="text-brand-500 dark:text-accent font-mono text-base group-open:rotate-45 transition transform">+</span>
+        </summary>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
+          No minimum order quantity for prototypes. Our standard turnkey prototype package includes 5 SMT-assembled boards, which is sufficient for bring-up, functional testing, and regulatory pre-compliance measurements. Single-unit handbuilt prototypes are also possible for urgent feasibility validation.
+        </p>
+      </details>
+
+      <% (locals.customFaqs || []).forEach(faq => { %>
+      <details class="bg-white dark:bg-brand-surface rounded-2xl p-5 border border-slate-200 dark:border-brand-border shadow-sm group">
+        <summary class="font-bold text-sm text-slate-900 dark:text-white cursor-pointer flex items-center justify-between gap-4"><span><%= faq.question %></span><span aria-hidden="true" class="text-brand-500 dark:text-accent shrink-0">+</span></summary>
+        <p class="text-sm text-slate-600 dark:text-slate-300 mt-3 whitespace-pre-line"><%= faq.answer %></p>
+      </details>
+      <% }); %>
     </div>
   </div>
 </section>

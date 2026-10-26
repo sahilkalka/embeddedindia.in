@@ -1,0 +1,168 @@
+<style>
+  .settings-workspace {
+    overflow: hidden;
+    background: #fff;
+  }
+  .dark .settings-workspace { background: var(--bg-surface, #13221e); }
+  .settings-taskbar {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.75rem;
+  }
+  .dark .settings-taskbar { border-color: #334155; }
+  .settings-content { min-width: 0; }
+  :root {
+    --bg-muted: #cbd5e1;
+  }
+  .dark {
+    --bg-muted: #334155;
+  }
+  .theme-toggle-switch {
+    transition: background-color 0.25s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .theme-toggle-switch.is-checked {
+    background-color: var(--accent-primary, #059669) !important;
+  }
+  .theme-toggle-switch.is-unchecked {
+    background-color: var(--bg-muted, #cbd5e1) !important;
+  }
+  .settings-section {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+  .settings-nav-btn {
+    display: flex;
+    min-height: 3.5rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.25rem;
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+  .dark .settings-nav-btn { color: #cbd5e1; }
+  .settings-nav-btn:hover { background: var(--bg-primary, #f1f5f9); color: var(--accent-primary, #059669); }
+  .settings-nav-btn.is-active {
+    background: var(--accent-primary, #059669);
+    color: #fff;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent-primary, #059669) 24%, transparent);
+  }
+  .settings-nav-btn:focus-visible {
+    outline: 2px solid var(--accent-primary, #059669);
+    outline-offset: 2px;
+  }
+  .settings-nav-icon { font-size: 1.2rem; line-height: 1; }
+  .settings-nav-label {
+    max-width: 100%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  .palette-picker-panel {
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    padding: 0.875rem;
+    background: #f8fafc;
+    color: #0f172a;
+  }
+  .palette-picker-heading { color: #0f172a !important; }
+  .palette-card {
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+    will-change: transform;
+  }
+  .palette-card:hover {
+    transform: translateY(-4px) scale(1.03);
+  }
+  .palette-card:active {
+    transform: scale(0.97);
+  }
+  .palette-picker-panel .palette-card {
+    background: #fff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+  }
+  .palette-picker-panel .palette-card-title { color: #0f172a !important; }
+  .palette-picker-panel .palette-card-divider { border-color: #e2e8f0; }
+  .palette-picker-panel .palette-card-edit {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .palette-picker-panel .palette-card-edit:hover { border-color: var(--accent-primary, #059669); }
+  .palette-picker-panel .palette-card-active {
+    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, #fff);
+  }
+  .palette-picker-panel .palette-drawer {
+    background: #fff;
+    border-color: #e2e8f0;
+    color: #0f172a;
+  }
+  .palette-picker-panel .palette-drawer-heading { color: var(--accent-primary, #059669); }
+  .palette-picker-panel .palette-drawer-muted { color: #64748b; }
+  .palette-picker-panel .palette-drawer-divider { border-color: #e2e8f0; }
+  .palette-picker-panel .palette-drawer-input {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+  }
+  .dark .palette-picker-panel {
+    border-color: var(--border-color, #334155);
+    background: var(--bg-primary, #0f172a);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-heading,
+  .dark .palette-picker-panel .palette-card-title { color: var(--text-primary, #f8fafc) !important; }
+  .dark .palette-picker-panel .palette-card {
+    background: var(--bg-surface, #1e293b);
+    border-color: var(--border-color, #334155);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-panel .palette-card-divider,
+  .dark .palette-picker-panel .palette-drawer-divider { border-color: var(--border-color, #334155); }
+  .dark .palette-picker-panel .palette-card-edit,
+  .dark .palette-picker-panel .palette-drawer-input {
+    background: var(--bg-primary, #0f172a);
+    border-color: var(--border-color, #334155);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-panel .palette-card-active {
+    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, var(--bg-surface, #1e293b));
+  }
+  .dark .palette-picker-panel .palette-drawer {
+    background: var(--bg-surface, #1e293b);
+    border-color: var(--border-color, #334155);
+    color: var(--text-primary, #f8fafc);
+  }
+  .dark .palette-picker-panel .palette-drawer-muted { color: var(--text-muted, #94a3b8); }
+  .dark .palette-picker-panel .palette-drawer-input { color: var(--text-primary, #f8fafc); }
+  .palette-card-active {
+    border-color: var(--palette-accent, var(--accent-primary, #059669)) !important;
+    background: color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 8%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 40%, transparent), 0 8px 24px -4px color-mix(in srgb, var(--palette-accent, var(--accent-primary, #059669)) 30%, transparent) !important;
+  }
+  @media (min-width: 1024px) {
+    .settings-workspace { min-height: 38rem; }
+    .settings-taskbar {
+      width: 7.5rem;
+      flex-shrink: 0;
+      border-bottom: 0;
+      border-right: 1px solid #e2e8f0;
+      padding: 1rem 0.75rem;
+    }
+    .dark .settings-taskbar { border-color: #334155; }
+    .settings-content { flex: 1; }
+    .settings-nav-btn { min-height: 3.75rem; font-size: 0.72rem; }
+  }
+</style>
