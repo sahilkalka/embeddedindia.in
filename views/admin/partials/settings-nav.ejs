@@ -4,7 +4,7 @@
         <span class="text-[9px] font-bold text-slate-500 dark:text-slate-400">SETTINGS</span>
       </div>
       <nav class="grid grid-cols-4 sm:grid-cols-8 lg:grid-cols-1 gap-1.5" id="settings-sidebar-nav" aria-label="Settings modules">
-        <a href="/admin/ai" class="settings-nav-btn <%= currentPath === '/admin/ai' ? 'is-active' : '' %>" aria-label="AI Engine"><span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">lightbulb</span><span class="settings-nav-label">AI Engine</span></a>
+        <a href="/admin/settings#ai-engine" data-settings-tab="ai-engine" class="settings-nav-btn" aria-label="AI Engine"><span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">lightbulb</span><span class="settings-nav-label">AI Engine</span></a>
 <a href="/admin/settings#faq-manager" data-settings-tab="faq-manager" class="settings-nav-btn"><span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">quiz</span><span class="settings-nav-label">FAQs</span></a>
         <a href="/admin/settings#site-customizer" data-settings-tab="site-customizer" aria-label="Customizer" title="Site Customizer" class="settings-nav-btn">
           <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">tune</span>
@@ -12,7 +12,7 @@
         </a>
         <a href="/admin/settings#feature-flags" data-settings-tab="feature-flags" aria-label="Flags and preview" title="Feature Flags &amp; Preview" class="settings-nav-btn">
           <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">flag</span>
-          <span class="settings-nav-label">Flags &amp; Live</span>
+          <span class="settings-nav-label">Homepage</span>
         </a>
         <a href="/admin/settings#seo-scripts" data-settings-tab="seo-scripts" aria-label="Dynamic SEO" title="Dynamic SEO &amp; AI" class="settings-nav-btn">
           <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">query_stats</span>
@@ -28,11 +28,11 @@
         </a>
         <a href="/admin/settings#smtp-settings" data-settings-tab="smtp-settings" aria-label="SMTP and routing" title="SMTP &amp; Recipient Routing" class="settings-nav-btn">
           <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">outgoing_mail</span>
-          <span class="settings-nav-label">SMTP</span>
+          <span class="settings-nav-label">Email &amp; routing</span>
         </a>
         <a href="/admin/settings#team-accounts" data-settings-tab="team-accounts" aria-label="Staff accounts" title="Staff Accounts &amp; Access" class="settings-nav-btn">
           <span class="material-symbols-rounded settings-nav-icon" aria-hidden="true">group</span>
-          <span class="settings-nav-label">Staff</span>
+          <span class="settings-nav-label">Team &amp; access</span>
         </a>
       </nav>
     </aside>

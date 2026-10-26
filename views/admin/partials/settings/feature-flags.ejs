@@ -1,0 +1,123 @@
+<section id="feature-flags" aria-labelledby="feature-flags-title" class="settings-section hidden">
+
+      <form class="settings-module-form space-y-6" action="/admin/settings" method="POST" data-module="Feature Flags">
+        <input type="hidden" name="_active_tab" value="feature-flags">
+
+        <%- include('../settings-module-header', {"sectionId":"feature-flags","title":"Homepage sections","icon":"flag","description":"Choose which sections appear and preview the homepage on desktop, tablet, or mobile.","saveLabel":"Save Feature Flags"}) %>
+
+        <!-- 2-COLUMN SPLIT: LEFT TOGGLES (5 cols) | RIGHT LIVE HOMEPAGE PREVIEW (7 cols) -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+          <!-- LEFT: 11 Section Toggles (iOS / Tailwind Style Switches) -->
+          <div class="xl:col-span-5 space-y-2.5 text-xs">
+            <%
+            const SECTION_FLAGS = [
+              { key: 'section_hero_enabled', num: '1', title: 'Hero Section', desc: 'Primary headline, PCB telemetry pill & CTA buttons', val: settings.section_hero_enabled },
+              { key: 'lab_event_enabled', num: '2', title: 'Lab Telemetry Ticker', desc: 'Live active SMT lines & HIL station indicator banner', val: settings.lab_event_enabled },
+              { key: 'section_sandbox_enabled', num: '3', title: 'Interactive Sandbox', desc: 'Trace sandbox & firmware architecture runner', val: settings.section_sandbox_enabled },
+              { key: 'section_services_enabled', num: '4', title: 'Engineering Services', desc: 'Hardware, RTOS Firmware, IoT & Turnkey PCB capabilities', val: settings.section_services_enabled },
+              { key: 'section_architecture_enabled', num: '5', title: 'Architecture Viewer', desc: 'Automotive, TinyML, and IoT architecture breakdowns', val: settings.section_architecture_enabled },
+              { key: 'section_projects_enabled', num: '6', title: 'Featured Projects', desc: 'Curated hardware case studies and real-world designs', val: settings.section_projects_enabled },
+              { key: 'section_tools_enabled', num: '7', title: 'Engineering Tools Hub', desc: 'Interactive calculators: Trace Width, Battery Life, Antenna', val: settings.section_tools_enabled },
+              { key: 'section_blog_enabled', num: '8', title: 'Technical Blog', desc: 'Latest technical articles, firmware guides, and whitepapers', val: settings.section_blog_enabled },
+              { key: 'section_process_enabled', num: '8b', title: 'How We Work', desc: 'Four-step engagement process', val: settings.section_process_enabled },
+              { key: 'section_testimonials_enabled', num: '9', title: 'Testimonials & Trust', desc: 'Published client reviews and engagement commitments', val: settings.section_testimonials_enabled },
+              { key: 'section_faq_enabled', num: '10', title: 'FAQ Accordion', desc: 'Frequently asked engineering & manufacturing questions', val: settings.section_faq_enabled },
+              { key: 'section_cta_enabled', num: '11', title: 'Feasibility Consultation CTA Banner', desc: 'High-conversion bottom RFQ banner linking to /contact', val: settings.section_cta_enabled }
+            ];
+            %>
+
+            <% SECTION_FLAGS.forEach(f => {
+              const isEnabled = f.val !== 'false';
+            %>
+            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border flex items-center justify-between transition hover:border-slate-300 dark:hover:border-slate-700">
+              <div class="pr-3">
+                <label for="btn_<%= f.key %>" class="font-bold text-slate-900 dark:text-white block"><%= f.num %>. <%= f.title %></label>
+                <span class="text-[10px] text-slate-400"><%= f.desc %></span>
+              </div>
+
+              <div class="flex items-center space-x-2.5 flex-shrink-0">
+                <span id="badge_<%= f.key %>" class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md <%= isEnabled ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300' : 'bg-slate-200 dark:bg-slate-800 text-slate-500' %>">
+                  <%= isEnabled ? 'Show' : 'Hide' %>
+                </span>
+
+                <!-- iOS / Tailwind Toggle Switch Button -->
+                <button type="button"
+                  role="switch"
+                  aria-checked="<%= isEnabled ? 'true' : 'false' %>"
+                  id="btn_<%= f.key %>"
+                  onclick="toggleSectionFlag('<%= f.key %>', this)"
+                  class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 <%= isEnabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700' %>"
+                  title="Click to toggle section <%= f.title %>">
+                  <span class="sr-only">Toggle <%= f.title %></span>
+                  <span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out <%= isEnabled ? 'translate-x-5' : 'translate-x-0' %>"></span>
+                </button>
+                <input type="hidden" name="<%= f.key %>" id="input_<%= f.key %>" value="<%= isEnabled ? 'true' : 'false' %>">
+              </div>
+            </div>
+            <% }); %>
+
+          </div>
+
+          <!-- RIGHT: LIVE HOMEPAGE PREVIEW IFRAME WITH RESPONSIVE TOOLBAR -->
+          <div class="homepage-preview-panel xl:col-span-7 sticky top-20 space-y-3" style="width: 100%; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box;">
+
+            <!-- Toolbar -->
+            <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div class="flex items-center space-x-1.5 text-xs font-bold">
+                <span class="text-slate-500 mr-1 text-[11px] uppercase tracking-wider hidden sm:inline">Viewport:</span>
+                <button type="button" onclick="setIframeViewport('100%')" id="vp-btn-desktop" class="nav-icon-link group flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl border border-brand-500/30 bg-brand-500/15 text-brand-600 dark:text-accent font-bold transition shadow-xs">
+                  <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0">desktop_windows</span>
+                  <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Desktop</span>
+                </button>
+                <button type="button" onclick="setIframeViewport('768px')" id="vp-btn-tablet" class="nav-icon-link group flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-bold">
+                  <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0">tablet_mac</span>
+                  <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Tablet</span>
+                </button>
+                <button type="button" onclick="setIframeViewport('390px')" id="vp-btn-mobile" class="nav-icon-link group flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-bold">
+                  <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0">smartphone</span>
+                  <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">Mobile</span>
+                </button>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <a href="/" target="_blank" class="nav-icon-link group flex flex-col items-center justify-center min-w-[54px] py-1 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-accent hover:bg-slate-100 dark:hover:bg-slate-800 transition font-bold">
+                  <span class="material-symbols-rounded text-lg transition-transform duration-200 group-hover:scale-110 flex-shrink-0">open_in_new</span>
+                  <span class="text-[10px] font-bold tracking-tight mt-0.5 whitespace-nowrap leading-tight">New Tab</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Iframe Container Mockup -->
+            <div id="iframeScaleContainer" class="w-full flex justify-center items-start overflow-hidden rounded-2xl transition-all duration-300" style="min-height: 640px; width: 100%; max-width: 100%; overflow: hidden; position: relative; box-sizing: border-box;">
+              <div id="iframeViewportWrapper" class="mx-auto rounded-2xl overflow-hidden border-2 border-slate-300 dark:border-slate-700 shadow-2xl bg-white dark:bg-slate-950 flex flex-col flex-shrink-0" style="width: 100%; max-width: 100%; height: 640px; box-sizing: border-box;">
+
+              <!-- Browser Mock Address Bar -->
+              <div class="h-8 bg-slate-200 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-700 px-3 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                </div>
+                <div class="bg-white dark:bg-slate-900 px-4 py-0.5 rounded-md text-[10px] text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 flex items-center space-x-1">
+                  <span>🔒 https://embeddedindia.in/</span>
+                  <span id="previewSyncBadge" class="text-brand-500 font-bold">[Live Preview]</span>
+                </div>
+                <span class="text-[10px]">Embedded India</span>
+              </div>
+
+              <!-- Real Homepage Iframe -->
+              <iframe id="liveHomepageIframe" title="Live homepage preview" src="/?preview=1" class="w-full flex-grow border-0"></iframe>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 px-1">
+              <span>Scaled to fit: Desktop 1440 × 900, Tablet 768 × 1024, Mobile 390 × 844. The preview uses saved settings.</span>
+              <%- include('../module-save-button', { label: "Save Feature Flags" }) %>
+            </div>
+
+          </div>
+
+        </div>
+      </form>
+    </section>

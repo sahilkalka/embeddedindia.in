@@ -1,164 +1,101 @@
-// scripts/pack-bundle.js
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+// Build a cPanel deployment archive from an explicit runtime allowlist.
+const { execFileSync, spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const rootDir = path.resolve(__dirname, '..');
 const zipOutput = path.join(rootDir, 'embeddedindia.zip');
-
-// Clean up any old deployment archives
-const staleArchives = [
-  'embeddedindia.zip',
-  'embedded.zip',
-  'embeddedindia-cpanel-deploy.zip',
-  'embeddedindia-cpanel-deploy.tar.gz'
+const temporaryOutput = zipOutput + '.tmp';
+const runtimeDirectories = ['src', 'views', 'public'];
+const runtimeFiles = [
+  'app.js', 'package.json', 'package-lock.json', 'server-deploy.sh',
+  'tailwind.config.js', '.cpanel.yml', 'prisma/schema.prisma',
+  'scripts/init-db.js', 'scripts/seed-sqlite.js',
+  'scripts/reset-admin.js', 'scripts/generate-lead-magnet.js'
 ];
+const excludedDirectories = new Set([
+  'node_modules', 'tmp', 'scratch', 'reports', 'logs', 'tests', '__tests__',
+  'test-results', 'playwright-report', 'coverage', '__pycache__'
+]);
 
-for (const archive of staleArchives) {
-  const p = path.join(rootDir, archive);
-  if (fs.existsSync(p)) {
-    try { fs.unlinkSync(p); } catch (e) {}
+function isExcluded(name) {
+  return name.startsWith('.') ||
+    /\.(?:db|sqlite|sqlite3)(?:[-.].*)?$/i.test(name) ||
+    /\.(?:log|bak(?:\..*)?|tmp|temp|map|tsbuildinfo|zip|tar|gz|7z)$/i.test(name) ||
+    /(?:^|[.-])(?:test|spec)\.[cm]?[jt]sx?$/i.test(name) ||
+    /^(?:Thumbs\.db|desktop\.ini)$/i.test(name);
+}
+
+function collectFiles(root = rootDir) {
+  const files = [];
+  function visit(relative) {
+    const absolute = path.join(root, relative);
+    const entry = fs.lstatSync(absolute);
+    // Do not follow links into dependencies or files outside the deployment tree.
+    if (entry.isSymbolicLink()) return;
+    if (entry.isDirectory()) {
+      for (const name of fs.readdirSync(absolute).sort()) {
+        if (excludedDirectories.has(name.toLowerCase()) || isExcluded(name)) continue;
+        visit(path.join(relative, name));
+      }
+    } else if (entry.isFile()) {
+      files.push(relative.split(path.sep).join('/'));
+    }
   }
+  for (const relative of runtimeFiles) {
+    if (!fs.existsSync(path.join(root, relative))) throw new Error('Required deployment file missing: ' + relative);
+    visit(relative);
+  }
+  for (const relative of runtimeDirectories) visit(relative);
+  return files.sort();
 }
 
-console.log('📦 [1/3] Compiling Tailwind production stylesheet...');
-try {
-  execSync('npm run build:css', { cwd: rootDir, stdio: 'inherit' });
-} catch (e) {
-  console.warn('⚠️ CSS build warning:', e.message);
+function findPython() {
+  const candidates = process.platform === 'win32'
+    ? [['python', []], ['py', ['-3']], ['python3', []]]
+    : [['python3', []], ['python', []]];
+  for (const [command, args] of candidates) {
+    const result = spawnSync(command, [...args, '--version'], { encoding: 'utf8', windowsHide: true });
+    if (!result.error && result.status === 0 && /Python 3\./.test((result.stdout || '') + (result.stderr || ''))) return [command, args];
+  }
+  throw new Error('Python 3 is required to create the deployment ZIP.');
 }
 
-console.log('📦 [2/3] Checking Prisma Client schema...');
-const clientExists = fs.existsSync(path.join(rootDir, 'node_modules', '.prisma', 'client', 'index.js'));
-if (clientExists) {
-  console.log('✓ Prisma Client is already generated.');
-} else {
+function pack() {
   try {
-    execSync('npx prisma generate', { cwd: rootDir, stdio: 'inherit' });
-  } catch (e) {
-    console.log('ℹ️ Local Prisma Client engine in use; server generates its target Linux engine during deployment.');
+    console.log('[1/2] Building production CSS...');
+    execFileSync(process.execPath, [
+      require.resolve('tailwindcss/lib/cli.js'),
+      '-i', './src/public/css/input.css', '-o', './public/css/style.css', '--minify'
+    ], { cwd: rootDir, stdio: 'inherit', windowsHide: true });
+
+    const files = collectFiles();
+    const [python, args] = findPython();
+    console.log('[2/2] Packing deployment files only...');
+    const pythonScript = [
+      'import json, os, sys, zipfile',
+      'bundle = json.load(sys.stdin)',
+      'with zipfile.ZipFile(bundle["output"], "w", zipfile.ZIP_DEFLATED, compresslevel=9) as archive:',
+      '    for name in bundle["files"]:',
+      '        archive.write(os.path.join(bundle["root"], name), name)',
+      'with zipfile.ZipFile(bundle["output"]) as archive:',
+      '    bad = archive.testzip()',
+      '    if bad: raise RuntimeError("Corrupt ZIP entry: " + bad)'
+    ].join('\n');
+    execFileSync(python, [...args, '-c', pythonScript], {
+      input: JSON.stringify({ root: rootDir, output: temporaryOutput, files }),
+      cwd: rootDir, stdio: ['pipe', 'inherit', 'inherit'], windowsHide: true
+    });
+    fs.renameSync(temporaryOutput, zipOutput);
+    const size = (fs.statSync(zipOutput).size / 1024 / 1024).toFixed(2);
+    console.log(`Created embeddedindia.zip: ${files.length} files, ${size} MB.`);
+    console.log('Excluded databases, environment files, dependencies, reports, tests, and temporary files.');
+  } finally {
+    if (fs.existsSync(temporaryOutput)) fs.unlinkSync(temporaryOutput);
   }
 }
 
-console.log('📦 [3/3] Creating single deployment archive (embeddedindia.zip)...');
-
-const pythonScript = `
-import zipfile
-import os
-
-output_zip = r"${zipOutput}"
-root_dir = r"${rootDir}"
-
-exclude_dirs = {
-    'node_modules',
-    '.git',
-    '.github',
-    '.gemini',
-    '.agents',
-    '.playwright-mcp',
-    '.playwright-mcp-profile',
-    'tests',
-    'playwright-report',
-    'test-results',
-    'deep-qa-report',
-    'qa-report',
-    'audit-reports',
-    '.vscode',
-    '.idea',
-    'coverage',
-    'tmp',
-    'scratch',
-    '__pycache__',
-    '.cache',
-    '.pytest_cache'
+if (require.main === module) {
+  try { pack(); } catch (error) { console.error('Packaging failed:', error.message); process.exitCode = 1; }
 }
-
-exclude_files = {
-    'embeddedindia.zip',
-    'embedded.zip',
-    'embeddedindia-cpanel-deploy.zip',
-    'embeddedindia-cpanel-deploy.tar.gz',
-    '.env',
-    '.env.example',
-    '.gitattributes',
-    '.gitignore',
-    'playwright.config.js',
-    '.last-run.json',
-    'dev.db-journal',
-    'dev.db-wal',
-    'dev.db-shm',
-    'temp_bundle_script.py',
-    'temp_zip_script.py',
-    '.DS_Store',
-    'Thumbs.db',
-    'qa-inspector.mjs',
-    'deep-audit.mjs',
-    'database.sqlite'
-}
-
-exclude_extensions = {
-    '.log',
-    '.bak',
-    '.tmp',
-    '.tsbuildinfo',
-    '.pma',
-    '.map'
-}
-
-total_files = 0
-with zipfile.ZipFile(output_zip, 'w', zipfile.ZIP_DEFLATED) as zf:
-    for foldername, subfolders, filenames in os.walk(root_dir):
-        # Exclude directories in-place (case-insensitive check)
-        subfolders[:] = [
-            d for d in subfolders
-            if d.lower() not in {x.lower() for x in exclude_dirs}
-            and not d.startswith('.')
-        ]
-        
-        for filename in filenames:
-            fl = filename.lower()
-            if fl in {x.lower() for x in exclude_files}:
-                continue
-            if fl.startswith('dev.db.bak') or fl.startswith('.last-run'):
-                continue
-            if fl.endswith('.spec.js') or fl.endswith('.test.js') or fl.endswith('.spec.ts') or fl.endswith('.test.ts'):
-                continue
-            _, ext = os.path.splitext(filename)
-            if ext.lower() in exclude_extensions:
-                continue
-            
-            filepath = os.path.join(foldername, filename)
-            arcname = os.path.relpath(filepath, root_dir).replace('\\\\', '/')
-            
-            zf.write(filepath, arcname)
-            total_files += 1
-
-print(f"Packed {total_files} files directly into {output_zip}")
-`;
-
-const tempScriptPath = path.join(rootDir, 'temp_bundle_script.py');
-fs.writeFileSync(tempScriptPath, pythonScript, 'utf8');
-
-const primaryPy = process.platform === 'win32' ? 'python' : 'python3';
-const secondaryPy = process.platform === 'win32' ? 'python3' : 'python';
-
-try {
-  execSync(`${primaryPy} "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
-} catch (pyErr) {
-  try {
-    execSync(`${secondaryPy} "${tempScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
-  } catch (err2) {
-    console.error('⚠️ Could not run Python zip packaging:', err2.message);
-  }
-} finally {
-  if (fs.existsSync(tempScriptPath)) {
-    fs.unlinkSync(tempScriptPath);
-  }
-}
-
-if (fs.existsSync(zipOutput)) {
-  const stats = fs.statSync(zipOutput);
-  console.log(`\n🎉 Deployment bundle created: embeddedindia.zip (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
-} else {
-  console.log(`\n⚠️ embeddedindia.zip was not created.`);
-}
+module.exports = { collectFiles, isExcluded };

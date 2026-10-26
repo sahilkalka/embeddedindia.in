@@ -6,7 +6,7 @@
   function render() {
     rows.replaceChildren();
     items.forEach((item, index) => {
-      const card = document.createElement('div'); card.className = 'faq-editor-card p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4';
+      const card = document.createElement('div'); card.className = 'settings-panel faq-editor-card p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4';
       for (const [key, label, max] of [['question', 'Question', 300], ['answer', 'Answer', 5000]]) {
         const wrapper = document.createElement('label'); wrapper.className = 'block text-xs font-medium text-slate-800 dark:text-slate-200'; wrapper.textContent = label + ' ' + (index + 1);
         const input = document.createElement(key === 'answer' ? 'textarea' : 'input'); input.value = item[key] || ''; input.required = true; input.maxLength = max; input.className = 'block w-full mt-2 px-3.5 py-2.5 rounded-xl bg-white dark:bg-brand-surface border border-slate-300 dark:border-slate-700 text-sm font-normal';

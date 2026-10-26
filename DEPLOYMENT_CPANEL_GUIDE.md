@@ -1,172 +1,206 @@
-```bash
-npm run pack:cpanel
-```
+# cPanel deployment guide
 
-# 🚀 Deployment Guide: GitHub Actions CI/CD & cPanel Automation
+This project supports two separate CloudLinux Node.js applications. Each keeps its own dependencies, configuration, database, and Passenger restart file.
 
-This guide covers deployment for **Embedded India (`embeddedindia.in`)**, supporting both **Automated Git Push Deployments via GitHub Actions** and **Terminal-Free Manual Deployment via the cPanel Web Interface**.
+| Target argument | Website | Application root | Node 22 activation script |
+| --- | --- | --- | --- |
+| `default` | https://embeddedindia.in | `/home/jiazxebj/embeddedindia.in` | `/home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate` |
+| `new` | https://new.embeddedindia.in | `/home/jiazxebj/new` | `/home/jiazxebj/nodevenv/new/22/bin/activate` |
 
----
+## 1. Register each application in cPanel
 
-## 🔄 1. Automated CI/CD Deployment via GitHub Actions (Active)
+Under **Software → Setup Node.js App**, create or verify these settings for each site:
 
-The repository includes a configured workflow at [`.github/workflows/deploy.yml`](file:///.github/workflows/deploy.yml) that automatically pulls changes and updates the production website on every push to the `main` branch.
+- Node.js version: **22**.
+- Application mode: **Production**.
+- Application root: **embeddedindia.in** for production, **new** for staging.
+- Application URL: the matching website in the table above.
+- Application startup file: **app.js**.
 
-### How the Auto-Deploy Pipeline Works:
+Creating the app supplies its CloudLinux virtual environment. The deployment script requires the matching activation script to exist; it does not create a cPanel application or fall back to another site's Node environment.
 
-```mermaid
-flowchart LR
-  A["Git Push to main"] --> B["GitHub Actions Triggered"]
-  B --> C["SSH to cPanel Host"]
-  C --> D["Git Fetch & Hard Reset"]
-  D --> E["uapi VersionControlDeployment"]
-  E --> F["./server-deploy.sh update"]
-  F --> G["Phusion Passenger Reload (tmp/restart.txt)"]
-```
+CloudLinux documents [virtual-environment activation and its npm commands](https://docs.cloudlinux.com/cloudlinuxos/command-line_tools/#node-js-selector). Its [application editor](https://docs.cloudlinux.com/cloudlinuxos/lve_manager/#edit-application) also provides **Run npm install** and **Restart** controls.
 
-1. **Push Event**: Any commit merged into `main` triggers `.github/workflows/deploy.yml`.
-2. **Secure SSH Handshake**: The workflow securely authenticates with your cPanel server via `appleboy/ssh-action@v1.0.3`.
-3. **Repository Sync**:
+## 2. Build a deployment ZIP locally
 
-   ```bash
-   cd /home/jiazxebj/embeddedindia.in
-   git fetch origin main
-   git reset --hard origin/main
-   ```
-4. **cPanel Version Control Registration**:
-
-   ```bash
-   uapi VersionControlDeployment create repository_root=/home/jiazxebj/embeddedindia.in
-   ```
-5. **Zero-Downtime Deployment Script**:
-
-   ```bash
-   bash ./server-deploy.sh update
-   ```
-
-   - Automatically detects and activates the cPanel Node.js virtual environment (`nodevenv`).
-   - Backs up the SQLite database (`prisma/dev.db.bak_TIMESTAMP`).
-   - Installs production dependencies only when `package.json` or `package-lock.json` changes; otherwise skips npm install.
-   - Runs database table initialization (`node scripts/init-db.js`) and seeds initial content only for a new database.
-   - Relies on npm's Prisma postinstall generation when dependencies are installed; does not repeat `prisma generate`.
-   - Compiles Tailwind CSS if necessary (`public/css/style.css`).
-   - Sets safe file permissions (`chmod 777 tmp prisma`, `chmod 666 prisma/dev.db*`).
-   - Verifies server loader syntax.
-   - Touches `tmp/restart.txt` to trigger an instant Phusion Passenger reload.
-
-### Required GitHub Repository Secrets
-
-Configure the following secrets in your GitHub repository (**Settings &rarr; Secrets and variables &rarr; Actions &rarr; Repository secrets**):
-
-| Secret Name        | Description                                          | Example Value                              |
-| :----------------- | :--------------------------------------------------- | :----------------------------------------- |
-| `CPANEL_HOST`    | Hostname or IP address of your cPanel server         | `embeddedindia.in` or server IP          |
-| `CPANEL_USER`    | Your cPanel Linux username                           | `jiazxebj`                               |
-| `CPANEL_SSH_KEY` | Private SSH Key (RSA / Ed25519) authorized on server | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
-| `CPANEL_PORT`    | SSH Port (default: `22`)                           | `22` or hosting custom port              |
-
-> [!TIP]
-> To generate and authorize an SSH key in cPanel:
->
-> 1. In cPanel, navigate to **SSH Access** &rarr; **Manage SSH Keys** &rarr; **Generate a New Key**.
-> 2. Click **Authorize** next to the generated public key.
-> 3. View/Download the **Private Key** and paste it into GitHub Secrets as `CPANEL_SSH_KEY`.
-
----
-
-## 📦 2. Terminal-Free Manual UI Deployment (cPanel Web Interface)
-
-If you ever need to perform a manual deployment without SSH or terminal access:
-
-### Step 1: Pack the Deployment Bundle (On Your Computer)
+From the project directory on your computer:
 
 ```bash
 npm run pack:cpanel
 ```
 
-This generates a clean, optimized `embeddedindia.zip` excluding local caches, test suites, and temporary files.
+The command rebuilds production CSS and creates `embeddedindia.zip`. It includes app code, templates, public assets, the Prisma schema, and the runtime setup scripts. It excludes `.env`, databases and their backups, `node_modules`, tests, reports, and temporary files.
 
-### Step 2: Upload & Extract via cPanel File Manager
+Do not add your local `node_modules` or SQLite database to the ZIP.
 
-1. Log into your **cPanel Account**.
-2. Open **File Manager** and navigate to your application root (e.g., `/home/jiazxebj/embeddedindia.in`).
-3. Click **Upload**, select `embeddedindia.zip`, and extract the files directly into the repository folder.
+## 3. Upload and deploy the ZIP
 
-### Step 3: Configure "Setup Node.js App" in cPanel
+Upload the latest `embeddedindia.zip` using cPanel File Manager or SFTP. On the first deployment, also upload the current `server-deploy.sh` separately so it can open the ZIP. The ZIP itself includes the updated script for subsequent deployments.
 
-1. In cPanel, navigate to **Software &rarr; Setup Node.js App**.
-2. If creating new, fill out:
-   - **Node.js version**: `20.x` *(or 22.x LTS)*
-   - **Application mode**: `Production`
-   - **Application root**: `embeddedindia.in`
-   - **Application URL**: `embeddedindia.in`
-   - **Application startup file**: `app.js`
-3. Click **Run NPM Install** under the detected `package.json`.
-4. Click **Restart** (circular arrow button) at the top of the interface.
+Manual extraction is unnecessary. Paths containing spaces must be quoted.
 
----
+### Production
 
-## ⚙️ 3. Production Environment Variables Reference (`.env`)
-
-Add or verify these environment variables in cPanel Node.js App UI (**Environment variables** section) or in `/home/jiazxebj/embeddedindia.in/.env`:
-
-| Variable                   | Recommended Production Value                     | Description                                                                      |
-| :------------------------- | :----------------------------------------------- | :------------------------------------------------------------------------------- |
-| `NODE_ENV`               | `production`                                   | Enables caching, minification, and security headers                              |
-| `PORT`                   | `3000`                                         | Port handled by Passenger                                                        |
-| `APP_URL`                | `https://embeddedindia.in`                     | Canonical public URL (used in SEO & sitemaps)                                    |
-| `DATABASE_URL`           | `file:./prisma/dev.db`                         | Relative path to production SQLite database                                      |
-| `SESSION_SECRET`         | *(Random 32+ char secret string)*              | Session cookie cryptographic signature                                           |
-| `ADMIN_JWT_SECRET`       | *(Random 32+ char secret token)*               | Admin JWT session token                                                          |
-| `ADMIN_DEFAULT_EMAIL`    | `admin@embeddedindia.in`                       | Email for the initial admin account; used only when no admin exists              |
-| `ADMIN_DEFAULT_PASSWORD` | `AdminEmbedded@2026!`                          | Initial admin password; existing admin passwords are preserved during deployment |
-| `SMTP_HOST`              | `smtp.gmail.com` *(or cPanel mail)*          | Outgoing mail server for inquiries                                               |
-| `SMTP_PORT`              | `587`                                          | `587` (STARTTLS) or `465` (SSL)                                              |
-| `SMTP_SECURE`            | `false`                                        | `false` for 587, `true` for 465                                              |
-| `SMTP_USER`              | `info@embeddedindia.in`                        | Outgoing email address                                                           |
-| `SMTP_PASS`              | *(Your email app password)*                    | Outgoing email password                                                          |
-| `AI_PROVIDER`            | `nvidia` / `gemini` / `openai` / `local` | Active AI provider for blog/case-study generator                                 |
-| `AI_API_KEY`             | *(Your provider API key)*                      | API key for cloud LLM inference                                                  |
-
----
-
-## 🛠️ 4. Database Architecture & Self-Healing
-
-The application uses an ultra-reliable **hybrid SQLite persistence engine** in `src/services/db.js`:
-
-- **Dual-Mode Engine**: Operates with native `better-sqlite3` (guaranteeing 0% network or binary download failures on cPanel) and seamlessly interfaces with `@prisma/client` when binaries are present.
-- **Zero-Config Migrations**: All table structures (`Project`, `User`, `Post`, `Inquiry`, `Subscriber`, `Setting`, `Analytics`, `CalculatorStat`) are created and migrated via `node scripts/init-db.js`.
-- **Pre-Seeded Content**: `node scripts/seed-sqlite.js` automatically provisions the 4 rich case studies, technical articles, and default customizer settings if the database is newly initialized.
-- **Automatic Permission Healing**: `app.js` runs a self-healing permissions hook on startup that ensures `prisma/` and `prisma/dev.db` have read/write access.
-
----
-
-## 🔍 5. Troubleshooting & Maintenance Commands
-
-### Instant Application Reload
+Upload the archive to `/home/jiazxebj/embeddedindia.in/embeddedindia.zip`, then run:
 
 ```bash
+cd /home/jiazxebj/embeddedindia.in
+bash server-deploy.sh default ./embeddedindia.zip
+```
+
+### Staging
+
+Upload the archive to `/home/jiazxebj/new/embeddedindia.zip`, then run:
+
+```bash
+cd /home/jiazxebj/new
+bash server-deploy.sh new ./embeddedindia.zip
+```
+
+You can also use an absolute ZIP path:
+
+```bash
+bash /home/jiazxebj/new/server-deploy.sh new /home/jiazxebj/embeddedindia.zip
+```
+
+The ZIP path is resolved relative to your current terminal directory. The explicit target determines the extraction destination. Without an explicit target, the script infers it from its own folder name when possible.
+
+### What deployment does
+
+1. Validates ZIP paths, required files, integrity, and protected destinations before replacing app files.
+2. Stages and extracts the release into the selected app root, then executes the uploaded deployment script.
+3. Activates that site's Node 22 virtual environment, even if another site's Node is already active.
+4. Preserves a conflicting app-root `node_modules` entry and lets CloudLinux's npm wrapper create its managed link.
+5. Installs runtime and build dependencies; verifies that the dependency link points inside the selected virtual environment.
+6. Generates Prisma and rebuilds Tailwind CSS from the uploaded sources.
+7. Backs up an existing SQLite database using SQLite's online backup API, initializes tables, and seeds only when no admin exists.
+8. Keeps the installed build tools and checks the dependency link again. It does not run `npm prune`, which can replace CloudLinux's managed symlink.
+9. Checks entry-point syntax and runs `src/deployment-check.js`, which requests the authenticated Settings page locally and verifies that every module renders with HTTP 200. It then writes `public/deployment-version.json`, and touches only the selected app's `tmp/restart.txt`.
+10. Requests the public deployment marker with a cache-busting URL and confirms the deployment ID.
+
+Existing `.env`, SQLite data, and existing files under `public/uploads/` and `public/downloads/` are preserved. `APP_URL` in `.env` is synchronized with the selected domain. New files in those public folders may be installed. Unrelated server files are not removed.
+
+The script does not fetch new source code by itself: supply the latest ZIP or update the extracted source files first.
+
+## 4. CloudLinux node_modules repair
+
+CloudLinux requires app-root `node_modules` to be a **symlink**, with its destination inside the application's virtual environment. A regular directory or file at that path causes this error:
+
+```text
+Cloudlinux NodeJS Selector demands to store node modules for application
+in separate folder (virtual environment) pointed by symlink called "node_modules"
+```
+
+The current deployment script handles this automatically:
+
+- A valid link into the selected Node 22 environment is retained.
+- A regular directory/file, broken link, or link to a different environment is moved to a unique backup such as `tmp/node_modules.pre-deploy.ABC12345/node_modules`.
+- Moving a conflicting symlink preserves the link itself; its destination is not deleted or changed.
+- CloudLinux's activated npm wrapper creates the proper link during installation.
+- A missing or incorrect link after installation stops deployment before it reports success.
+
+To recover from the reported error, upload the newly built ZIP and rerun the same command:
+
+```bash
+cd /home/jiazxebj/embeddedindia.in
+bash server-deploy.sh default ./embeddedindia.zip
+```
+
+Do not delete the virtual environment or copy another site's dependency folder into this app. The backup remains available for inspection; it is not automatically removed.
+
+If npm still fails, open the matching app in **Setup Node.js App**, confirm its root and Node 22 version, and use **Run npm install**. Retry deployment afterward. Inspect dependency or native-module build errors separately; they are not treated as a successful deployment.
+
+To inspect the link:
+
+```bash
+cd /home/jiazxebj/embeddedindia.in
+ls -ld node_modules
+readlink -f node_modules
+```
+
+For production, the resolved path must be inside `/home/jiazxebj/nodevenv/embeddedindia.in/22/`. For staging it must be inside `/home/jiazxebj/nodevenv/new/22/`. The deployment script checks this boundary rather than assuming a specific dependency subfolder.
+
+## 5. Configuration and data
+
+Each app keeps its `.env` in its own root. Preserve it across uploads.
+
+| Variable | Purpose |
+| --- | --- |
+| `NODE_ENV=production` | Production runtime behavior. |
+| `APP_URL` | Canonical website URL, including the sitemap origin; synchronized by deployment. |
+| `SESSION_SECRET` | Long random session secret. Generated if the script creates a new `.env`. |
+| `ADMIN_JWT_SECRET` | Long random admin-token secret. Generated if the script creates a new `.env`. |
+| `DATABASE_URL=file:./prisma/dev.db` | Database configuration; the SQLite scripts use the selected app's `prisma/dev.db`. |
+
+Passenger manages the listening port. Keep any hosting-supplied port configuration intact.
+
+Manage mail routing, AI provider credentials, and site settings in the admin console. The AI settings tab is `/admin/settings#ai-engine`. After the first installation, change the seeded admin password to a unique password.
+
+SQLite backups are written beside the database as `prisma/dev.db.bak_TIMESTAMP`. Keep sufficient free disk space for backups and dependency installation. An `update`, `clean`, or `fresh` invocation preserves existing data; these modes do not erase or reset the database.
+
+## 6. Already-extracted releases and cPanel Git deployments
+
+If the latest release is already extracted into its target root:
+
+```bash
+cd /home/jiazxebj/embeddedindia.in
+bash server-deploy.sh default update
+```
+
+For staging:
+
+```bash
+cd /home/jiazxebj/new
+bash server-deploy.sh new update
+```
+
+The repository's `.cpanel.yml` currently deploys to **staging**, `/home/jiazxebj/new`, and invokes `server-deploy.sh new update`. It does not deploy to production. In cPanel Git Version Control, update the checked-out source and use its deployment action when following that workflow.
+
+This guide does not assume an active GitHub Actions deployment workflow. Pushing a commit alone is not evidence that either server has deployed it.
+
+## 7. Verify and troubleshoot
+
+A successful deployment ends with:
+
+```text
+Verified: https://embeddedindia.in serves deployment <deployment-id>.
+```
+
+Check the corresponding public URLs:
+
+- Production marker: https://embeddedindia.in/deployment-version.json
+- Staging marker: https://new.embeddedindia.in/deployment-version.json
+- Production sitemap: https://embeddedindia.in/sitemap.xml
+- Staging sitemap: https://new.embeddedindia.in/sitemap.xml
+
+If files were installed but live verification fails, check the cPanel application's root, URL, startup file, and restart status. Purge a hosting/CDN cache if one is enabled. The script exits with an error when a live marker cannot be verified; it does not roll the release back automatically.
+
+To request another restart for the selected app:
+
+```bash
+cd /home/jiazxebj/embeddedindia.in
+mkdir -p tmp
 touch tmp/restart.txt
 ```
 
-Phusion Passenger detects this file touch and gracefully restarts worker processes without dropping traffic.
+Alternatively, use **Restart** on that application in cPanel.
 
-### Run Manual Server Deployment / Fix
+A missing schema during the explicit app-root Prisma generation means the release is incomplete. Rebuild and upload the current ZIP. CloudLinux may run npm lifecycle hooks from its environment folder; the current postinstall hook defers generation when that working directory has no schema, then the deployment script generates Prisma explicitly from the app root.
 
-If SSH'd into the cPanel server:
+### Settings returns HTTP 500 after an interrupted deployment
 
-```bash
-source /home/jiazxebj/nodevenv/embeddedindia.in/20/bin/activate
-cd /home/jiazxebj/embeddedindia.in
-bash ./server-deploy.sh update
-```
+The earlier script ran `npm prune`, which could replace CloudLinux's dependency symlink and stop deployment before Passenger restarted. Old workers could then load new Settings templates without the new AI module's view data. The current release removes that prune step and supplies template defaults during this transition.
 
-### Fresh Server Installation / Full Reset
+Upload the current ZIP and rerun the normal deployment command. Do not run `npm prune` manually in the application root. The script preserves any conflicting dependency entry, installs through CloudLinux's wrapper, verifies the Settings page, and requests a restart.
 
-If you need a 100% clean installation (creates safety backup, reinitializes database schema, seeds default content, reinstalls dependencies & compiles production CSS):
+If the local Settings check fails, it prints an error and deployment stops. Look for `[ADMIN SETTINGS LOAD ERROR]`, `[UNCAUGHT ERROR]`, or `[DEPLOYMENT CHECK FAILED]` in the terminal/Passenger logs. Template errors are logged by the application error handler. The smoke check uses a temporary loopback port and a short-lived token; it does not print credentials, start cron jobs, or call AI/SMTP services.
+
+You can repeat the read-only check after activating the site's environment:
 
 ```bash
-source /home/jiazxebj/nodevenv/embeddedindia.in/20/bin/activate
+source /home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate
 cd /home/jiazxebj/embeddedindia.in
-bash ./server-deploy.sh fresh
+node src/deployment-check.js
 ```
+
+If the local check passes but the public Settings page still returns 500, use **Restart** for the selected cPanel application and inspect its Passenger log for the current stack trace.

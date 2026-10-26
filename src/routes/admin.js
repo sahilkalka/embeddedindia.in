@@ -463,14 +463,16 @@ router.post('/posts/:id/delete', async (req, res) => {
 });
 
 // GET /admin/settings - Manage Site Settings
-router.get('/settings', async (req, res) => {
+router.get('/settings', async (req, res, next) => {
   try {
-    const [settings, users] = await Promise.all([
+    const [settings, users, schedulerSettings, totalPosts] = await Promise.all([
       prisma.setting.findMany(),
       prisma.user.findMany({
         select: { id: true, username: true, email: true, role: true, createdAt: true },
         orderBy: { createdAt: 'desc' }
-      })
+      }),
+      aiScheduler.getSchedulerSettings(),
+      prisma.post.count()
     ]);
 
     const settingsMap = settings.reduce((acc, curr) => {
@@ -480,12 +482,16 @@ router.get('/settings', async (req, res) => {
 
     res.render('admin/settings', {
       settings: settingsMap,
+      schedulerSettings,
+      totalPosts,
+      saved: req.query.saved === '1',
       users: users || [],
       currentUser: req.user,
       success: req.query.saved === '1'
     });
   } catch (err) {
-    res.status(500).send('Error fetching settings');
+    console.error('[ADMIN SETTINGS LOAD ERROR]', err);
+    next(err);
   }
 });
 
@@ -872,30 +878,9 @@ const handleChangePassword = async (req, res) => {
 router.post('/settings/change-password', handleChangePassword);
 router.post('/change-password', handleChangePassword);
 
-// GET /admin/ai - AI Content Generator & Model Setup Page
-router.get('/ai', async (req, res) => {
-  try {
-    const [settings, schedulerSettings, totalPosts] = await Promise.all([
-      prisma.setting.findMany(),
-      aiScheduler.getSchedulerSettings(),
-      prisma.post.count()
-    ]);
-
-    const settingsMap = settings.reduce((acc, curr) => {
-      acc[curr.key] = curr.value;
-      return acc;
-    }, {});
-
-    res.render('admin/ai', { 
-      settings: settingsMap, 
-      schedulerSettings,
-      totalPosts,
-      saved: req.query.saved === '1' 
-    });
-  } catch (err) {
-    console.error('[LOAD AI SETTINGS ERROR]', err);
-    res.status(500).send('Error loading AI settings');
-  }
+// Keep existing bookmarks on the canonical Settings tab.
+router.get('/ai', (req, res) => {
+  res.redirect(302, '/admin/settings' + (req.query.saved === '1' ? '?saved=1' : '') + '#ai-engine');
 });
 
 // POST /admin/ai - Save AI Configuration & Automated Scheduler Settings
@@ -913,7 +898,7 @@ router.post('/ai', async (req, res) => {
       });
     }
     clearSettingsCache();
-    res.redirect('/admin/ai?saved=1');
+    res.redirect('/admin/settings?saved=1#ai-engine');
   } catch (err) {
     console.error('[SAVE AI CONFIG ERROR]', err);
     res.status(500).send('Error saving AI configuration');

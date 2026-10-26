@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "postinstall": "prisma generate || true",
+    "postinstall": "node -e \"const fs=require('fs');if(fs.existsSync('prisma/schema.prisma')){require('child_process').execFileSync(process.execPath,[require.resolve('prisma/build/index.js'),'generate','--schema','prisma/schema.prisma'],{stdio:'inherit'});}else{console.log('Prisma generation deferred: schema is outside the npm working directory. server-deploy.sh generates it from the app root.');}\"",
     "dev": "nodemon src/server.js",
     "build:css": "tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --minify",
     "watch:css": "tailwindcss -i ./src/public/css/input.css -o ./public/css/style.css --watch",

@@ -4,118 +4,44 @@ const router = express.Router();
 const prisma = require('../services/db');
 const toolsRegistry = require('../data/toolsRegistry');
 
-let cachedSitemap = null;
-let sitemapTimestamp = 0;
-const SITEMAP_TTL = 3600 * 1000; // 1 hour
-
-// Dynamic sitemap.xml
+// Public canonical URLs are generated from the same registries and records as the site.
+// Settings tabs and other authenticated routes do not belong in the public sitemap.
+const servicesData = require('../data/servicesData');
+function sitemapDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
 router.get('/sitemap.xml', async (req, res) => {
-  const now = Date.now();
-  if (cachedSitemap && now - sitemapTimestamp < SITEMAP_TTL) {
-    res.header('Content-Type', 'application/xml');
-    return res.send(cachedSitemap);
-  }
-
   try {
-    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-    const posts = await prisma.post.findMany({
-      where: { status: 'published' },
-      select: { slug: true, updatedAt: true }
-    });
-
-    const staticPages = [
+    const appUrl = (process.env.APP_URL || `${req.protocol}://${req.get('host')}`).replace(/\/+$/, '');
+    const [posts, projects] = await Promise.all([
+      prisma.post.findMany({ where: { status: 'published' }, select: { slug: true, updatedAt: true } }),
+      prisma.project.findMany({ select: { slug: true, updatedAt: true } })
+    ]);
+    const pages = [
       { path: '/', priority: '1.0', changefreq: 'daily' },
       { path: '/services', priority: '0.9', changefreq: 'weekly' },
-      { path: '/services/full-cycle-embedded-product-engineering', priority: '0.8', changefreq: 'weekly' },
-      { path: '/services/embedded-software-firmware-development', priority: '0.8', changefreq: 'weekly' },
-      { path: '/services/hardware-design-engineering', priority: '0.8', changefreq: 'weekly' },
-      { path: '/services/bsp-development', priority: '0.8', changefreq: 'weekly' },
-      { path: '/services/iot-edge-computing-solutions', priority: '0.8', changefreq: 'weekly' },
-      { path: '/services/automotive-embedded-systems', priority: '0.8', changefreq: 'weekly' },
       { path: '/about', priority: '0.8', changefreq: 'monthly' },
-      { path: '/projects', priority: '0.8', changefreq: 'monthly' },
+      { path: '/projects', priority: '0.8', changefreq: 'weekly' },
       { path: '/blogs', priority: '0.9', changefreq: 'daily' },
       { path: '/contact', priority: '0.8', changefreq: 'monthly' },
       { path: '/privacy-policy', priority: '0.3', changefreq: 'yearly' },
       { path: '/tools', priority: '0.9', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/developer-formatters', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/financial-calculators', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/media-file-tools', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/generators-security', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/text-content-tools', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/unit-converters', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/seo-webmaster-tools', priority: '0.85', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/pcb-trace', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/voltage-divider', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/smd-code', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/battery-life', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/led-resistor', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/555-timer', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/uart-baud', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/trace-impedance', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/engineering-hardware/mcu-pinout', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/developer-formatters/json-formatter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/developer-formatters/base64-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/developer-formatters/regex-tester', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/developer-formatters/jwt-decoder', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/developer-formatters/sql-formatter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/financial-calculators/compound-interest-sip', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/financial-calculators/emi-loan-calculator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/financial-calculators/gst-calculator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/financial-calculators/freelance-rate-calculator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/media-file-tools/image-compressor', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/media-file-tools/image-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/media-file-tools/svg-optimizer', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/media-file-tools/pdf-tools', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/generators-security/qr-generator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/generators-security/password-generator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/generators-security/uuid-generator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/generators-security/meta-tag-generator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/text-content-tools/word-counter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/text-content-tools/case-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/text-content-tools/text-diff', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/text-content-tools/markdown-previewer', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/unit-converters/data-storage-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/unit-converters/electrical-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/unit-converters/temp-pressure-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/unit-converters/length-area-converter', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/seo-webmaster-tools/open-graph-previewer', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/seo-webmaster-tools/schema-generator', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/seo-webmaster-tools/http-status-codes', priority: '0.8', changefreq: 'weekly' },
-      { path: '/tools/seo-webmaster-tools/robots-sitemap-builder', priority: '0.8', changefreq: 'weekly' },
+      ...Object.values(servicesData).map(service => ({ path: '/services/' + encodeURIComponent(service.slug), priority: '0.8', changefreq: 'weekly' })),
+      ...toolsRegistry.TOOL_CATEGORIES.map(category => ({ path: '/tools/' + encodeURIComponent(category.slug), priority: '0.85', changefreq: 'weekly' })),
+      ...toolsRegistry.TOOLS.map(tool => ({ path: '/tools/' + encodeURIComponent(tool.groupSlug) + '/' + encodeURIComponent(tool.slug), priority: '0.8', changefreq: 'weekly' })),
+      ...posts.filter(post => post.slug).map(post => ({ path: '/blogs/' + encodeURIComponent(post.slug), lastmod: sitemapDate(post.updatedAt), priority: '0.8', changefreq: 'weekly' })),
+      ...projects.filter(project => project.slug).map(project => ({ path: '/projects/' + encodeURIComponent(project.slug), lastmod: sitemapDate(project.updatedAt), priority: '0.8', changefreq: 'monthly' }))
     ];
-
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-
-    // Static pages
-    for (const page of staticPages) {
-      xml += `  <url>\n`;
-      xml += `    <loc>${appUrl}${page.path}</loc>\n`;
-      xml += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
-      xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
-      xml += `    <priority>${page.priority}</priority>\n`;
-      xml += `  </url>\n`;
-    }
-
-    // Dynamic blog posts
-    for (const post of posts) {
-      xml += `  <url>\n`;
-      xml += `    <loc>${appUrl}/blogs/${post.slug}</loc>\n`;
-      xml += `    <lastmod>${post.updatedAt.toISOString()}</lastmod>\n`;
-      xml += `    <changefreq>weekly</changefreq>\n`;
-      xml += `    <priority>0.8</priority>\n`;
-      xml += `  </url>\n`;
-    }
-
-    xml += `</urlset>`;
-
-    cachedSitemap = xml;
-    sitemapTimestamp = now;
-
-    res.header('Content-Type', 'application/xml');
-    res.send(xml);
+    const seen = new Set();
+    const entries = pages.filter(page => !seen.has(page.path) && seen.add(page.path)).map(page =>
+      '  <url><loc>' + escapeXml(appUrl + page.path) + '</loc>' +
+      (page.lastmod ? '<lastmod>' + page.lastmod + '</lastmod>' : '') +
+      '<changefreq>' + page.changefreq + '</changefreq><priority>' + page.priority + '</priority></url>'
+    );
+    const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + entries.join('\n') + '\n</urlset>';
+    res.set('Cache-Control', 'no-cache').type('application/xml').send(xml);
   } catch (err) {
     console.error('[SITEMAP ERROR]', err);
     res.status(500).send('Error generating sitemap');

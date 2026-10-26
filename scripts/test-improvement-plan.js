@@ -66,7 +66,7 @@ const pages=['/','/services','/projects','/tools','/blogs','/blogs/plan-qa-fixtu
  const response=await request(app).post('/admin/settings').set('Authorization','Bearer '+token).set('Accept','application/json').send(fixture);
  assert.equal(response.status,200,'valid settings accepted');assert.equal(saved.length,Object.keys(fixture).length);
  const settings=Object.fromEntries((await db.setting.findMany()).map(r=>[r.key,r.value]));
- const html=await ejs.renderFile(path.join(__dirname,'../views/admin/settings.ejs'),{colorThemes:require('../src/data/colorThemes'),success:false,settings,users:[],currentUser:{id:'qa',email:'qa@example.test'},currentPath:'/admin/settings',seo:{},theme:require('../src/services/themeEngine').resolveTheme(settings),appUrl:'http://localhost'});
+ const html=await ejs.renderFile(path.join(__dirname,'../views/admin/settings.ejs'),{colorThemes:require('../src/data/colorThemes'),success:false,saved:false,schedulerSettings:await require('../src/services/aiScheduler').getSchedulerSettings(),totalPosts:await db.post.count(),settings,users:[],currentUser:{id:'qa',email:'qa@example.test'},currentPath:'/admin/settings',seo:{},theme:require('../src/services/themeEngine').resolveTheme(settings),appUrl:'http://localhost'});
  for(const key of Object.keys(fixture).filter(key=>key.startsWith('adsense_')||key==='calendly_url'))assert(html.includes('name="'+key+'"'),key+' admin field');
  console.log('PASS: public routes, every registered tool, ad enable/disable and scope, inline placement, schema JSON, booking and admin fields.');
  const server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));

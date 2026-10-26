@@ -76,8 +76,8 @@ const pages = ['/admin', '/admin/inquiries', '/admin/subscribers', '/admin/posts
       await page.waitForTimeout(100);
       assert.equal(await page.locator('#theme-engine').count(), 0, 'Theme editor removed');
       assert(await page.locator('#site-customizer').isVisible(), 'Legacy theme link redirects to existing settings');
-      const aiLink = page.locator('#settings-sidebar-nav a[href="/admin/ai"]');
-      await aiLink.click(); await page.waitForURL('**/admin/ai');
+      const aiLink = page.locator('#settings-sidebar-nav a[href="/admin/settings#ai-engine"]');
+      await aiLink.click(); await page.waitForURL('**/admin/settings#ai-engine');
       assert.equal(await page.locator('header a[href="/admin/ai"]').count(), 0, 'AI removed from global header');
       assert.equal(await page.locator('#settings-sidebar-nav [data-settings-tab]').count(), 8, 'Settings navigation remains on AI Engine');
       await page.locator('#settings-sidebar-nav [data-settings-tab="site-customizer"]').click();

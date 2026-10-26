@@ -1216,5 +1216,3 @@ body:has(#copilot-drawer:not(.hidden)) #back-to-top-btn { visibility: hidden; po
 @media (min-width: 1024px) and (max-width: 1279px) {
   .admin-shell .settings-workspace { --settings-top: 144px; }
 }
-
-.admin-shell #ai-engine > .module-heading { margin-top: 24px; }
