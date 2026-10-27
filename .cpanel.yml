@@ -1,6 +1,10 @@
 ---
 deployment:
   tasks:
-    - /usr/local/cpanel/3rdparty/bin/git fetch origin main
-    - /usr/local/cpanel/3rdparty/bin/git reset --hard origin/main
-    - /bin/bash ./scripts/cpanel-deploy.sh
+    - export DEPLOYPATH="$(pwd -P)"
+    - if [ "$DEPLOYPATH" = "/home/jiazxebj/new" ]; then export TARGET="new.embeddedindia.in"; else export TARGET="embeddedindia.in"; fi
+    - /bin/mkdir -p "$DEPLOYPATH/tmp" "$DEPLOYPATH/prisma"
+    - /bin/chmod +x "$DEPLOYPATH/server-deploy.sh" "$DEPLOYPATH/scripts/cpanel-deploy.sh"
+    - /bin/bash "$DEPLOYPATH/server-deploy.sh" "$TARGET" update
+    - /bin/touch "$DEPLOYPATH/tmp/restart.txt"
+    - /usr/local/cpanel/3rdparty/bin/git checkout -- .
