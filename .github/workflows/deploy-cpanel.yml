@@ -1,11 +1,10 @@
 name: Deploy to cPanel
 
 on:
-  # Allows manual deployment from the GitHub Actions tab with a target selection dropdown
   workflow_dispatch:
     inputs:
       target_domain:
-        description: 'Select deployment target:'
+        description: 'Choose deployment target:'
         required: true
         type: choice
         default: 'embeddedindia.in'
@@ -13,11 +12,10 @@ on:
           - 'embeddedindia.in'
           - 'new.embeddedindia.in'
 
-  # Optional: Automatic deployment on push based on branch name
   push:
     branches:
-      - main
-      - develop
+      - main       # Auto-deploys to embeddedindia.in
+      - develop    # Auto-deploys to new.embeddedindia.in
 
 jobs:
   deploy:
@@ -29,52 +27,47 @@ jobs:
           CPANEL_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
           CPANEL_USER: "jiazxebj"
         run: |
-          # 1. Resolve target directory based on manual choice or branch push
+          # 1. Resolve domain from manual selection or pushed branch
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            SELECTED_TARGET="${{ inputs.target_domain }}"
+            TARGET_DOMAIN="${{ inputs.target_domain }}"
           else
             if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-              SELECTED_TARGET="embeddedindia.in"
+              TARGET_DOMAIN="embeddedindia.in"
             else
-              SELECTED_TARGET="new.embeddedindia.in"
+              TARGET_DOMAIN="new.embeddedindia.in"
             fi
           fi
 
-          # 2. Map chosen domain to the absolute cPanel repository path
-          if [ "$SELECTED_TARGET" = "embeddedindia.in" ]; then
+          # 2. Map domain to directory root
+          if [ "$TARGET_DOMAIN" = "embeddedindia.in" ]; then
             REPO_PATH="/home/${CPANEL_USER}/embeddedindia.in"
-          elif [ "$SELECTED_TARGET" = "new.embeddedindia.in" ]; then
-            REPO_PATH="/home/${CPANEL_USER}/new"
           else
-            echo "Error: Unknown target selected: $SELECTED_TARGET"
-            exit 1
+            REPO_PATH="/home/${CPANEL_USER}/new"
           fi
 
-          echo "Target domain: $SELECTED_TARGET"
-          echo "Target repository root: $REPO_PATH"
+          echo "Target Domain: $TARGET_DOMAIN"
+          echo "Repository Path: $REPO_PATH"
 
-          # 3. Pull latest commits into cPanel
-          echo "--- Pulling latest changes from GitHub into cPanel ---"
+          # 3. Pull latest commits into the selected folder
+          echo "Pulling latest code..."
           PULL_RES=$(curl -s -k -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
             "https://${CPANEL_HOST}:2083/execute/VersionControl/update?repository_root=${REPO_PATH}")
-
           echo "Pull response: $PULL_RES"
 
           if echo "$PULL_RES" | grep -q '"status":0'; then
-            echo "Error: Pull step failed. Check if $REPO_PATH exists in cPanel Git Version Control."
+            echo "Error during pull."
             exit 1
           fi
 
-          # 4. Trigger deployment tasks defined in .cpanel.yml
-          echo "--- Triggering cPanel deployment task ---"
+          # 4. Trigger deployment via .cpanel.yml
+          echo "Executing cPanel deployment tasks..."
           DEPLOY_RES=$(curl -s -k -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
             "https://${CPANEL_HOST}:2083/execute/VersionControlDeployment/create?repository_root=${REPO_PATH}")
-
           echo "Deploy response: $DEPLOY_RES"
 
           if echo "$DEPLOY_RES" | grep -q '"status":0'; then
-            echo "Error: Deployment task failed."
+            echo "Error during deployment execution."
             exit 1
           fi
 
-          echo "Deployment completed successfully for $SELECTED_TARGET."
+          echo "Deployment triggered successfully for $TARGET_DOMAIN."

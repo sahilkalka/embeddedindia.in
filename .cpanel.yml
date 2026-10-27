@@ -1,6 +1,4 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=$(pwd)
-    - /bin/cp -R * $DEPLOYPATH/
-    - /bin/bash scripts/cpanel-deploy.sh
+    - /bin/bash ./scripts/cpanel-deploy.sh
