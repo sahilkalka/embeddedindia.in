@@ -1,11 +1,4 @@
 ---
 deployment:
   tasks:
-    - |
-      case "$(pwd -P)" in
-        */embeddedindia.in) TARGET="embeddedindia.in" ;;
-        */new) TARGET="new.embeddedindia.in" ;;
-        *) TARGET="embeddedindia.in" ;;
-      esac
-      export TARGET_SITE="$TARGET"
-      /bin/bash ./scripts/cpanel-deploy.sh "$TARGET"
+    - /bin/bash ./scripts/cpanel-deploy.sh
