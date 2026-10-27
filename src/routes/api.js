@@ -185,16 +185,19 @@ router.get('/newsletter/verify', async (req, res) => {
         status: 'active',
         verifiedAt: new Date(),
         verifyToken: null,
-        leadMagnetSent: true
+        leadMagnetSent: subscriber.leadMagnetSent
       }
     });
 
-    mailer.sendLeadMagnetEmail(subscriber.email).catch(e => console.error(e));
+    const delivery = await mailer.sendLeadMagnetEmail(subscriber.email);
+    if (delivery.success) {
+      await prisma.subscriber.update({ where: { id: subscriber.id }, data: { leadMagnetSent: true } });
+    }
 
     return res.render('pages/message', {
       title: 'Subscription Confirmed!',
       heading: 'Subscription Confirmed & Checklist Ready! 🎉',
-      message: `Your email (${subscriber.email}) is verified. We have sent the 2026 Embedded Hardware & Firmware Design Checklist PDF to your inbox. You can also download it right now using the button below.`,
+      message: `Your email (${subscriber.email}) is verified. ${delivery.success ? 'The mail server accepted your checklist email.' : 'Email delivery is currently unavailable.'} You can also download it right now using the button below.`,
       buttonText: 'Download PDF Checklist Now',
       buttonLink: '/downloads/embedded-design-checklist.pdf'
     });

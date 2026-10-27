@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS Project (
 );
 `);
 
+require('../src/services/postDuplicates').installPostDuplicateGuards(db);
 console.log('Database initialized at:', dbPath);
 if (require.main === module) {
   try { db.close(); } catch (e) {}

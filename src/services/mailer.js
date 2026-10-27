@@ -389,7 +389,10 @@ const mailer = {
   // 4. Send Lead Magnet PDF directly to confirmed/approved subscriber
   async sendLeadMagnetEmail(email) {
     try {
-      const smtpSender = process.env.SMTP_USER || 'info@embeddedindia.in';
+      const t = await getTransporter();
+      if (!t) return { success: false, error: 'No transporter configured' };
+      if (t.isMock) return { success: false, error: 'SMTP is not configured. Save valid SMTP credentials in Settings before sending PDFs.' };
+      const smtpSender = t.options?.auth?.user || process.env.SMTP_USER || 'info@embeddedindia.in';
       let adminEmail = process.env.ADMIN_EMAIL || 'info@embeddedindia.in';
       try {
         const _s = await prisma.setting.findUnique({ where: { key: 'newsletter_recipient_emails' } });
@@ -398,6 +401,9 @@ const mailer = {
       const appUrl = process.env.APP_URL || 'http://localhost:3000';
       const pdfPath = path.join(__dirname, '../../public/downloads/embedded-design-checklist.pdf');
       const attachments = [];
+      if (!fs.existsSync(pdfPath) || fs.statSync(pdfPath).size === 0) {
+        return { success: false, error: 'Checklist PDF is missing. Run npm run generate-lead-magnet on the server and retry.' };
+      }
       if (fs.existsSync(pdfPath)) {
         attachments.push({
           filename: 'Embedded-Design-Checklist-2026.pdf',
@@ -438,9 +444,10 @@ const mailer = {
         attachments
       };
 
-      const t = await getTransporter();
-      if (!t) return { success: false, error: 'No transporter configured' };
       const res = await t.sendMail(mailOptions);
+      if (!res.accepted || !res.accepted.some(address => String(address).toLowerCase() === email.toLowerCase())) {
+        return { success: false, error: 'Mail server did not accept the recipient. Check SMTP settings and retry.' };
+      }
       console.log(`[SMTP] Lead magnet dispatched to ${email} (Msg ID: ${res.messageId})`);
       return { success: true, messageId: res.messageId };
     } catch (err) {

@@ -27,6 +27,8 @@ try {
       fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
       fs.writeFileSync(path.join(root, file), file.endsWith('.json') ? '{}' : '// fixture\n');
     }
+    fs.mkdirSync(path.join(root, 'public/downloads'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'public/downloads/embedded-design-checklist.pdf'), '%PDF-fixture');
     const activate = path.join(base, 'nodevenv', folder, '22/bin/activate');
     fs.mkdirSync(path.dirname(activate), { recursive: true });
     fs.writeFileSync(activate, `

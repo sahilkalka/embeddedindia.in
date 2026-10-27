@@ -15,6 +15,7 @@
 
   let conversationHistory = [];
   let isOpen = false;
+  let isSending = false;
 
   let drawerAnimation;
   function toggleCopilot(open) {
@@ -163,7 +164,8 @@
   }
 
   async function submitMessage(userText) {
-    if (!userText || !userText.trim()) return;
+    if (isSending || !userText || !userText.trim()) return;
+    isSending = true;
     const clean = userText.trim();
 
     appendUserMessage(clean);
@@ -194,6 +196,8 @@
     } catch (err) {
       removeLoading();
       appendBotMessage("Connection to engineering server interrupted. Please check your internet connection or email info@embeddedindia.in directly.");
+    } finally {
+      isSending = false;
     }
   }
 

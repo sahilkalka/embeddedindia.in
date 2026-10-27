@@ -1,0 +1,117 @@
+name: Deploy Embedded India
+run-name: Deploy ${{ inputs.domain || 'new.embeddedindia.in' }} by @${{ github.actor }}
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: Domain to update
+        required: true
+        type: choice
+        default: new.embeddedindia.in
+        options:
+          - new.embeddedindia.in
+          - embeddedindia.in
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cpanel-${{ inputs.domain || 'new.embeddedindia.in' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Resolve selected domain
+        id: target
+        env:
+          SELECTED_DOMAIN: ${{ inputs.domain || 'new.embeddedindia.in' }}
+        run: |
+          set -euo pipefail
+          resolved="$(bash server-deploy.sh "$SELECTED_DOMAIN" --print-target)"
+          IFS='|' read -r domain app_root activate <<< "$resolved"
+          printf 'domain=%s\napp_root=%s\nactivate=%s\n' "$domain" "$app_root" "$activate" >> "$GITHUB_OUTPUT"
+          printf '### Deployment target\n- Domain: https://%s\n- App root: `%s`\n' "$domain" "$app_root" >> "$GITHUB_STEP_SUMMARY"
+      - run: npm ci
+      - name: Regression checks
+        run: node --test scripts/test-request-fixes.cjs scripts/test-deployment-targets.cjs
+      - name: Package application
+        run: npm run pack:cpanel
+      - name: Configure SSH
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.CPANEL_KNOWN_HOSTS }}
+          SSH_PORT: ${{ secrets.CPANEL_SSH_PORT || secrets.CPANEL_PORT || '22' }}
+        run: |
+          set -euo pipefail
+          : "${CPANEL_HOST:?Set CPANEL_HOST secret}"
+          : "${CPANEL_USER:?Set CPANEL_USER secret}"
+          : "${SSH_KEY:?Set CPANEL_SSH_KEY secret}"
+          CPANEL_HOST="${CPANEL_HOST#https://}"
+          CPANEL_HOST="${CPANEL_HOST#http://}"
+          CPANEL_HOST="${CPANEL_HOST%/}"
+          CPANEL_HOST="${CPANEL_HOST%%:*}"
+          # CPANEL_PORT often identifies HTTPS API port 2083 rather than SSH.
+          if [[ "$SSH_PORT" == 2083 || "$SSH_PORT" == 2087 ]]; then SSH_PORT=22; fi
+          [[ "$CPANEL_HOST" =~ ^[a-zA-Z0-9.-]+$ ]]
+          [[ "$CPANEL_USER" =~ ^[a-zA-Z0-9_-]+$ ]]
+          [[ "$SSH_PORT" =~ ^[0-9]+$ ]]
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/cpanel_key
+          if [[ -n "$KNOWN_HOSTS" ]]; then
+            printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            # First-connection trust when no host key has been pinned in secrets.
+            ssh-keyscan -T 15 -p "$SSH_PORT" -H "$CPANEL_HOST" > ~/.ssh/known_hosts
+            test -s ~/.ssh/known_hosts
+          fi
+          chmod 600 ~/.ssh/cpanel_key ~/.ssh/known_hosts
+          cat > ~/.ssh/config <<EOF
+          Host ei-cpanel
+            HostName $CPANEL_HOST
+            User $CPANEL_USER
+            Port $SSH_PORT
+            IdentityFile ~/.ssh/cpanel_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+            BatchMode yes
+          EOF
+      - name: Upload, run update, and verify selected domain
+        env:
+          DEPLOY_DOMAIN: ${{ steps.target.outputs.domain }}
+        run: |
+          set -euo pipefail
+          release="ei-deploy-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          ssh ei-cpanel "mkdir -p /home/jiazxebj/tmp/$release"
+          scp embeddedindia.zip server-deploy.sh "ei-cpanel:/home/jiazxebj/tmp/$release/"
+          ssh ei-cpanel "bash -s -- '$release' '$DEPLOY_DOMAIN'" <<'REMOTE'
+          set -euo pipefail
+          release_dir="/home/jiazxebj/tmp/$1"
+          trap 'rm -f -- "$release_dir/embeddedindia.zip" "$release_dir/server-deploy.sh"; rmdir -- "$release_dir"' EXIT
+          bash "$release_dir/server-deploy.sh" "$2" update "$release_dir/embeddedindia.zip"
+          curl --fail --silent --show-error --retry 5 --retry-delay 5 --max-time 30 "https://$2/health" > /dev/null
+          REMOTE
+      - name: Email deployment result
+        if: always()
+        env:
+          DEPLOY_STATUS: ${{ job.status }}
+          DEPLOY_DOMAIN: ${{ steps.target.outputs.domain }}
+          APP_ROOT: ${{ steps.target.outputs.app_root }}
+          ACTIVATE: ${{ steps.target.outputs.activate }}
+        run: |
+          set -euo pipefail
+          # Use the website's saved SMTP settings; credentials stay on cPanel.
+          : "${APP_ROOT:?Deployment target was not resolved}"
+          ssh ei-cpanel "cd '$APP_ROOT' && source '$ACTIVATE' && DEPLOY_DOMAIN='$DEPLOY_DOMAIN' DEPLOY_STATUS='$DEPLOY_STATUS' GITHUB_SHA='$GITHUB_SHA' GITHUB_REPOSITORY='$GITHUB_REPOSITORY' GITHUB_RUN_ID='$GITHUB_RUN_ID' node -" < scripts/notify-deployment.cjs

@@ -58,8 +58,8 @@ router.use((req, res, next) => {
 router.get('/', (req, res) => {
   const categories = toolsRegistry.getAllCategories();
   res.locals.seo = res.locals.seo || {};
-  res.locals.seo.title = 'Interactive Engineering & Developer Tools Suite (8 Hubs) | Embedded India';
-  res.locals.seo.description = 'Explore 38+ precision client-side calculators, circuit analyzers, data formatters, and webmaster diagnostics engineered for hardware and firmware designers.';
+  res.locals.seo.title = `Interactive Engineering & Developer Tools Suite (${categories.length} Hubs) | Embedded India`;
+  res.locals.seo.description = `Explore ${res.app.locals.totalTools} precision client-side calculators, circuit analyzers, data formatters, and webmaster diagnostics engineered for hardware and firmware designers.`;
   res.locals.seo.canonical = 'https://embeddedindia.in/tools';
 
   res.render('pages/tools/index', {

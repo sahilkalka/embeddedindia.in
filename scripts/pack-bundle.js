@@ -11,7 +11,7 @@ const runtimeFiles = [
   'app.js', 'package.json', 'package-lock.json', 'server-deploy.sh',
   'tailwind.config.js', '.cpanel.yml', 'prisma/schema.prisma',
   'scripts/init-db.js', 'scripts/seed-sqlite.js',
-  'scripts/reset-admin.js', 'scripts/generate-lead-magnet.js'
+  'scripts/reset-admin.js', 'scripts/generate-lead-magnet.js', 'scripts/cpanel-deploy.sh'
 ];
 const excludedDirectories = new Set([
   'node_modules', 'tmp', 'scratch', 'reports', 'logs', 'tests', '__tests__',

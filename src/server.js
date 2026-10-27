@@ -26,6 +26,8 @@ const adminRoutes = require('./routes/admin');
 const servicesData = require('./data/servicesData');
 
 const app = express();
+app.locals.toolCategories = require('./data/toolsRegistry').getAllCategories();
+app.locals.totalTools = app.locals.toolCategories.reduce((total, category) => total + category.toolCount, 0);
 const PORT = process.env.PORT || 3000;
 
 // Security: Disable x-powered-by
@@ -128,6 +130,16 @@ app.use(express.static(path.join(__dirname, '../public'), {
 // SEO & Global View Locals Middleware
 app.use(seoMiddleware);
 app.use(optionalAuth);
+
+app.get('/health', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  try {
+    await prisma.post.count();
+    res.json({ status: 'ok' });
+  } catch (_) {
+    res.status(503).json({ status: 'unavailable' });
+  }
+});
 
 // Maintenance Mode Interceptor
 app.use((req, res, next) => {

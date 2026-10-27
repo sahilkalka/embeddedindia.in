@@ -5,7 +5,9 @@ trap 'echo "Deployment failed at line $LINENO. The selected site was not confirm
 
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 usage() {
-  echo "Usage: bash server-deploy.sh [default|new] [update|clean|fresh] [bundle.zip]"
+  echo "Usage: bash server-deploy.sh [embeddedindia.in|new.embeddedindia.in] [update|clean|fresh] [bundle.zip]"
+  echo "Aliases: default = embeddedindia.in; new = new.embeddedindia.in."
+  echo "Use --print-target to inspect the domain, app root, and Node environment without deploying."
   echo "Example: bash server-deploy.sh default /home/jiazxebj/embeddedindia.zip"
   echo "ZIP paths are resolved from the current directory. Without a ZIP, install existing app files."
   echo "Existing configuration, databases, and uploaded files are preserved."
@@ -13,15 +15,17 @@ usage() {
 SITE_CHOICE="${TARGET_SITE:-}"
 MODE="${MODE:-update}"
 ZIP_FILE=""
+PRINT_TARGET=false
 for arg in "$@"; do
   case "$arg" in
     --help|-h) usage; exit 0 ;;
+    --print-target) PRINT_TARGET=true ;;
     update|clean|fresh|fresh-install|install) MODE="$arg" ;;
     *.zip|*.ZIP)
       [ -z "$ZIP_FILE" ] || { echo "Pass only one ZIP archive." >&2; exit 1; }
       [ -f "$arg" ] || { echo "ZIP not found: $arg" >&2; exit 1; }
       ZIP_FILE="$(cd "$(dirname "$arg")" && pwd -P)/$(basename "$arg")" ;;
-    1|2|default|Default|new|New|embeddedindia.in|new.embeddedindia.in) SITE_CHOICE="$arg" ;;
+    1|2|default|Default|new|New|embeddedindia.in|new.embeddedindia.in|https://embeddedindia.in|https://embeddedindia.in/|https://new.embeddedindia.in|https://new.embeddedindia.in/) SITE_CHOICE="$arg" ;;
     *) echo "Unknown argument: $arg" >&2; usage; exit 1 ;;
   esac
 done
@@ -39,14 +43,18 @@ if [ -z "$SITE_CHOICE" ]; then
   esac
 fi
 case "$SITE_CHOICE" in
-  1|default|Default|embeddedindia.in) APP_FOLDER=embeddedindia.in; DOMAIN=embeddedindia.in ;;
-  2|new|New|new.embeddedindia.in) APP_FOLDER=new; DOMAIN=new.embeddedindia.in ;;
+  1|default|Default|embeddedindia.in|https://embeddedindia.in|https://embeddedindia.in/) APP_FOLDER=embeddedindia.in; DOMAIN=embeddedindia.in ;;
+  2|new|New|new.embeddedindia.in|https://new.embeddedindia.in|https://new.embeddedindia.in/) APP_FOLDER=new; DOMAIN=new.embeddedindia.in ;;
   *) echo "Invalid target: $SITE_CHOICE" >&2; usage; exit 1 ;;
 esac
 case "$MODE" in update|clean|fresh|fresh-install|install) ;; *) echo "Invalid mode: $MODE" >&2; exit 1 ;; esac
 APP_ROOT="/home/jiazxebj/$APP_FOLDER"
 ACTIVATE="/home/jiazxebj/nodevenv/$APP_FOLDER/22/bin/activate"
 APP_URL="https://$DOMAIN"
+if [ "$PRINT_TARGET" = true ]; then
+  printf '%s|%s|%s\n' "$DOMAIN" "$APP_ROOT" "$ACTIVATE"
+  exit 0
+fi
 if [ -z "$ZIP_FILE" ] && [ "$SOURCE_DIR" != "$APP_ROOT" ]; then
   echo "Wrong app root: $SOURCE_DIR" >&2
   echo "Extract the latest bundle into $APP_ROOT, then run: cd $APP_ROOT && bash server-deploy.sh $SITE_CHOICE $MODE" >&2
@@ -72,7 +80,7 @@ allowed_files = {
     'app.js', 'package.json', 'package-lock.json', 'server-deploy.sh',
     'tailwind.config.js', '.cpanel.yml', 'prisma/schema.prisma',
     'scripts/init-db.js', 'scripts/seed-sqlite.js',
-    'scripts/reset-admin.js', 'scripts/generate-lead-magnet.js'
+    'scripts/reset-admin.js', 'scripts/generate-lead-magnet.js', 'scripts/cpanel-deploy.sh'
 }
 required = {
     'app.js', 'src/server.js', 'package.json', 'package-lock.json',
@@ -226,6 +234,10 @@ const Database = require('better-sqlite3');
 NODE
 fi
 "$NODE_BIN" scripts/init-db.js
+if [ ! -s public/downloads/embedded-design-checklist.pdf ]; then
+  "$NODE_BIN" scripts/generate-lead-magnet.js
+fi
+[ -s public/downloads/embedded-design-checklist.pdf ] || { echo "Checklist PDF generation failed" >&2; exit 1; }
 ADMIN_EXISTS="$("$NODE_BIN" <<'NODE'
 const Database = require('better-sqlite3');
 const db = new Database('prisma/dev.db', { readonly: true });
@@ -252,6 +264,8 @@ echo "Prepared $APP_ROOT and requested Passenger restart for $DOMAIN only."
 if command -v curl >/dev/null 2>&1; then
   LIVE_VERSION="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' "$APP_URL/deployment-version.json?v=$DEPLOY_ID" || true)"
   if printf '%s' "$LIVE_VERSION" | "$NODE_BIN" -e 'let s="";process.stdin.on("data",d=>s+=d);process.stdin.on("end",()=>{try{process.exit(JSON.parse(s).id===process.argv[1]?0:1)}catch{process.exit(1)}})' "$DEPLOY_ID"; then
+    curl --fail --silent --show-error --retry 5 --retry-delay 3 --max-time 30 "$APP_URL/health" > /dev/null
+    curl --fail --silent --show-error --retry 3 --retry-delay 3 --max-time 30 "$APP_URL/tools/engineering-hardware" > /dev/null
     echo "Verified: $APP_URL serves deployment $DEPLOY_ID."
   else
     echo "WARNING: Live update is NOT verified. Check cPanel app root ($APP_ROOT), startup file (app.js), restart the selected Node app, and purge any CDN cache." >&2

@@ -147,10 +147,41 @@ These are first-install defaults only. `ADMIN_DEFAULT_EMAIL` and `ADMIN_DEFAULT_
 
 ## 🔄 Automated CI/CD & cPanel Deployment
 
-This repository is linked to the live production server at `embeddedindia.in`:
-- Pushing to the `main` branch triggers [`.github/workflows/deploy.yml`](file:///.github/workflows/deploy.yml).
-- The action pulls changes via SSH, registers the commit in cPanel Version Control, runs `./server-deploy.sh update`, and triggers an instant Phusion Passenger reload (`tmp/restart.txt`).
-- For complete setup instructions and required GitHub secrets, see [DEPLOYMENT_CPANEL_GUIDE.md](file:///DEPLOYMENT_CPANEL_GUIDE.md).
+One repository deploys to either cPanel Node.js application:
+
+| Domain | Application directory | Node environment |
+| --- | --- | --- |
+| https://embeddedindia.in | `/home/jiazxebj/embeddedindia.in` | `/home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate` |
+| https://new.embeddedindia.in | `/home/jiazxebj/new` | `/home/jiazxebj/nodevenv/new/22/bin/activate` |
+
+To choose a domain, open **GitHub → Actions → Deploy Embedded India → Run workflow**, select the branch/ref and the **Domain to update**, then run it. The workflow must first be present on the default branch for the manual run button to appear. Manual runs offer `embeddedindia.in` and `new.embeddedindia.in`. Pushes to `main` automatically update **new.embeddedindia.in**; production updates are selected manually.
+
+The [deployment workflow](.github/workflows/deploy-cpanel.yml) tests and packages the selected commit, uploads it over SSH, runs `server-deploy.sh` for the chosen domain, and checks the deployment marker, database/application health and tools page. It restarts only the selected application. Each site keeps its own `.env`, database, admin accounts, uploads and Node dependencies. Concurrent runs are queued per domain.
+
+The existing GitHub Actions secrets `CPANEL_HOST`, `CPANEL_USER`, `CPANEL_SSH_KEY` and `CPANEL_PORT` are shared by both domains. Optional `CPANEL_SSH_PORT` overrides the SSH port; panel ports 2083/2087 default to SSH port 22. Optional `CPANEL_KNOWN_HOSTS` pins the host key. `CPANEL_API_TOKEN` is not needed by this SSH workflow. Both Node 22 apps must already exist in cPanel.
+
+Deployment results are emailed to **sahil.kalka@gmail.com** using the **selected site's saved SMTP settings**. The subject and body identify the domain, result, commit and workflow run. Configure mail under that site's **Admin → Settings → Email & routing**. A success email follows successful live checks; failure details remain in the Actions logs.
+
+For an SSH/manual update from already-extracted code:
+
+```bash
+cd /home/jiazxebj/embeddedindia.in
+bash server-deploy.sh embeddedindia.in update
+
+cd /home/jiazxebj/new
+bash server-deploy.sh new.embeddedindia.in update
+```
+
+For ZIP deployment, run `npm run pack:cpanel`, upload the resulting `embeddedindia.zip`, and pass its path after the domain and `update`. Inspect a target without deploying with `bash server-deploy.sh embeddedindia.in --print-target`. The earlier `default` and `new` aliases still work.
+
+If using cPanel's **Git Version Control → Deploy HEAD Commit** instead of GitHub Actions, `.cpanel.yml` invokes `scripts/cpanel-deploy.sh`. In a repository outside the two app roots, create an ignored `.cpanel-target` file containing the chosen domain, or set `TARGET_SITE`. For example, from the cPanel Git checkout:
+
+```bash
+printf '%s\n' 'new.embeddedindia.in' > .cpanel-target
+# For production, write embeddedindia.in instead.
+```
+
+This local selection survives Git updates and is independent of the GitHub workflow's dropdown. Avoid running cPanel deployment and GitHub deployment on the same site simultaneously. See [DEPLOYMENT_CPANEL_GUIDE.md](DEPLOYMENT_CPANEL_GUIDE.md) for full setup and recovery instructions.
 
 ---
 

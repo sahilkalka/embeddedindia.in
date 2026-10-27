@@ -1,9 +1,4 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/jiazxebj/new
-    - /bin/mkdir -p "$DEPLOYPATH/tmp" "$DEPLOYPATH/prisma"
-    - if [ "$(pwd -P)" != "$DEPLOYPATH" ]; then /bin/cp -R src views public scripts package.json package-lock.json app.js server-deploy.sh tailwind.config.js "$DEPLOYPATH/"; /bin/cp prisma/schema.prisma "$DEPLOYPATH/prisma/schema.prisma"; fi
-    - /bin/chmod +x "$DEPLOYPATH/server-deploy.sh"
-    - /bin/bash "$DEPLOYPATH/server-deploy.sh" new update
-    - /bin/touch "$DEPLOYPATH/tmp/restart.txt"
+    - /bin/bash scripts/cpanel-deploy.sh

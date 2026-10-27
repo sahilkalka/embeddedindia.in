@@ -2,6 +2,7 @@
 node_modules/
 
 # Environment variables & secrets
+.cpanel-target
 .env
 .env.*
 !.env.example

@@ -402,4 +402,9 @@ if (hasNativeEngine()) {
   }
 }
 
+// Install on startup as well, so restarting an existing installation protects it.
+const guardDb = getSqliteDb();
+if (guardDb.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='Post'").get()) {
+  require('./postDuplicates').installPostDuplicateGuards(guardDb);
+}
 module.exports = activeClient;

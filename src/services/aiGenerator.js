@@ -16,10 +16,10 @@ class AIGeneratorService {
     }, {});
 
     return {
-      provider: map.ai_provider || 'nvidia',
+      provider: map.ai_provider || process.env.AI_PROVIDER || 'nvidia',
       apiKey: map.ai_api_key || process.env.AI_API_KEY || '',
-      model: map.ai_model || 'meta/llama-3.1-70b-instruct',
-      baseUrl: map.ai_base_url || '',
+      model: map.ai_model || process.env.AI_MODEL || 'meta/llama-3.1-70b-instruct',
+      baseUrl: map.ai_base_url || process.env.AI_BASE_URL || '',
       temperature: parseFloat(map.ai_temperature || '0.7')
     };
   }
@@ -357,7 +357,7 @@ Return ONLY the raw JSON object without markdown fences.`;
 
     // Render markdown to syntax-highlighted HTML
     const contentHtml = await markdownToHtml(parsed.contentMarkdown);
-    const finalSlug = slugify(parsed.slug || parsed.title, { lower: true, strict: true }) + '-' + Math.floor(Math.random() * 1000);
+    const finalSlug = slugify(parsed.title, { lower: true, strict: true }) || 'embedded-engineering-guide';
 
     const postPayload = {
       title: parsed.title,
@@ -393,7 +393,7 @@ Return ONLY the raw JSON object without markdown fences.`;
 
     const cleanTitle = topic.replace(/[^\w\s-]/g, '').trim();
     const slugBase = slugify(cleanTitle, { lower: true, strict: true }) || 'embedded-engineering-guide';
-    const finalSlug = `${slugBase}-${Date.now().toString().slice(-4)}`;
+    const finalSlug = slugBase;
 
     const tags = ['stm32', 'hardware-design', 'firmware', 'pcb-layout', 'signal-integrity'];
 

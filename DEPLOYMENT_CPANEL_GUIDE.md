@@ -1,5 +1,30 @@
 # cPanel deployment guide
 
+## Select a domain in GitHub Actions
+
+Open **GitHub → Actions → Deploy Embedded India → Run workflow**. Choose the branch/ref and the **Domain to update**: `embeddedindia.in` deploys to `/home/jiazxebj/embeddedindia.in`; `new.embeddedindia.in` deploys to `/home/jiazxebj/new`. The workflow must be on the default branch before GitHub shows the manual run button. Pushes to `main` continue automatically deploying staging (`new.embeddedindia.in`); production is selected manually.
+
+The workflow `.github/workflows/deploy-cpanel.yml` tests and packages the checked-out commit, uploads it over SSH, then invokes `server-deploy.sh` with the selected domain. The script resolves the matching app root and Node environment. Each site's configuration, database and uploaded/generated files are preserved. Runs are queued separately for each domain. The existing cPanel Git connection can remain in place; this workflow transfers a release bundle directly and does not require an additional Git pull or manual deployment button. Avoid running cPanel's manual deployment at the same time as the workflow for that site.
+
+Configure these repository **Actions secrets** before the first run:
+
+| Secret | Value |
+| --- | --- |
+| `CPANEL_HOST` | SSH hostname supplied by your host |
+| `CPANEL_USER` | cPanel account username (currently `jiazxebj`) |
+| `CPANEL_SSH_KEY` | Private SSH key whose public key is authorized in cPanel |
+| `CPANEL_PORT` | Existing connection port; panel HTTPS ports 2083/2087 are mapped to SSH port 22 |
+| `CPANEL_SSH_PORT` | Optional override for a nonstandard SSH port |
+| `CPANEL_KNOWN_HOSTS` | Optional verified SSH host-key entry. Without it, the workflow discovers the key with `ssh-keyscan` on each run (first-connection trust). Pin this secret to protect against host impersonation. |
+
+Your existing `CPANEL_HOST`, `CPANEL_USER`, `CPANEL_SSH_KEY`, and `CPANEL_PORT` secrets are used directly for both domains. `CPANEL_API_TOKEN` can remain configured; this SSH release-bundle path does not use it. The cPanel account needs SSH access and both Node 22 apps registered with roots `embeddedindia.in` and `new`.
+
+Every run attempts to email `sahil.kalka@gmail.com` using the selected site's SMTP settings, identifying its domain, commit and workflow link. A success email is sent only after the deployment marker, application/database health, and engineering tools page pass live checks. Failures are labelled as failures; SMTP errors fail the notification step. Mail server acceptance does not guarantee inbox delivery.
+
+Deployment notifications use the website's saved SMTP credentials over SSH; no SMTP secrets are needed in GitHub. Configure **Admin → Settings → Email & routing** on the website for subscriber PDF mail. The update script generates the checklist if missing. Copilot uses the provider configured in **Admin → AI** (or `AI_*` environment fallbacks); it uses labelled general guidance when no live provider is available.
+
+References: [GitHub Actions secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets), [cPanel Git deployment](https://docs.cpanel.net/knowledge-base/web-services/guide-to-git-deployment/).
+
 This project supports two separate CloudLinux Node.js applications. Each keeps its own dependencies, configuration, database, and Passenger restart file.
 
 | Target argument | Website | Application root | Node 22 activation script |
@@ -154,9 +179,9 @@ cd /home/jiazxebj/new
 bash server-deploy.sh new update
 ```
 
-The repository's `.cpanel.yml` currently deploys to **staging**, `/home/jiazxebj/new`, and invokes `server-deploy.sh new update`. It does not deploy to production. In cPanel Git Version Control, update the checked-out source and use its deployment action when following that workflow.
+The repository's `.cpanel.yml` invokes `scripts/cpanel-deploy.sh`. Target precedence is: explicit script argument, `TARGET_SITE`, an ignored `.cpanel-target` file in the Git checkout, then the current app root if it is exactly `/home/jiazxebj/embeddedindia.in` or `/home/jiazxebj/new`. Other checkout locations require an explicit selection. Write `embeddedindia.in` or `new.embeddedindia.in` into `.cpanel-target` on the server; it survives Git updates and is excluded from release bundles. The helper copies runtime sources while preserving configuration, databases, uploads and downloads, then runs the same domain-specific update script.
 
-This guide does not assume an active GitHub Actions deployment workflow. Pushing a commit alone is not evidence that either server has deployed it.
+GitHub Actions selection and the cPanel Git checkout's local selection are independent. A pushed commit alone is not evidence that either server has deployed it; inspect the Actions result and selected domain's live deployment marker.
 
 ## 7. Verify and troubleshoot
 

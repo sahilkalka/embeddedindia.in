@@ -243,7 +243,7 @@ router.get('/subscribers', async (req, res) => {
     const subscribers = await prisma.subscriber.findMany({
       orderBy: { createdAt: 'desc' }
     });
-    res.render('admin/subscribers', { subscribers, message: null });
+    res.render('admin/subscribers', { subscribers, message: req.query.sent === '1' ? 'PDF email accepted by the mail server.' : null, deliveryError: req.query.error || null });
   } catch (err) {
     res.status(500).send('Error loading subscribers');
   }
@@ -287,15 +287,17 @@ router.post('/subscribers/:id/approve', async (req, res) => {
         status: 'active',
         verifiedAt: new Date(),
         verifyToken: null,
-        leadMagnetSent: true
+        leadMagnetSent: subscriber.leadMagnetSent
       }
     });
 
     // Trigger confirmation / dispatch email
     const delivery = await mailer.sendLeadMagnetEmail(subscriber.email);
-    console.log('[ADMIN APPROVAL] Subscriber manually approved and lead magnet email triggered for:', subscriber.email, delivery);
-
-    res.redirect('/admin/subscribers');
+    if (!delivery.success) {
+      return res.redirect('/admin/subscribers?error=' + encodeURIComponent(delivery.error || 'PDF delivery failed. Check SMTP settings and retry.'));
+    }
+    await prisma.subscriber.update({ where: { id: subscriber.id }, data: { leadMagnetSent: true } });
+    res.redirect('/admin/subscribers?sent=1');
   } catch (err) {
     console.error('[ADMIN APPROVE SUBSCRIBER ERROR]', err);
     res.status(500).send('Failed to approve subscriber');
@@ -361,7 +363,7 @@ router.post('/posts/new', async (req, res) => {
     res.redirect('/admin/posts');
   } catch (err) {
     console.error('[CREATE POST ERROR]', err);
-    res.status(500).send('Error creating post: ' + err.message);
+    res.status(/duplicate|unique/i.test(err.message) ? 409 : 500).send('Error creating post: ' + err.message);
   }
 });
 
@@ -395,38 +397,13 @@ router.post('/posts/:id/edit', async (req, res) => {
     const existing = await prisma.post.findFirst({
       where: { slug: targetSlug, NOT: { id: req.params.id } }
     });
-    if (existing) {
-      targetSlug = `${targetSlug}-${Date.now().toString().slice(-4)}`;
-    }
+    if (existing) return res.status(409).send('Another post already uses this URL. Edit the existing post or choose a different URL.');
 
     const validScheduledAt = scheduledAt && !isNaN(Date.parse(scheduledAt)) ? new Date(scheduledAt) : null;
     const contentHtml = renderMarkdown(contentMarkdown || '');
 
-    // Check if post exists; if not found, upsert/auto-create it to safeguard author's writing
-    const postExists = await prisma.post.findUnique({
-      where: { id: req.params.id }
-    });
-
-    if (!postExists) {
-      console.warn(`[UPDATE POST] Post ${req.params.id} not found in DB; auto-creating to preserve submitted content.`);
-      await prisma.post.create({
-        data: {
-          id: req.params.id,
-          title: cleanTitle,
-          slug: targetSlug,
-          category: category || 'Embedded Electronics',
-          tags: tags || 'embedded',
-          summary: summary || '',
-          contentMarkdown: contentMarkdown || '',
-          contentHtml,
-          status: status || 'draft',
-          readingTime: parseInt(readingTime) || 4,
-          scheduledAt: validScheduledAt,
-          publishedAt: status === 'published' ? new Date() : null
-        }
-      });
-      return res.redirect('/admin/posts');
-    }
+    const postExists = await prisma.post.findUnique({ where: { id: req.params.id } });
+    if (!postExists) return res.status(404).send('Post no longer exists. Reload the post list before saving.');
 
     await prisma.post.update({
       where: { id: req.params.id },
@@ -448,7 +425,7 @@ router.post('/posts/:id/edit', async (req, res) => {
     res.redirect('/admin/posts');
   } catch (err) {
     console.error('[UPDATE POST ERROR]', err);
-    res.status(500).send('Error updating post: ' + err.message);
+    res.status(/duplicate|unique/i.test(err.message) ? 409 : 500).send('Error updating post: ' + err.message);
   }
 });
 
