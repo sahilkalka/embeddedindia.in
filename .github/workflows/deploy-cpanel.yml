@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       target_domain:
-        description: 'Choose deployment target:'
+        description: 'Select target domain to update:'
         required: true
         type: choice
         default: 'embeddedindia.in'
@@ -14,8 +14,7 @@ on:
 
   push:
     branches:
-      - main       # Auto-deploys to embeddedindia.in
-      - develop    # Auto-deploys to new.embeddedindia.in
+      - main
 
 jobs:
   deploy:
@@ -27,47 +26,42 @@ jobs:
           CPANEL_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
           CPANEL_USER: "jiazxebj"
         run: |
-          # 1. Resolve domain from manual selection or pushed branch
+          # 1. Determine target domain (defaults to embeddedindia.in on normal git push to main)
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TARGET_DOMAIN="${{ inputs.target_domain }}"
           else
-            if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-              TARGET_DOMAIN="embeddedindia.in"
-            else
-              TARGET_DOMAIN="new.embeddedindia.in"
-            fi
+            TARGET_DOMAIN="embeddedindia.in"
           fi
 
-          # 2. Map domain to directory root
+          # 2. Map domain to the cPanel repository root
           if [ "$TARGET_DOMAIN" = "embeddedindia.in" ]; then
             REPO_PATH="/home/${CPANEL_USER}/embeddedindia.in"
           else
             REPO_PATH="/home/${CPANEL_USER}/new"
           fi
 
-          echo "Target Domain: $TARGET_DOMAIN"
-          echo "Repository Path: $REPO_PATH"
+          echo "Deploying to: $TARGET_DOMAIN ($REPO_PATH)"
 
-          # 3. Pull latest commits into the selected folder
-          echo "Pulling latest code..."
+          # 3. Pull latest commit into the target repository directory
           PULL_RES=$(curl -s -k -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
             "https://${CPANEL_HOST}:2083/execute/VersionControl/update?repository_root=${REPO_PATH}")
           echo "Pull response: $PULL_RES"
 
           if echo "$PULL_RES" | grep -q '"status":0'; then
-            echo "Error during pull."
+            echo "Error: cPanel Git pull failed."
             exit 1
           fi
 
-          # 4. Trigger deployment via .cpanel.yml
-          echo "Executing cPanel deployment tasks..."
+          # 4. Trigger .cpanel.yml deployment in that directory
           DEPLOY_RES=$(curl -s -k -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
             "https://${CPANEL_HOST}:2083/execute/VersionControlDeployment/create?repository_root=${REPO_PATH}")
           echo "Deploy response: $DEPLOY_RES"
 
           if echo "$DEPLOY_RES" | grep -q '"status":0'; then
-            echo "Error during deployment execution."
+            echo "Error: cPanel deployment task failed."
             exit 1
           fi
 
-          echo "Deployment triggered successfully for $TARGET_DOMAIN."
+          echo "Queued deployment for $TARGET_DOMAIN. Waiting 25s for build and Passenger restart..."
+          sleep 25
+          echo "Done! https://$TARGET_DOMAIN is updated."
