@@ -4,14 +4,24 @@ set -Eeuo pipefail
 SOURCE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 cd "$SOURCE_ROOT"
 
-# Always detect target from the directory path first unless $1 is explicitly passed
-target="${1:-}"
+target="${1:-${TARGET_SITE:-}}"
+
+# 1. Always determine target from the folder path first
 if [ -z "$target" ]; then
   case "$SOURCE_ROOT" in
-    */embeddedindia.in) target="embeddedindia.in" ;;
-    */new) target="new.embeddedindia.in" ;;
-    *) target="${TARGET_SITE:-embeddedindia.in}" ;;
+    /home/jiazxebj/embeddedindia.in) target=embeddedindia.in ;;
+    /home/jiazxebj/new) target=new.embeddedindia.in ;;
   esac
+fi
+
+# 2. Only check .cpanel-target if folder didn't match
+if [ -z "$target" ] && [ -f .cpanel-target ]; then
+  target="$(tr -d '\r\n' < .cpanel-target)"
+fi
+
+if [ -z "$target" ]; then
+  echo 'Set TARGET_SITE or create an ignored .cpanel-target file containing embeddedindia.in or new.embeddedindia.in in this Git checkout.' >&2
+  exit 1
 fi
 
 resolved="$(bash server-deploy.sh "$target" --print-target)"
