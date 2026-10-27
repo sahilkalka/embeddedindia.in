@@ -1,4 +1,6 @@
 ---
 deployment:
   tasks:
+    - /usr/local/cpanel/3rdparty/bin/git fetch origin main
+    - /usr/local/cpanel/3rdparty/bin/git reset --hard origin/main
     - /bin/bash ./scripts/cpanel-deploy.sh
