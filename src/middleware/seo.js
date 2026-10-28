@@ -101,6 +101,7 @@ async function seoMiddleware(req, res, next) {
   res.locals.theme = theme;
   res.locals.currentPath = currentPath;
   res.locals.appUrl = appUrl;
+  res.locals.assetVersion = req.app.locals.assetVersion || '20261028-v1';
 
   // Track lightweight page view analytics (ignoring static assets, /admin, and API)
   if (!req.path.startsWith('/admin') && !req.path.startsWith('/api') && !req.path.includes('.')) {

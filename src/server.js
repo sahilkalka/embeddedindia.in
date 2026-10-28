@@ -29,6 +29,18 @@ const servicesData = require('./data/servicesData');
 const app = express();
 app.locals.toolCategories = require('./data/toolsRegistry').getAllCategories();
 app.locals.totalTools = app.locals.toolCategories.reduce((total, category) => total + category.toolCount, 0);
+
+// Dynamic asset versioning for cache busting across Cloudflare, LiteSpeed, and browser caches
+const getAssetVersion = () => {
+  try {
+    const cssPath = path.join(__dirname, '../public/css/style.css');
+    const stat = fs.statSync(cssPath);
+    return Math.floor(stat.mtimeMs).toString(36);
+  } catch (_) {
+    return Date.now().toString(36);
+  }
+};
+app.locals.assetVersion = getAssetVersion();
 const PORT = process.env.PORT || 3000;
 
 // Security: Disable x-powered-by
