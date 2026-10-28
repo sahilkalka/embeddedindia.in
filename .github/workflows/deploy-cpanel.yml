@@ -22,7 +22,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Trigger cPanel Git Pull & Deployment
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
@@ -100,6 +105,9 @@ jobs:
             echo "cPanel Pull Raw Response:"
             echo "$PULL_RES"
 
+            echo "--- PULL for ${DOMAIN} ---" >> cpanel_debug.log
+            echo "$PULL_RES" >> cpanel_debug.log
+
             # Check if cPanel returned status 1
             if ! echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
               echo "❌ ERROR: cPanel Git pull failed for ${DOMAIN} (${REPO_PATH})!"
@@ -117,6 +125,8 @@ jobs:
 
             echo "cPanel Deploy Raw Response:"
             echo "$DEPLOY_RES"
+            echo "--- DEPLOY for ${DOMAIN} ---" >> cpanel_debug.log
+            echo "$DEPLOY_RES" >> cpanel_debug.log
 
             if ! echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
               echo "❌ ERROR: cPanel deployment task failed for ${DOMAIN} (${REPO_PATH})!"
@@ -137,3 +147,14 @@ jobs:
           echo "Trigger: ${{ github.event_name }} (${{ github.ref_name }})"
           echo "Target Notification Email: sahil.kalka@gmail.com"
           echo "=========================================================="
+
+      - name: Commit & Push cPanel Debug Log
+        if: always()
+        run: |
+          if [ -f cpanel_debug.log ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add cpanel_debug.log
+            git commit -m "chore: record cpanel debug log [skip ci]" || echo "No changes"
+            git push origin HEAD:${{ github.ref_name }} || echo "Failed to push log"
+          fi
