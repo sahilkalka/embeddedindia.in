@@ -77,12 +77,23 @@ jobs:
             fi
           fi
 
+          CURRENT_REF="${{ github.ref }}"
+          CURRENT_BRANCH="${{ github.ref_name }}"
+          if [ -z "$CURRENT_BRANCH" ]; then
+            CURRENT_BRANCH="main"
+          fi
+
+          echo "Triggered by: ${{ github.event_name }} on branch '${CURRENT_BRANCH}'"
           echo "Target deployment list: ${TARGET_DOMAINS[*]}"
 
           for DOMAIN in "${TARGET_DOMAINS[@]}"; do
             if [ "$DOMAIN" = "new.embeddedindia.in" ]; then
               REPO_DIR="new"
-              TARGET_BRANCH="dev"
+              if [ "$CURRENT_BRANCH" = "dev" ] || [ "$CURRENT_BRANCH" = "develop" ]; then
+                TARGET_BRANCH="dev"
+              else
+                TARGET_BRANCH="${CURRENT_BRANCH}"
+              fi
             else
               REPO_DIR="embeddedindia.in"
               TARGET_BRANCH="main"
@@ -96,16 +107,18 @@ jobs:
             echo "=========================================================="
 
             # Step 1: Git Pull / Update from Remote via cPanel UAPI
-            echo "Triggering cPanel Git pull for ${REPO_PATH}..."
+            # Note: cPanel VersionControl::update requires 'branch' parameter to trigger a git pull from remote
+            echo "Triggering cPanel Git pull for ${REPO_PATH} (branch: ${TARGET_BRANCH})..."
             PULL_RES=$(curl -s -S -k \
               -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
               --data-urlencode "repository_root=${REPO_PATH}" \
+              --data-urlencode "branch=${TARGET_BRANCH}" \
               -G "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1)
 
             echo "cPanel Pull Raw Response:"
             echo "$PULL_RES"
 
-            echo "--- PULL for ${DOMAIN} ---" >> cpanel_debug.log
+            echo "--- PULL for ${DOMAIN} (branch: ${TARGET_BRANCH}) ---" >> cpanel_debug.log
             echo "$PULL_RES" >> cpanel_debug.log
 
             # Check if cPanel returned status 1
@@ -114,7 +127,7 @@ jobs:
               echo "Verify that CPANEL_HOST (${CLEAN_HOST}), CPANEL_API_TOKEN, and repository path exist."
               exit 1
             fi
-            echo "✅ Git pull succeeded for ${DOMAIN}."
+            echo "✅ Git pull succeeded for ${DOMAIN} (branch: ${TARGET_BRANCH})."
 
             # Step 2: Trigger .cpanel.yml deployment task
             echo "Triggering .cpanel.yml deployment task for ${REPO_PATH}..."
