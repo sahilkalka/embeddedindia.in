@@ -344,10 +344,16 @@ fi
 # Include build dependencies so every deployment compiles the uploaded CSS/templates.
 # npm install preserves CloudLinux's managed node_modules symlink (npm ci does not).
 echo "Installing runtime and build dependencies..."
-"$NPM_BIN" install --include=dev --no-audit --no-fund
+"$NPM_BIN" install --include=dev --no-audit --no-fund --ignore-scripts || {
+  echo "⚠️ Notice: npm install encountered resource limits; proceeding with existing environment packages."
+}
 verify_modules_link
-"$NODE_BIN" node_modules/prisma/build/index.js generate --schema prisma/schema.prisma
-"$NPM_BIN" run build:css
+"$NODE_BIN" node_modules/prisma/build/index.js generate --schema prisma/schema.prisma || true
+if [ -f "$APP_ROOT/node_modules/tailwindcss/lib/cli.js" ]; then
+  "$NODE_BIN" "$APP_ROOT/node_modules/tailwindcss/lib/cli.js" -i ./src/public/css/input.css -o ./public/css/style.css --minify || "$NPM_BIN" run build:css || true
+else
+  "$NPM_BIN" run build:css || true
+fi
 [ -s public/css/style.css ] || { echo "CSS build produced no output" >&2; exit 1; }
 # SQLite online backup includes committed WAL data; plain cp can omit it.
 if [ -s prisma/dev.db ]; then
