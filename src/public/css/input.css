@@ -751,6 +751,17 @@ textarea:focus {
   box-shadow: 0 0 0 3px var(--glow-color, rgba(5, 150, 105, 0.25)) !important;
 }
 
+/* Bulletproof scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 7px;
@@ -834,6 +845,8 @@ textarea:focus {
   transform: scale(0.96);
 }
 .spotlight-card {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease;
+  will-change: transform;
   position: relative;
   overflow: hidden;
 }
@@ -850,8 +863,54 @@ textarea:focus {
   pointer-events: none;
   z-index: 1;
 }
+.spotlight-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px -10px var(--glow-color, rgba(0, 127, 95, 0.18)), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
 .spotlight-card:hover::before {
   opacity: 1;
+}
+
+/* ====================================================================
+.spotlight-card .w-14,
+.spotlight-card .w-12,
+.spotlight-card img {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.spotlight-card:hover .w-14,
+.spotlight-card:hover .w-12,
+.spotlight-card:hover img {
+  transform: scale(1.08) translateY(-2px);
+}
+.spotlight-card a[href*="/services"] {
+  display: inline-flex;
+  align-items: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+}
+.spotlight-card:hover a[href*="/services"] {
+  transform: translateX(4px);
+}
+
+/* Category cards hover animation (Tools Hub page) */
+.category-card {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease;
+  will-change: transform;
+}
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px -10px var(--glow-color, rgba(0, 127, 95, 0.18)), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+/* Blog article cards hover animation (Blogs page) */
+.blog-card,
+article.group {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.25s ease;
+  will-change: transform;
+}
+.blog-card:hover,
+article.group:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 30px -10px var(--glow-color, rgba(0, 127, 95, 0.15)), 0 8px 12px -3px rgba(0, 0, 0, 0.05);
 }
 
 /* ====================================================================

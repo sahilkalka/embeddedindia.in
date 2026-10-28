@@ -51,7 +51,7 @@
   </div>
 
   <form action="<%= post ? '/admin/posts/' + post.id + '/edit' : '/admin/posts/new' %>" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-    
+      <%- csrfField %>
     <!-- Left: Content Inputs (8 Cols) -->
     <div class="lg:col-span-8 space-y-5 bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm">
       

@@ -59,7 +59,7 @@ async function seoMiddleware(req, res, next) {
       '@type': 'Organization',
       name: siteName,
       url: appUrl,
-      logo: `${appUrl}/assets/images/logo.png`,
+      logo: `${appUrl}/assets/images/logo.svg`,
       description: 'Full-Cycle Embedded Product Engineering, Hardware Design, and Firmware Solutions.',
       address: {
         '@type': 'PostalAddress',

@@ -43,6 +43,7 @@
     <% } %>
 
     <form action="/admin/login" method="POST" class="space-y-5">
+      <%- csrfField %>
       <input type="hidden" name="redirect" value="<%= typeof redirect !== 'undefined' ? redirect : '' %>">
       <div>
         <label for="admin-email" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">

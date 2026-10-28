@@ -23,6 +23,7 @@ const totalPostCount = Number.isFinite(Number(locals.totalPosts)) ? Number(local
 
   <!-- AI Model Settings Form -->
   <form id="aiConfigForm" action="/admin/ai" method="POST" class="space-y-6">
+    <%- csrfField %>
 
     <div class="bg-slate-50 dark:bg-brand-dark rounded-2xl p-5 border border-slate-200 dark:border-brand-border space-y-5">
       <div class="flex items-center justify-between border-b border-slate-100 dark:border-brand-border pb-3">
@@ -192,6 +193,7 @@ const totalPostCount = Number.isFinite(Number(locals.totalPosts)) ? Number(local
 
   <!-- Scheduled publishing & Topic Queue -->
   <form action="/admin/ai" method="POST" class="space-y-6">
+    <%- csrfField %>
     <div class="bg-slate-50 dark:bg-brand-dark rounded-2xl p-5 border border-slate-200 dark:border-brand-border space-y-6">
 
       <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-brand-border pb-4 gap-3">

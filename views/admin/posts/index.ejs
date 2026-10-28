@@ -57,6 +57,7 @@
               <td class="p-4 text-right space-x-3 whitespace-nowrap">
                 <a href="/admin/posts/<%= post.id %>/edit" class="font-bold text-emerald-600 dark:text-emerald-400 hover:underline">Edit</a>
                 <form action="/admin/posts/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Delete this post?')" class="inline">
+                  <%- csrfField %>
                   <button type="submit" class="font-bold text-red-600 dark:text-red-400 hover:underline">Delete</button>
                 </form>
               </td>

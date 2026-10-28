@@ -1,6 +1,7 @@
 <section id="feature-flags" aria-labelledby="feature-flags-title" class="settings-section hidden">
 
       <form class="settings-module-form space-y-6" action="/admin/settings" method="POST" data-module="Feature Flags">
+        <%- csrfField %>
         <input type="hidden" name="_active_tab" value="feature-flags">
 
         <%- include('../settings-module-header', {"sectionId":"feature-flags","title":"Homepage sections","icon":"flag","description":"Choose which sections appear and preview the homepage on desktop, tablet, or mobile.","saveLabel":"Save Feature Flags"}) %>

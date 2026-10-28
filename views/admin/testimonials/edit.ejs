@@ -15,6 +15,7 @@
   </div>
 
   <form action="<%= testimonial ? '/admin/testimonials/' + testimonial.id : '/admin/testimonials' %>" method="POST" class="bg-white dark:bg-brand-surface rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-brand-border shadow-sm space-y-5">
+    <%- csrfField %>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div>

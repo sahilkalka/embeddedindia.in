@@ -12,6 +12,7 @@ const cors = require('cors');
 
 const { seoMiddleware } = require('./middleware/seo');
 const { optionalAuth } = require('./middleware/auth');
+const { csrfProtection } = require('./middleware/csrf');
 const { initCronJobs } = require('./cron/jobs');
 const prisma = require('./services/db');
 const mailer = require('./services/mailer');
@@ -107,6 +108,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// CSRF Protection Middleware
+app.use(csrfProtection);
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'embeddedindia_default_session_secret_2026',

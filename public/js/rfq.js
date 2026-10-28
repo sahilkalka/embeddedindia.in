@@ -1,4 +1,4 @@
-// public/js/rfq.js - 3-Step Interactive RFQ Form Controller
+// public/js/rfq.js - 3-Step Interactive RFQ Form Controller with Direct General Query Option
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contact-form');
   if (!form) return;
@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepIndicator = document.getElementById('rfq-step-indicator');
 
   const btnNext1 = document.getElementById('rfq-next-1');
+  const btnNext1Text = document.getElementById('rfq-next-1-text');
   const btnBack2 = document.getElementById('rfq-back-2');
   const btnNext2 = document.getElementById('rfq-next-2');
   const btnBack3 = document.getElementById('rfq-back-3');
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const typeButtons = document.querySelectorAll('.rfq-type-btn');
 
   let currentStep = 1;
+  let isDirectQuery = false;
 
   function updateStepUI(step) {
     currentStep = step;
@@ -36,7 +38,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const percent = Math.round((step / 3) * 100);
     if (progressBar) progressBar.style.width = `${percent}%`;
     if (progressLabel) progressLabel.textContent = `${step}/3`;
-    if (stepIndicator) stepIndicator.textContent = `Step ${step} of 3`;
+    if (stepIndicator) {
+      if (isDirectQuery && step === 3) {
+        stepIndicator.textContent = 'Direct Inquiry Form (Step 3 of 3)';
+      } else {
+        stepIndicator.textContent = `Step ${step} of 3`;
+      }
+    }
+  }
+
+  function goToDirectForm() {
+    isDirectQuery = true;
+    if (serviceCategoryInput) serviceCategoryInput.value = 'General Query';
+
+    const generalBtn = document.getElementById('rfq-discipline-general');
+    if (generalBtn) {
+      typeButtons.forEach(b => {
+        b.classList.remove('bg-brand-500', 'text-white', 'border-brand-500', 'shadow-md');
+        b.classList.add('bg-slate-50', 'dark:bg-brand-dark', 'text-slate-800', 'dark:text-slate-200', 'border-slate-200', 'dark:border-brand-border');
+      });
+      generalBtn.classList.remove('bg-slate-50', 'dark:bg-brand-dark', 'text-slate-800', 'dark:text-slate-200', 'border-slate-200', 'dark:border-brand-border');
+      generalBtn.classList.add('bg-brand-500', 'text-white', 'border-brand-500', 'shadow-md');
+    }
+
+    const subjectInput = document.getElementById('contact-subject');
+    if (subjectInput && !subjectInput.value.trim()) {
+      subjectInput.value = 'General Query / Consultation';
+    }
+
+    updateStepUI(3);
   }
 
   // Handle Project Type selection buttons
@@ -51,29 +81,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const val = btn.getAttribute('data-value');
       if (serviceCategoryInput) serviceCategoryInput.value = val;
+
+      if (btn.getAttribute('data-skip-specs') === 'true' || val === 'General Query' || val === 'Other / General Query') {
+        isDirectQuery = true;
+        if (btnNext1Text) btnNext1Text.innerHTML = 'Continue to Form &rarr;';
+      } else {
+        isDirectQuery = false;
+        if (btnNext1Text) btnNext1Text.innerHTML = 'Continue to Specifications &rarr;';
+      }
     });
   });
+
+  const directOptBtn = document.getElementById('rfq-direct-opt-btn');
+  if (directOptBtn) {
+    directOptBtn.addEventListener('click', (e) => {
+      // If user clicks the "Fill Form Directly" text/arrow specifically, jump straight
+      if (e.target.closest('.group-hover\\:underline') || e.target.closest('span:last-child')) {
+        goToDirectForm();
+      }
+    });
+  }
+
+  const directLinkBtn = document.getElementById('rfq-direct-link');
+  if (directLinkBtn) {
+    directLinkBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      goToDirectForm();
+    });
+  }
 
   // URL query pre-select
   try {
     const params = new URLSearchParams(window.location.search);
     const serviceParam = (params.get('service') || '').toLowerCase();
     if (serviceParam) {
-      typeButtons.forEach(btn => {
-        const v = btn.getAttribute('data-value').toLowerCase();
-        if (serviceParam.includes('hardware') && v.includes('hardware') ||
-            serviceParam.includes('firmware') && v.includes('firmware') ||
-            serviceParam.includes('iot') && v.includes('iot') ||
-            serviceParam.includes('auto') && v.includes('auto')) {
-          btn.click();
-        }
-      });
+      if (serviceParam.includes('other') || serviceParam.includes('general')) {
+        const generalBtn = document.getElementById('rfq-discipline-general');
+        if (generalBtn) generalBtn.click();
+      } else {
+        typeButtons.forEach(btn => {
+          const v = btn.getAttribute('data-value').toLowerCase();
+          if (serviceParam.includes('hardware') && v.includes('hardware') ||
+              serviceParam.includes('firmware') && v.includes('firmware') ||
+              serviceParam.includes('iot') && v.includes('iot') ||
+              serviceParam.includes('auto') && v.includes('auto')) {
+            btn.click();
+          }
+        });
+      }
     }
   } catch (e) {}
 
   if (btnNext1) {
     btnNext1.addEventListener('click', () => {
-      updateStepUI(2);
+      if (isDirectQuery || (serviceCategoryInput && (serviceCategoryInput.value === 'General Query' || serviceCategoryInput.value === 'Other / General Query'))) {
+        goToDirectForm();
+      } else {
+        updateStepUI(2);
+      }
     });
   }
 
@@ -97,7 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnBack3) {
     btnBack3.addEventListener('click', () => {
-      updateStepUI(2);
+      if (isDirectQuery) {
+        updateStepUI(1);
+      } else {
+        updateStepUI(2);
+      }
     });
   }
 
@@ -127,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // Consolidate specs into message body
+    // Consolidate specs into message body if not direct query
     const mcu = data.spec_mcu || '';
     const layers = data.spec_layers || '';
     const qty = data.spec_qty || '';
@@ -156,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
           contactStatus.innerHTML = `<strong>Inquiry Received!</strong> ${result.message}`;
         }
         form.reset();
+        isDirectQuery = false;
         updateStepUI(1);
       } else {
         if (contactStatus) {
@@ -182,4 +252,3 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Step 1
   updateStepUI(1);
 });
-

@@ -88,6 +88,7 @@
                   <a href="/projects/<%= p.slug %>" target="_blank" class="font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white">View</a>
                   <a href="/admin/projects/<%= p.id %>/edit" class="font-bold text-brand-500 hover:underline">Edit</a>
                   <form action="/admin/projects/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Delete this project permanently?')" class="inline">
+                    <%- csrfField %>
                     <button type="submit" class="font-bold text-red-600 dark:text-red-400 hover:underline">Delete</button>
                   </form>
                 </td>

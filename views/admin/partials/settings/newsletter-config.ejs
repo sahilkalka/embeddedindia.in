@@ -1,6 +1,7 @@
 <section id="newsletter-config" aria-labelledby="newsletter-config-title" class="settings-section hidden">
 
       <form class="settings-module-form space-y-6" action="/admin/settings" method="POST" data-module="Newsletter Configuration">
+        <%- csrfField %>
         <input type="hidden" name="_active_tab" value="newsletter-config">
 
         <%- include('../settings-module-header', {"sectionId":"newsletter-config","title":"Newsletter","icon":"mail","description":"Set digest frequency, topics, categories, and subscriber notifications.","saveLabel":"Save Newsletter Settings","actions":[{"id":"btnTriggerDigest","handler":"triggerNewsletterDigest()","icon":"forward_to_inbox","label":"Test send"}]}) %>

@@ -55,6 +55,135 @@ if [ "$PRINT_TARGET" = true ]; then
   printf '%s|%s|%s\n' "$DOMAIN" "$APP_ROOT" "$ACTIVATE"
   exit 0
 fi
+
+# ==============================================================================
+# Automated Logging & Email Notification Wrapper
+# Runs for all actual code deployments (whether succeeded or failed)
+# ==============================================================================
+if [ -z "${SERVER_DEPLOY_LOG_ACTIVE:-}" ]; then
+  export SERVER_DEPLOY_LOG_ACTIVE=1
+  DEPLOY_LOG_FILE="/tmp/server-deploy-${APP_FOLDER}-$(date +%s)-$$.log"
+  export DEPLOY_LOG_FILE
+
+  set +e
+  /bin/bash "$0" "$@" 2>&1 | tee "$DEPLOY_LOG_FILE"
+  DEPLOY_EXIT_CODE=${PIPESTATUS[0]}
+  set -e
+
+  RECIPIENT="sahil.kalka@gmail.com"
+  if [ $DEPLOY_EXIT_CODE -eq 0 ]; then
+    STATUS_LABEL="SUCCESS"
+  else
+    STATUS_LABEL="FAILED (Exit Code: $DEPLOY_EXIT_CODE)"
+  fi
+
+  SUBJECT="[DEPLOY $STATUS_LABEL] $DOMAIN - Code Deployment Report"
+  LOG_EXCERPT="$(tail -n 250 "$DEPLOY_LOG_FILE" 2>/dev/null || echo "No deployment logs captured.")"
+
+  EMAIL_BODY="==============================================================================
+EMBEDDED INDIA - AUTOMATED CODE DEPLOYMENT REPORT
+==============================================================================
+Status:       $STATUS_LABEL
+Target:       $APP_URL
+App Directory:$APP_ROOT
+Timestamp:    $(date -u)
+Exit Code:    $DEPLOY_EXIT_CODE
+Git Commit:   $(git -C "$APP_ROOT" rev-parse --short HEAD 2>/dev/null || echo "N/A")
+Commit Msg:   $(git -C "$APP_ROOT" log -1 --pretty=%B 2>/dev/null | head -n 1 || echo "N/A")
+Commit Author:$(git -C "$APP_ROOT" log -1 --pretty='%an <%ae>' 2>/dev/null || echo "N/A")
+==============================================================================
+
+LATEST DEPLOYMENT LOGS (last 250 lines):
+------------------------------------------------------------------------------
+$LOG_EXCERPT
+==============================================================================
+"
+
+  EMAIL_SENT=false
+
+  # 1. Primary delivery: /usr/sbin/sendmail (cPanel local Exim)
+  if [ -x /usr/sbin/sendmail ]; then
+    if /usr/sbin/sendmail -oi -t <<EOF 2>/dev/null
+To: $RECIPIENT
+From: "Embedded India Deploy" <noreply@embeddedindia.in>
+Subject: $SUBJECT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+$EMAIL_BODY
+EOF
+    then
+      echo "✅ Deployment log email dispatched to $RECIPIENT via sendmail."
+      EMAIL_SENT=true
+    fi
+  fi
+
+  # 2. Secondary delivery: Python 3 SMTP to local Exim
+  if [ "$EMAIL_SENT" = false ] && command -v python3 >/dev/null 2>&1; then
+    if python3 - "$RECIPIENT" "$SUBJECT" "$EMAIL_BODY" <<'PY_MAIL' 2>/dev/null
+import sys, smtplib
+from email.message import EmailMessage
+
+recip, subj, body = sys.argv[1:4]
+msg = EmailMessage()
+msg["To"] = recip
+msg["From"] = "Embedded India Deploy <noreply@embeddedindia.in>"
+msg["Subject"] = subj
+msg.set_content(body)
+
+sent = False
+for port in (25, 587):
+    try:
+        with smtplib.SMTP("localhost", port, timeout=5) as s:
+            s.send_message(msg)
+            sent = True
+            break
+    except Exception:
+        continue
+sys.exit(0 if sent else 1)
+PY_MAIL
+    then
+      echo "✅ Deployment log email dispatched to $RECIPIENT via Python SMTP."
+      EMAIL_SENT=true
+    fi
+  fi
+
+  # 3. Tertiary delivery: Node.js mailer fallback
+  if [ "$EMAIL_SENT" = false ] && [ -f "$ACTIVATE" ]; then
+    (
+      set +u
+      source "$ACTIVATE" 2>/dev/null || true
+      set -u
+      if command -v node >/dev/null 2>&1; then
+        cd "$APP_ROOT" 2>/dev/null || true
+        node - "$RECIPIENT" "$SUBJECT" "$EMAIL_BODY" <<'NODE_MAIL' 2>/dev/null || true
+const [,, to, subject, text] = process.argv;
+try {
+  const mailer = require('./src/services/mailer');
+  mailer.getTransporter().then(t => {
+    if (t && typeof t.sendMail === 'function') {
+      return t.sendMail({
+        from: '"Embedded India Deploy" <noreply@embeddedindia.in>',
+        to,
+        subject,
+        text
+      }).then(() => {
+        console.log('✅ Deployment log email dispatched to ' + to + ' via nodemailer.');
+      });
+    }
+  }).catch(() => {});
+} catch (e) {}
+NODE_MAIL
+      fi
+    ) 2>/dev/null || true
+  fi
+
+  # Remove temporary log file
+  rm -f "$DEPLOY_LOG_FILE" 2>/dev/null || true
+
+  # Propagate original exit code
+  exit $DEPLOY_EXIT_CODE
+fi
 if [ -z "$ZIP_FILE" ] && [ "$SOURCE_DIR" != "$APP_ROOT" ]; then
   echo "Wrong app root: $SOURCE_DIR" >&2
   echo "Extract the latest bundle into $APP_ROOT, then run: cd $APP_ROOT && bash server-deploy.sh $SITE_CHOICE $MODE" >&2
