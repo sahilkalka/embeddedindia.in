@@ -7,7 +7,7 @@ on:
         description: 'Select domain(s) to deploy:'
         required: true
         type: choice
-        default: 'new.embeddedindia.in'
+        default: 'both (embeddedindia.in & new.embeddedindia.in)'
         options:
           - 'both (embeddedindia.in & new.embeddedindia.in)'
           - 'dev (new.embeddedindia.in -> cpanel dir new)'
@@ -31,6 +31,15 @@ jobs:
           NOTIFY_EMAIL: "sahil.kalka@gmail.com"
         run: |
           set -e
+
+          # Sanitize host in case secret includes http(s):// or ports
+          CLEAN_HOST=$(echo "${CPANEL_HOST}" | sed -e 's|^https\?://||' -e 's|:[0-9]*||' -e 's|/.*||' | tr -d '[:space:]')
+          if [ -z "$CLEAN_HOST" ]; then
+            CLEAN_HOST="cpanel.embeddedindia.in"
+          fi
+
+          echo "Target cPanel Host: https://${CLEAN_HOST}:2083"
+          echo "Target cPanel User: ${CPANEL_USER}"
 
           TARGET_DOMAINS=()
 
@@ -68,42 +77,57 @@ jobs:
           for DOMAIN in "${TARGET_DOMAINS[@]}"; do
             if [ "$DOMAIN" = "new.embeddedindia.in" ]; then
               REPO_DIR="new"
+              TARGET_BRANCH="dev"
             else
               REPO_DIR="embeddedindia.in"
+              TARGET_BRANCH="main"
             fi
 
             REPO_PATH="/home/${CPANEL_USER}/${REPO_DIR}"
             echo "=========================================================="
-            echo "🚀 Deploying: https://${DOMAIN}"
+            echo "🚀 Target: https://${DOMAIN}"
             echo "📁 cPanel Directory: ${REPO_PATH}"
+            echo "🌿 Target Branch: ${TARGET_BRANCH}"
             echo "=========================================================="
 
-            echo "Executing Git pull on cPanel (${REPO_PATH})..."
-            PULL_RES=$(curl -s -k -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-              "https://${CPANEL_HOST}:2083/execute/VersionControl/update?repository_root=${REPO_PATH}")
-            echo "Pull response: $PULL_RES"
+            # Step 1: Git Pull / Update from Remote via cPanel UAPI
+            echo "Triggering cPanel Git pull for ${REPO_PATH}..."
+            PULL_RES=$(curl -s -S -k \
+              -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+              --data-urlencode "repository_root=${REPO_PATH}" \
+              -G "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1)
 
-            if echo "$PULL_RES" | grep -q '"status":0'; then
-              echo "❌ Error: cPanel Git pull failed for ${DOMAIN} (${REPO_PATH})."
+            echo "cPanel Pull Raw Response:"
+            echo "$PULL_RES"
+
+            # Check if cPanel returned status 1
+            if ! echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
+              echo "❌ ERROR: cPanel Git pull failed for ${DOMAIN} (${REPO_PATH})!"
+              echo "Verify that CPANEL_HOST (${CLEAN_HOST}), CPANEL_API_TOKEN, and repository path exist."
               exit 1
             fi
+            echo "✅ Git pull succeeded for ${DOMAIN}."
 
-            echo "Executing .cpanel.yml deployment task on cPanel (${REPO_PATH})..."
-            DEPLOY_RES=$(curl -s -k -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-              "https://${CPANEL_HOST}:2083/execute/VersionControlDeployment/create?repository_root=${REPO_PATH}")
-            echo "Deploy response: $DEPLOY_RES"
+            # Step 2: Trigger .cpanel.yml deployment task
+            echo "Triggering .cpanel.yml deployment task for ${REPO_PATH}..."
+            DEPLOY_RES=$(curl -s -S -k \
+              -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+              --data-urlencode "repository_root=${REPO_PATH}" \
+              -G "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1)
 
-            if echo "$DEPLOY_RES" | grep -q '"status":0'; then
-              echo "❌ Error: cPanel deployment task failed for ${DOMAIN} (${REPO_PATH})."
+            echo "cPanel Deploy Raw Response:"
+            echo "$DEPLOY_RES"
+
+            if ! echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
+              echo "❌ ERROR: cPanel deployment task failed for ${DOMAIN} (${REPO_PATH})!"
               exit 1
             fi
-
-            echo "✅ Successfully queued deployment for ${DOMAIN} (${REPO_DIR})."
+            echo "✅ cPanel deployment task successfully queued for ${DOMAIN} (${REPO_DIR})."
           done
 
           echo "Waiting 25s for builds, server-deploy.sh execution, and Passenger restart to finish..."
           sleep 25
-          echo "🎉 All targeted deployments processed. server-deploy.sh dispatches email logs to ${NOTIFY_EMAIL} upon completion."
+          echo "🎉 Deployment tasks completed successfully. server-deploy.sh dispatches email logs to ${NOTIFY_EMAIL}."
 
       - name: Workflow Run Summary & Status Notice
         if: always()
@@ -112,5 +136,4 @@ jobs:
           echo "GitHub Workflow Job Status: ${{ job.status }}"
           echo "Trigger: ${{ github.event_name }} (${{ github.ref_name }})"
           echo "Target Notification Email: sahil.kalka@gmail.com"
-          echo "server-deploy.sh executes on cPanel and sends detailed logs on both success and failure."
           echo "=========================================================="
