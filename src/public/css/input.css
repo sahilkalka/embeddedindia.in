@@ -5,7 +5,7 @@
 /* ====================================================================
    Bulletproof Responsive Desktop & Mobile Navigation Display
    ==================================================================== */
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .public-desktop-nav,
   nav.public-desktop-nav {
     display: flex !important;
@@ -17,7 +17,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   .public-desktop-nav,
   nav.public-desktop-nav {
     display: none !important;
