@@ -148,13 +148,9 @@ jobs:
           echo "Target Notification Email: sahil.kalka@gmail.com"
           echo "=========================================================="
 
-      - name: Commit & Push cPanel Debug Log
+      - name: Upload Debug Log Artifact
         if: always()
-        run: |
-          if [ -f cpanel_debug.log ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add cpanel_debug.log
-            git commit -m "chore: record cpanel debug log [skip ci]" || echo "No changes"
-            git push origin HEAD:${{ github.ref_name }} || echo "Failed to push log"
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpanel-debug-log
+          path: cpanel_debug.log
