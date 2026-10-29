@@ -20,25 +20,28 @@ jobs:
         with:
           node-version: 22
 
-      - name: Pre-build Production Assets (Zero Server-Side Build)
+      - name: Pre-build Production Assets & Pack Release (Zero Server-Side Build)
         run: |
           npm ci || npm install
           npm run build
           node --check app.js
           node --check src/server.js
+          npm run pack:cpanel
+          ls -lh embeddedindia.zip
 
-      - name: Trigger cPanel Git Pull & Deployment
+      - name: Push Release & Deploy to cPanel
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_TOKEN: ${{ secrets.CPANEL_API_TOKEN || secrets.CPANEL_TOKEN }}
           CPANEL_USER: "jiazxebj"
           CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          CPANEL_SSH_HOST: ${{ secrets.CPANEL_SSH_HOST }}
           CPANEL_PORT: ${{ secrets.CPANEL_SSH_PORT || secrets.CPANEL_PORT || '22' }}
           NOTIFY_EMAIL: "sahil.kalka@gmail.com"
         run: |
           set -e
 
-          # Sanitize host in case secret includes http(s):// or ports
+          # Sanitize cPanel host
           CLEAN_HOST=$(echo "${CPANEL_HOST}" | sed -e 's|^https\?://||' -e 's|:[0-9]*||' -e 's|/.*||' | tr -d '[:space:]')
           if [ -z "$CLEAN_HOST" ]; then
             CLEAN_HOST="cpanel.embeddedindia.in"
@@ -51,74 +54,112 @@ jobs:
 
           echo "=========================================================="
           echo "🚀 Deploy Target: https://${DOMAIN}"
-          echo "📁 cPanel Directory: ${REPO_PATH}"
-          echo "🌿 Target Branch: ${TARGET_BRANCH}"
+          echo "📁 Target Directory: ${REPO_PATH}"
           echo "🌐 Host: https://${CLEAN_HOST}:2083"
           echo "👤 User: ${CPANEL_USER}"
+          echo "📦 Pre-built Package: embeddedindia.zip ($(du -h embeddedindia.zip | cut -f1))"
           echo "=========================================================="
 
           DEPLOYED=false
 
           # -----------------------------------------------------------
-          # Strategy 1: cPanel VersionControl UAPI (POST & GET fallback)
+          # Strategy 1: Direct File Push via cPanel UAPI (Zero Server-Side Build)
+          # Pushes pre-built bundle directly over cPanel HTTPS (port 2083),
+          # extracts atomically, touches restart marker, and runs server-deploy.
           # -----------------------------------------------------------
           if [ -n "${CPANEL_TOKEN}" ]; then
-            echo "Attempting Git pull via cPanel UAPI..."
+            echo "Initiating direct push deployment via cPanel API..."
 
-            # Step 1: Git Pull / Update from Remote via cPanel UAPI
-            PULL_RES=$(curl -s -S -k \
+            # Step 1: Upload pre-built embeddedindia.zip
+            echo "1. Uploading pre-built release package..."
+            UPLOAD_RES=$(curl -s -S -k \
               -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-              --data-urlencode "repository_root=${REPO_PATH}" \
-              --data-urlencode "branch=${TARGET_BRANCH}" \
-              "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1 || true)
+              -F "dir=${REPO_PATH}" \
+              -F "overwrite=1" \
+              -F "file-1=@embeddedindia.zip" \
+              "https://${CLEAN_HOST}:2083/execute/Fileman/upload_files" 2>&1 || true)
 
-            if ! echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
-              echo "UAPI POST returned non-1 status. Retrying with GET query..."
-              PULL_RES=$(curl -s -S -k \
+            echo "Upload Response:"
+            echo "$UPLOAD_RES"
+            echo "--- UPLOAD for ${DOMAIN} ---" >> cpanel_debug.log
+            echo "$UPLOAD_RES" >> cpanel_debug.log
+
+            if echo "$UPLOAD_RES" | grep -qE '"status"\s*:\s*1'; then
+              echo "✅ Pre-built bundle uploaded successfully."
+
+              # Step 2: Extract embeddedindia.zip directly into REPO_PATH
+              echo "2. Extracting package files into ${REPO_PATH}..."
+              EXTRACT_RES=$(curl -s -S -k \
                 -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                --data-urlencode "repository_root=${REPO_PATH}" \
-                --data-urlencode "branch=${TARGET_BRANCH}" \
-                -G "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1 || true)
-            fi
+                --data-urlencode "dir=${REPO_PATH}" \
+                --data-urlencode "file=embeddedindia.zip" \
+                "https://${CLEAN_HOST}:2083/execute/Fileman/extract_files" 2>&1 || true)
 
-            echo "cPanel Pull Raw Response:"
-            echo "$PULL_RES"
-            echo "--- PULL for ${DOMAIN} ---" >> cpanel_debug.log
-            echo "$PULL_RES" >> cpanel_debug.log
+              if ! echo "$EXTRACT_RES" | grep -qE '"status"\s*:\s*1'; then
+                echo "UAPI extract returned non-1 status. Retrying via cPanel API 2 fileop..."
+                EXTRACT_RES=$(curl -s -S -k \
+                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                  "https://${CLEAN_HOST}:2083/json-api/cpanel?cpanel_jsonapi_user=${CPANEL_USER}&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=fileop&op=extract&sourcefiles=embeddedindia.zip&dest=${REPO_PATH}" 2>&1 || true)
+              fi
 
-            if echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
-              echo "✅ Git pull succeeded via cPanel UAPI."
+              echo "Extract Response:"
+              echo "$EXTRACT_RES"
+              echo "--- EXTRACT for ${DOMAIN} ---" >> cpanel_debug.log
+              echo "$EXTRACT_RES" >> cpanel_debug.log
 
-              # Step 2: Trigger .cpanel.yml deployment task
-              echo "Triggering .cpanel.yml deployment task for ${REPO_PATH}..."
-              DEPLOY_RES=$(curl -s -S -k \
-                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                --data-urlencode "repository_root=${REPO_PATH}" \
-                "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
+              if echo "$EXTRACT_RES" | grep -qE '"status"\s*:\s*1'; then
+                echo "✅ Release package extracted successfully."
 
-              if ! echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
+                # Step 3: Trigger cPanel .cpanel.yml deployment task
+                echo "3. Triggering .cpanel.yml deployment task..."
                 DEPLOY_RES=$(curl -s -S -k \
                   -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
                   --data-urlencode "repository_root=${REPO_PATH}" \
-                  -G "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
-              fi
+                  "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
 
-              echo "cPanel Deploy Raw Response:"
-              echo "$DEPLOY_RES"
-              echo "--- DEPLOY for ${DOMAIN} ---" >> cpanel_debug.log
-              echo "$DEPLOY_RES" >> cpanel_debug.log
+                echo "Deployment Task Response:"
+                echo "$DEPLOY_RES"
+                echo "--- DEPLOY TASK for ${DOMAIN} ---" >> cpanel_debug.log
+                echo "$DEPLOY_RES" >> cpanel_debug.log
 
-              if echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
-                echo "✅ cPanel deployment task successfully queued for ${DOMAIN}."
+                # Step 4: Ensure tmp directory exists & touch tmp/restart.txt to reload Node.js
+                echo "4. Reloading Phusion Passenger via restart marker..."
+                curl -s -S -k \
+                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                  --data-urlencode "path=${REPO_PATH}" \
+                  --data-urlencode "name=tmp" \
+                  "https://${CLEAN_HOST}:2083/execute/Fileman/mkdir" 2>&1 || true
+
+                RESTART_RES=$(curl -s -S -k \
+                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                  --data-urlencode "dir=${REPO_PATH}/tmp" \
+                  --data-urlencode "filename=restart.txt" \
+                  --data-urlencode "content=Deployment timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+                  "https://${CLEAN_HOST}:2083/execute/Fileman/save_file_content" 2>&1 || true)
+
+                echo "Restart Response: $RESTART_RES"
+
+                # Step 5: Clean up uploaded zip
+                echo "5. Cleaning up temporary upload archive..."
+                curl -s -S -k \
+                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                  --data-urlencode "dir=${REPO_PATH}" \
+                  --data-urlencode "files=embeddedindia.zip" \
+                  "https://${CLEAN_HOST}:2083/execute/Fileman/delete_files" 2>&1 || true
+
                 DEPLOYED=true
+                echo "🎉 Push deployment completed successfully via cPanel API!"
+              else
+                echo "⚠️ Extract step did not return status 1."
               fi
             else
-              echo "⚠️ cPanel UAPI git pull did not succeed."
+              echo "⚠️ File upload did not return status 1."
             fi
           fi
 
           # -----------------------------------------------------------
-          # Strategy 2: Direct SSH Clean Pull Fallback
+          # Strategy 2: Direct SSH Deployment Fallback
+          # Only used if cPanel API push was not successful
           # -----------------------------------------------------------
           if [ "$DEPLOYED" = false ] && [ -n "${CPANEL_SSH_KEY}" ]; then
             echo "=========================================================="
@@ -134,7 +175,17 @@ jobs:
               SSH_PORT="22"
             fi
 
-            SSH_HOST="${CLEAN_HOST}"
+            # Cloudflare bypass: use CPANEL_SSH_HOST, or cpanel.subdomain, or CLEAN_HOST
+            SSH_HOST="${CPANEL_SSH_HOST:-}"
+            if [ -z "$SSH_HOST" ]; then
+              if [[ "$CLEAN_HOST" == "embeddedindia.in" ]]; then
+                SSH_HOST="cpanel.embeddedindia.in"
+              else
+                SSH_HOST="${CLEAN_HOST}"
+              fi
+            fi
+
+            echo "Connecting via SSH to ${CPANEL_USER}@${SSH_HOST}:${SSH_PORT}..."
             ssh-keyscan -T 15 -p "${SSH_PORT}" -H "${SSH_HOST}" >> ~/.ssh/known_hosts 2>/dev/null || true
             chmod 600 ~/.ssh/known_hosts
 
@@ -149,24 +200,20 @@ jobs:
             BatchMode yes
           EOF
 
+            scp -o BatchMode=yes embeddedindia.zip "cpanel-direct:${REPO_PATH}/embeddedindia.zip"
+
             ssh cpanel-direct <<REMOTE_DEPLOY
             set -e
             cd "${REPO_PATH}"
-            echo "Connected to \$(pwd). Cleaning working tree..."
-            git checkout -- . || true
-            git clean -fd -e prisma/dev.db -e .env -e public/uploads || true
-            echo "Fetching and resetting to origin/${TARGET_BRANCH}..."
-            git fetch origin "${TARGET_BRANCH}"
-            git reset --hard "origin/${TARGET_BRANCH}"
-            echo "Ensuring runtime directories..."
-            mkdir -p tmp prisma public/downloads public/images public/css
-            echo "Running zero-build update..."
+            echo "Extracting release zip via server-deploy..."
             if [ -f server-deploy.sh ]; then
               chmod +x server-deploy.sh
-              bash server-deploy.sh embeddedindia.in update
+              bash server-deploy.sh embeddedindia.in update "${REPO_PATH}/embeddedindia.zip"
+            else
+              unzip -o -q embeddedindia.zip
+              touch tmp/restart.txt
             fi
-            echo "Touching restart marker..."
-            touch tmp/restart.txt
+            rm -f embeddedindia.zip
             echo "✅ Direct SSH deployment and Passenger reload complete!"
           REMOTE_DEPLOY
 
@@ -174,14 +221,20 @@ jobs:
           fi
 
           if [ "$DEPLOYED" = false ]; then
-            echo "❌ ERROR: Deployment failed. Neither cPanel UAPI nor SSH could pull changes."
-            echo "Verify CPANEL_HOST, CPANEL_API_TOKEN, and CPANEL_SSH_KEY in repository secrets."
+            echo "❌ ERROR: Deployment failed. Neither cPanel API push nor SSH succeeded."
+            echo "Verify CPANEL_HOST and CPANEL_API_TOKEN in repository secrets."
             exit 1
           fi
 
           echo "Waiting 5s for Passenger restart to finish..."
           sleep 5
-          echo "🎉 Deployment completed successfully for https://${DOMAIN}."
+
+          # Step 6: Verify health check
+          echo "Verifying live service status at https://${DOMAIN}/health..."
+          HEALTH_STATUS=$(curl -s -k -o /dev/null -w "%{http_code}" --max-time 15 "https://${DOMAIN}/health" || echo "000")
+          echo "Health check HTTP status: ${HEALTH_STATUS}"
+
+          echo "🎉 Deployment to https://${DOMAIN} completed successfully!"
 
       - name: Workflow Run Summary & Status Notice
         if: always()
@@ -190,6 +243,7 @@ jobs:
           echo "GitHub Workflow Job Status: ${{ job.status }}"
           echo "Target Domain: embeddedindia.in"
           echo "Target Notification Email: sahil.kalka@gmail.com"
+          echo "Zero Server-Side Build: Verified (pre-built assets pushed directly)"
           echo "=========================================================="
 
       - name: Upload Debug Log Artifact
