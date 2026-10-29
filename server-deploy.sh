@@ -341,20 +341,31 @@ env = /^APP_URL=.*$/m.test(env) ? env.replace(/^APP_URL=.*$/m, line) : `${env.tr
 fs.writeFileSync('.env', env);
 NODE
 fi
-# Include build dependencies so every deployment compiles the uploaded CSS/templates.
-# npm install preserves CloudLinux's managed node_modules symlink (npm ci does not).
-echo "Installing runtime and build dependencies..."
-"$NPM_BIN" install --include=dev --no-audit --no-fund --ignore-scripts || {
-  echo "⚠️ Notice: npm install encountered resource limits; proceeding with existing environment packages."
-}
-verify_modules_link
-"$NODE_BIN" node_modules/prisma/build/index.js generate --schema prisma/schema.prisma || true
-if [ -f "$APP_ROOT/node_modules/tailwindcss/lib/cli.js" ]; then
-  "$NODE_BIN" "$APP_ROOT/node_modules/tailwindcss/lib/cli.js" -i ./src/public/css/input.css -o ./public/css/style.css --minify || "$NPM_BIN" run build:css || true
-else
-  "$NPM_BIN" run build:css || true
+# ==============================================================================
+# ZERO SERVER-SIDE BUILD & INSTALLATION
+# All assets (Tailwind CSS, PDF lead magnet, etc.) are compiled locally / in CI
+# before pushing. The server performs zero build, zero installation, and runs in <1s.
+# ==============================================================================
+echo "Zero server-side build mode: verifying pre-compiled production assets..."
+
+# Verify pre-built stylesheet exists
+if [ ! -s public/css/style.css ]; then
+  if [ -f "$APP_ROOT/node_modules/tailwindcss/lib/cli.js" ]; then
+    "$NODE_BIN" "$APP_ROOT/node_modules/tailwindcss/lib/cli.js" -i ./src/public/css/input.css -o ./public/css/style.css --minify || true
+  elif [ -n "${NPM_BIN:-}" ]; then
+    "$NPM_BIN" run build:css || true
+  fi
 fi
-[ -s public/css/style.css ] || { echo "CSS build produced no output" >&2; exit 1; }
+[ -s public/css/style.css ] || { echo "❌ Pre-built CSS missing: $APP_ROOT/public/css/style.css. Compile locally ('npm run build:css') before deployment." >&2; exit 1; }
+echo "✅ Pre-built CSS verified: public/css/style.css"
+
+# Verify pre-built lead magnet PDF exists
+if [ ! -s public/downloads/embedded-design-checklist.pdf ]; then
+  "$NODE_BIN" scripts/generate-lead-magnet.js || true
+fi
+[ -s public/downloads/embedded-design-checklist.pdf ] || { echo "❌ Pre-built lead magnet missing: $APP_ROOT/public/downloads/embedded-design-checklist.pdf" >&2; exit 1; }
+echo "✅ Pre-built lead magnet verified: public/downloads/embedded-design-checklist.pdf"
+
 # SQLite online backup includes committed WAL data; plain cp can omit it.
 if [ -s prisma/dev.db ]; then
   "$NODE_BIN" <<'NODE'
@@ -368,22 +379,23 @@ const Database = require('better-sqlite3');
 })().catch(error => { console.error(error); process.exitCode = 1; });
 NODE
 fi
-"$NODE_BIN" scripts/init-db.js
-if [ ! -s public/downloads/embedded-design-checklist.pdf ]; then
-  "$NODE_BIN" scripts/generate-lead-magnet.js
+
+# Self-bootstrap database schema if this is a fresh setup
+if [ ! -s prisma/dev.db ]; then
+  "$NODE_BIN" scripts/init-db.js
 fi
-[ -s public/downloads/embedded-design-checklist.pdf ] || { echo "Checklist PDF generation failed" >&2; exit 1; }
+
 ADMIN_EXISTS="$("$NODE_BIN" <<'NODE'
 const Database = require('better-sqlite3');
+if (!require('fs').existsSync('prisma/dev.db')) { process.stdout.write('no'); process.exit(0); }
 const db = new Database('prisma/dev.db', { readonly: true });
 try { process.stdout.write(db.prepare('SELECT 1 FROM User WHERE role = ? LIMIT 1').get('admin') ? 'yes' : 'no'); }
+catch (e) { process.stdout.write('no'); }
 finally { db.close(); }
 NODE
 )"
 if [ "$ADMIN_EXISTS" = no ]; then "$NODE_BIN" scripts/seed-sqlite.js; fi
-# Keep the installed build tools: npm prune bypasses CloudLinux install handling
-# and can replace its managed node_modules symlink with a regular directory.
-verify_modules_link
+
 "$NODE_BIN" --check app.js
 "$NODE_BIN" --check src/server.js
 echo "Checking authenticated Settings page rendering..."

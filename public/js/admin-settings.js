@@ -530,31 +530,43 @@
     if (btnValidateAd) {
       btnValidateAd.addEventListener('click', async () => {
         const pubInput = document.getElementById('adsense_pub_id');
-        const pubId = pubInput ? pubInput.value : '';
+        const pubId = pubInput ? pubInput.value.trim() : '';
         const resDiv = document.getElementById('adValidationResult');
         if (!resDiv) return;
 
         resDiv.classList.remove('hidden');
         resDiv.innerText = 'Validating publisher ID with IAB ads.txt format...';
         resDiv.className = 'p-2.5 rounded-xl text-[11px] font-mono bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300';
+        btnValidateAd.disabled = true;
+
+        const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+          document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+          document.querySelector('input[name="_csrf"]')?.value ||
+          window.csrfToken || '';
 
         try {
           const res = await fetch('/admin/settings/validate-ad', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pubId })
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ pubId, _csrf: csrfToken })
           });
           const data = await res.json();
           if (data.success) {
             resDiv.className = 'p-2.5 rounded-xl text-[11px] font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300';
-            resDiv.innerText = `✅ Valid Google AdSense ID: ${data.publisherId}. ads.txt synced!`;
+            resDiv.innerText = `✅ Valid Google AdSense ID: ${data.publisherId || data.pubId || pubId}. ads.txt synced!`;
           } else {
+            const errorMsg = data.error || data.message || 'AdSense validation failed';
             resDiv.className = 'p-2.5 rounded-xl text-[11px] font-mono bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300';
-            resDiv.innerText = `❌ Error: ${data.error}`;
+            resDiv.innerText = `❌ Error: ${errorMsg}`;
           }
         } catch (e) {
           resDiv.className = 'p-2.5 rounded-xl text-[11px] font-mono bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300';
           resDiv.innerText = `❌ Network Error: ${e.message}`;
+        } finally {
+          btnValidateAd.disabled = false;
         }
       });
     }
@@ -581,19 +593,28 @@
           toEmail: document.getElementById('smtpTestRecipient')?.value
         };
 
+        const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+          document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+          document.querySelector('input[name="_csrf"]')?.value ||
+          window.csrfToken || '';
+
         try {
           const res = await fetch('/admin/settings/test-smtp', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ ...payload, _csrf: csrfToken })
           });
           const data = await res.json();
           if (data.success) {
             resDiv.className = 'p-3 rounded-xl text-xs font-mono bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300';
             resDiv.innerText = `✅ Handshake Succeeded!\n${data.message}`;
           } else {
+            const errorMsg = data.error || data.message || 'SMTP handshake failed';
             resDiv.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300';
-            resDiv.innerText = `❌ Connection Error [${data.code || 'UNKNOWN'}]:\n${data.error}`;
+            resDiv.innerText = `❌ Connection Error [${data.code || 'UNKNOWN'}]:\n${errorMsg}`;
           }
         } catch (e) {
           resDiv.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300';
@@ -622,11 +643,19 @@
           return;
         }
 
+        const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+          document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+          document.querySelector('input[name="_csrf"]')?.value ||
+          window.csrfToken || '';
+
         try {
           const res = await fetch('/admin/settings/add-account', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, role, password: pass })
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ email, role, password: pass, _csrf: csrfToken })
           });
           const data = await res.json();
           if (data.success) {
@@ -637,7 +666,7 @@
           } else {
             resDiv.classList.remove('hidden');
             resDiv.className = 'p-3 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300';
-            resDiv.innerText = '❌ ' + (data.error || 'Failed to create user');
+            resDiv.innerText = '❌ ' + (data.error || data.message || 'Failed to create user');
           }
         } catch (e) {
           resDiv.classList.remove('hidden');
@@ -651,12 +680,23 @@
   async function deleteAccount(userId) {
     if (!confirm('Are you sure you want to delete this staff user account?')) return;
     try {
-      const res = await fetch('/admin/settings/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: userId }) });
+      const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+        document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+        document.querySelector('input[name="_csrf"]')?.value ||
+        window.csrfToken || '';
+      const res = await fetch('/admin/settings/delete-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ id: userId, _csrf: csrfToken })
+      });
       const data = await res.json();
       if (data.success) {
         window.location.reload();
       } else {
-        alert(data.error || 'Failed to delete account');
+        alert(data.error || data.message || 'Failed to delete account');
       }
     } catch (e) {
       alert('Network error deleting account');

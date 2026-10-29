@@ -8,13 +8,13 @@ The workflow `.github/workflows/deploy-cpanel.yml` tests and packages the checke
 
 Configure these repository **Actions secrets** before the first run:
 
-| Secret | Value |
-| --- | --- |
-| `CPANEL_HOST` | SSH hostname supplied by your host |
-| `CPANEL_USER` | cPanel account username (currently `jiazxebj`) |
-| `CPANEL_SSH_KEY` | Private SSH key whose public key is authorized in cPanel |
-| `CPANEL_PORT` | Existing connection port; panel HTTPS ports 2083/2087 are mapped to SSH port 22 |
-| `CPANEL_SSH_PORT` | Optional override for a nonstandard SSH port |
+| Secret                 | Value                                                                                                                                                                                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CPANEL_HOST`        | SSH hostname supplied by your host                                                                                                                                                                 |
+| `CPANEL_USER`        | cPanel account username (currently `jiazxebj`)                                                                                                                                                   |
+| `CPANEL_SSH_KEY`     | Private SSH key whose public key is authorized in cPanel                                                                                                                                           |
+| `CPANEL_PORT`        | Existing connection port; panel HTTPS ports 2083/2087 are mapped to SSH port 22                                                                                                                    |
+| `CPANEL_SSH_PORT`    | Optional override for a nonstandard SSH port                                                                                                                                                       |
 | `CPANEL_KNOWN_HOSTS` | Optional verified SSH host-key entry. Without it, the workflow discovers the key with `ssh-keyscan` on each run (first-connection trust). Pin this secret to protect against host impersonation. |
 
 Your existing `CPANEL_HOST`, `CPANEL_USER`, `CPANEL_SSH_KEY`, and `CPANEL_PORT` secrets are used directly for both domains. `CPANEL_API_TOKEN` can remain configured; this SSH release-bundle path does not use it. The cPanel account needs SSH access and both Node 22 apps registered with roots `embeddedindia.in` and `new`.
@@ -27,10 +27,10 @@ References: [GitHub Actions secrets](https://docs.github.com/en/actions/how-tos/
 
 This project supports two separate CloudLinux Node.js applications. Each keeps its own dependencies, configuration, database, and Passenger restart file.
 
-| Target argument | Website | Application root | Node 22 activation script |
-| --- | --- | --- | --- |
-| `default` | https://embeddedindia.in | `/home/jiazxebj/embeddedindia.in` | `/home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate` |
-| `new` | https://new.embeddedindia.in | `/home/jiazxebj/new` | `/home/jiazxebj/nodevenv/new/22/bin/activate` |
+| Target argument | Website                      | Application root                    | Node 22 activation script                                    |
+| --------------- | ---------------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| `default`     | https://embeddedindia.in     | `/home/jiazxebj/embeddedindia.in` | `/home/jiazxebj/nodevenv/embeddedindia.in/22/bin/activate` |
+| `new`         | https://new.embeddedindia.in | `/home/jiazxebj/new`              | `/home/jiazxebj/nodevenv/new/22/bin/activate`              |
 
 ## 1. Register each application in cPanel
 
@@ -90,14 +90,14 @@ bash /home/jiazxebj/new/server-deploy.sh new /home/jiazxebj/embeddedindia.zip
 
 The ZIP path is resolved relative to your current terminal directory. The explicit target determines the extraction destination. Without an explicit target, the script infers it from its own folder name when possible.
 
-### What deployment does
+### What deployment does (Zero Server-Side Build)
 
 1. Validates ZIP paths, required files, integrity, and protected destinations before replacing app files.
 2. Stages and extracts the release into the selected app root, then executes the uploaded deployment script.
 3. Activates that site's Node 22 virtual environment, even if another site's Node is already active.
 4. Preserves a conflicting app-root `node_modules` entry and lets CloudLinux's npm wrapper create its managed link.
-5. Installs runtime and build dependencies; verifies that the dependency link points inside the selected virtual environment.
-6. Generates Prisma and rebuilds Tailwind CSS from the uploaded sources.
+5. Verifies pre-compiled production assets: confirms public/css/style.css and public/downloads/embedded-design-checklist.pdf are present. Zero server-side compiler/build tools are invoked (no npm install, no tailwindcss compilation, no prisma generate).
+6. Zero server-side build required: at domain, simply pushing pre-built files and touching tmp/restart.txt updates the system in <1 second.
 7. Backs up an existing SQLite database using SQLite's online backup API, initializes tables, and seeds only when no admin exists.
 8. Keeps the installed build tools and checks the dependency link again. It does not run `npm prune`, which can replace CloudLinux's managed symlink.
 9. Checks entry-point syntax and runs `src/deployment-check.js`, which requests the authenticated Settings page locally and verifies that every module renders with HTTP 200. It then writes `public/deployment-version.json`, and touches only the selected app's `tmp/restart.txt`.
@@ -149,12 +149,12 @@ For production, the resolved path must be inside `/home/jiazxebj/nodevenv/embedd
 
 Each app keeps its `.env` in its own root. Preserve it across uploads.
 
-| Variable | Purpose |
-| --- | --- |
-| `NODE_ENV=production` | Production runtime behavior. |
-| `APP_URL` | Canonical website URL, including the sitemap origin; synchronized by deployment. |
-| `SESSION_SECRET` | Long random session secret. Generated if the script creates a new `.env`. |
-| `ADMIN_JWT_SECRET` | Long random admin-token secret. Generated if the script creates a new `.env`. |
+| Variable                              | Purpose                                                                              |
+| ------------------------------------- | ------------------------------------------------------------------------------------ |
+| `NODE_ENV=production`               | Production runtime behavior.                                                         |
+| `APP_URL`                           | Canonical website URL, including the sitemap origin; synchronized by deployment.     |
+| `SESSION_SECRET`                    | Long random session secret. Generated if the script creates a new `.env`.          |
+| `ADMIN_JWT_SECRET`                  | Long random admin-token secret. Generated if the script creates a new `.env`.      |
 | `DATABASE_URL=file:./prisma/dev.db` | Database configuration; the SQLite scripts use the selected app's `prisma/dev.db`. |
 
 Passenger manages the listening port. Keep any hosting-supplied port configuration intact.

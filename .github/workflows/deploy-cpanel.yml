@@ -7,7 +7,7 @@ on:
         description: 'Select domain(s) to deploy:'
         required: true
         type: choice
-        default: 'both (embeddedindia.in & new.embeddedindia.in)'
+        default: 'embeddedindia.in'
         options:
           - 'both (embeddedindia.in & new.embeddedindia.in)'
           - 'dev (new.embeddedindia.in -> cpanel dir new)'
@@ -27,6 +27,18 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 (Build Environment)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Pre-build Production Assets (Zero Server-Side Build)
+        run: |
+          npm ci || npm install
+          npm run build
+          node --check app.js
+          node --check src/server.js
 
       - name: Trigger cPanel Git Pull & Deployment
         env:
@@ -148,8 +160,8 @@ jobs:
             echo "✅ cPanel deployment task successfully queued for ${DOMAIN} (${REPO_DIR})."
           done
 
-          echo "Waiting 25s for builds, server-deploy.sh execution, and Passenger restart to finish..."
-          sleep 25
+          echo "Waiting 5s for cPanel git pull, zero-build deployment, and Passenger restart to finish..."
+          sleep 5
           echo "🎉 Deployment tasks completed successfully. server-deploy.sh dispatches email logs to ${NOTIFY_EMAIL}."
 
       - name: Workflow Run Summary & Status Notice

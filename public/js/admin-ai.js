@@ -38,17 +38,26 @@
     btnTestAi.disabled = true;
 
     const selectedProvider = document.querySelector('input[name="ai_provider"]:checked')?.value || 'nvidia';
+    const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+      document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+      document.querySelector('input[name="_csrf"]')?.value ||
+      window.csrfToken || '';
+
     const payload = {
       provider: selectedProvider,
-      apiKey: document.getElementById('ai_api_key').value,
-      model: document.getElementById('ai_model').value,
-      baseUrl: document.getElementById('ai_base_url').value
+      apiKey: document.getElementById('ai_api_key')?.value || '',
+      model: document.getElementById('ai_model')?.value || '',
+      baseUrl: document.getElementById('ai_base_url')?.value || '',
+      _csrf: csrfToken
     };
 
     try {
       const res = await fetch('/admin/ai/test', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
@@ -59,16 +68,17 @@
             <span>✅ Connection Verified Successfully!</span>
             <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-200/50 dark:bg-emerald-900/50">${data.latencyMs}ms</span>
           </div>
-          <div><strong>Provider:</strong> ${data.provider.toUpperCase()} | <strong>Model:</strong> ${data.model}</div>
+          <div><strong>Provider:</strong> ${(data.provider || selectedProvider).toUpperCase()} | <strong>Model:</strong> ${data.model || payload.model}</div>
           <div class="mt-2 p-2.5 bg-white/60 dark:bg-black/30 rounded-lg border border-emerald-200 dark:border-emerald-800 text-[11px]">
             &ldquo;${data.response}&rdquo;
           </div>
         `;
       } else {
+        const errorMsg = data.error || data.message || 'Connection test failed';
         aiTestResult.className = 'mt-3 p-4 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block space-y-1';
         aiTestResult.innerHTML = `
           <div class="font-bold text-sm">❌ AI Connection Error</div>
-          <div>${data.error}</div>
+          <div>${errorMsg}</div>
           <div class="text-[10px] text-slate-500 mt-1">Tip: Leave API key blank to test the built-in local simulation pipeline.</div>
         `;
       }
@@ -91,10 +101,17 @@
     btnRandomTopic.disabled = true;
 
     try {
+      const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+        document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+        document.querySelector('input[name="_csrf"]')?.value ||
+        window.csrfToken || '';
       const res = await fetch('/admin/ai/suggest-topics', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ category: document.getElementById('aiCategory').value })
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ category: document.getElementById('aiCategory').value, _csrf: csrfToken })
       });
       const data = await res.json();
       if (data.success && data.topics && data.topics.length > 0) {
@@ -139,13 +156,21 @@
     btnGenerateArticle.disabled = true;
 
     try {
+      const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+        document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+        document.querySelector('input[name="_csrf"]')?.value ||
+        window.csrfToken || '';
       const res = await fetch('/admin/ai/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
         body: JSON.stringify({
           topic,
           category: document.getElementById('aiCategory').value,
-          targetAudience: document.getElementById('aiAudience').value
+          targetAudience: document.getElementById('aiAudience').value,
+          _csrf: csrfToken
         })
       });
       const data = await res.json();
@@ -164,7 +189,7 @@
         `;
       } else {
         aiGenStatus.className = 'p-4 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        aiGenStatus.innerHTML = `❌ <strong>Article Generation Failed:</strong><br>${data.error}`;
+        aiGenStatus.innerHTML = `❌ <strong>Article Generation Failed:</strong><br>${data.error || data.message || 'Generation failed'}`;
       }
     } catch (err) {
       aiGenStatus.className = 'p-4 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
@@ -195,13 +220,21 @@
     btnGenerateOutline.disabled = true;
 
     try {
+      const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+        document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+        document.querySelector('input[name="_csrf"]')?.value ||
+        window.csrfToken || '';
       const res = await fetch('/admin/ai/generate-outline', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
         body: JSON.stringify({
           topic,
           category: document.getElementById('aiCategory').value,
-          targetAudience: document.getElementById('aiAudience').value
+          targetAudience: document.getElementById('aiAudience').value,
+          _csrf: csrfToken
         })
       });
       const data = await res.json();
@@ -214,7 +247,7 @@
         aiOutlineContent.textContent = data.outline.contentMarkdown || '';
       } else {
         aiGenStatus.className = 'p-4 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
-        aiGenStatus.innerHTML = `❌ <strong>Outline Generation Failed:</strong><br>${data.error || 'Unknown error'}`;
+        aiGenStatus.innerHTML = `❌ <strong>Outline Generation Failed:</strong><br>${data.error || data.message || 'Unknown error'}`;
       }
     } catch (err) {
       aiGenStatus.className = 'p-4 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';
@@ -266,9 +299,17 @@
       btnRunSchedulerNow.disabled = true;
 
       try {
+        const csrfToken = (typeof window.getCsrfToken === 'function' ? window.getCsrfToken() : '') ||
+          document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+          document.querySelector('input[name="_csrf"]')?.value ||
+          window.csrfToken || '';
         const res = await fetch('/admin/ai/auto-gen/run-now', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+          },
+          body: JSON.stringify({ _csrf: csrfToken })
         });
         const data = await res.json();
         if (data.success && data.post) {
@@ -278,7 +319,7 @@
               <span>🎉 Article Successfully Auto-Generated &amp; Added to CMS!</span>
             </div>
             <div><strong>Title:</strong> ${data.post.title}</div>
-            <div><strong>Status:</strong> <span class="px-2 py-0.5 rounded font-bold uppercase text-[10px] bg-emerald-200/50 dark:bg-emerald-900/50">${data.post.status}</span></div>
+            <div><strong>Status:</strong> <span class="px-2 py-0.5 rounded font-bold uppercase text-[10px] bg-emerald-200/50 dark:bg-emerald-950/50">${data.post.status}</span></div>
             <div class="mt-3 flex items-center gap-3">
               <a href="/admin/posts/${data.post.id}/edit" class="px-3.5 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold text-xs transition">Edit in CMS &rarr;</a>
               <a href="/blogs/${data.post.slug}" target="_blank" class="px-3.5 py-1.5 bg-slate-100 dark:bg-brand-dark hover:bg-slate-200 text-slate-800 dark:text-white rounded-lg font-bold text-xs border border-slate-300 dark:border-slate-700 transition">View Live &nearr;</a>
@@ -286,7 +327,7 @@
           `;
         } else {
           schedulerRunStatus.className = 'mt-4 p-4 rounded-xl text-xs font-mono bg-yellow-50 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800 block';
-          schedulerRunStatus.innerHTML = `⚠️ <strong>Scheduler Notice:</strong> ${data.error || 'Operation skipped.'}`;
+          schedulerRunStatus.innerHTML = `⚠️ <strong>Scheduler Notice:</strong> ${data.error || data.message || 'Operation skipped.'}`;
         }
       } catch (err) {
         schedulerRunStatus.className = 'mt-4 p-4 rounded-xl text-xs font-mono bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800 block';

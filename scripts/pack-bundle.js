@@ -63,15 +63,21 @@ function findPython() {
 
 function pack() {
   try {
-    console.log('[1/2] Building production CSS...');
+    console.log('[1/3] Building production CSS locally...');
     execFileSync(process.execPath, [
       require.resolve('tailwindcss/lib/cli.js'),
       '-i', './src/public/css/input.css', '-o', './public/css/style.css', '--minify'
     ], { cwd: rootDir, stdio: 'inherit', windowsHide: true });
 
+    console.log('[2/3] Ensuring pre-built lead magnet PDF...');
+    const leadMagnetPath = path.join(rootDir, 'public/downloads/embedded-design-checklist.pdf');
+    if (!fs.existsSync(leadMagnetPath) || fs.statSync(leadMagnetPath).size === 0) {
+      execFileSync(process.execPath, [path.join(rootDir, 'scripts/generate-lead-magnet.js')], { cwd: rootDir, stdio: 'inherit', windowsHide: true });
+    }
+
     const files = collectFiles();
     const [python, args] = findPython();
-    console.log('[2/2] Packing deployment files only...');
+    console.log('[3/3] Packing pre-built zero-server-build release bundle...');
     const pythonScript = [
       'import json, os, sys, zipfile',
       'bundle = json.load(sys.stdin)',

@@ -50,8 +50,8 @@ function csrfProtection(req, res, next) {
 
     if (!bodyToken && !headerToken) {
       // If it's an HTML form submission (not JSON API), render error page
-      if (req.headers['content-type']?.includes('application/json')) {
-        return res.status(403).json({ success: false, message: 'CSRF token missing' });
+      if (req.headers['content-type']?.includes('application/json') || req.headers['accept']?.includes('application/json') || req.xhr) {
+        return res.status(403).json({ success: false, message: 'CSRF token missing', error: 'CSRF token missing' });
       }
       return res.status(403).render('pages/message', {
         title: 'CSRF Token Missing',
@@ -64,8 +64,8 @@ function csrfProtection(req, res, next) {
 
     const providedToken = bodyToken || headerToken;
     if (providedToken !== token) {
-      if (req.headers['content-type']?.includes('application/json')) {
-        return res.status(403).json({ success: false, message: 'CSRF token mismatch' });
+      if (req.headers['content-type']?.includes('application/json') || req.headers['accept']?.includes('application/json') || req.xhr) {
+        return res.status(403).json({ success: false, message: 'CSRF token mismatch', error: 'CSRF token mismatch' });
       }
       return res.status(403).render('pages/message', {
         title: 'CSRF Token Mismatch',

@@ -652,7 +652,7 @@ const handleTestSmtp = async (req, res) => {
     const result = await mailer.testSmtpConnection(req.body);
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/settings/test-smtp', handleTestSmtp);
@@ -663,7 +663,11 @@ const handleValidateAd = async (req, res) => {
   try {
     const { pubId } = req.body;
     if (!pubId || !pubId.trim()) {
-      return res.json({ success: false, error: 'Please enter a Google AdSense Publisher ID (e.g. ca-pub-2644536267352236).' });
+      return res.json({
+        success: false,
+        error: 'Please enter a Google AdSense Publisher ID (e.g. ca-pub-2644536267352236).',
+        message: 'Please enter a Google AdSense Publisher ID (e.g. ca-pub-2644536267352236).'
+      });
     }
     const cleanPub = pubId.trim();
     const isValid = /^(ca-)?pub-\d{16}$/i.test(cleanPub);
@@ -701,13 +705,14 @@ const handleValidateAd = async (req, res) => {
     res.json({
       success: true,
       pubId: formattedPub,
+      publisherId: formattedPub,
       purePub,
       adsTxtUrl: '/ads.txt',
       adsTxtLine: adsTxtContent.trim(),
       message: 'AdSense publisher account validated successfully and ads.txt generated.'
     });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/settings/validate-ad', handleValidateAd);
@@ -768,7 +773,7 @@ const handleAddAccount = async (req, res) => {
       }
     });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/settings/add-account', handleAddAccount);
@@ -790,7 +795,7 @@ router.post('/users/:id/delete', async (req, res) => {
     await prisma.user.delete({ where: { id } });
     res.json({ success: true, message: 'Account successfully removed.' });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 });
 router.post('/settings/delete-account', async (req, res) => {
@@ -811,7 +816,7 @@ router.post('/settings/delete-account', async (req, res) => {
     await prisma.user.delete({ where: { id } });
     res.json({ success: true, message: 'Account successfully removed.' });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 });
 
@@ -849,7 +854,7 @@ const handleChangePassword = async (req, res) => {
 
     res.json({ success: true, message: 'Password updated successfully!' });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/settings/change-password', handleChangePassword);
@@ -888,7 +893,7 @@ const handleAiTest = async (req, res) => {
     const result = await aiGenerator.testConnection(req.body);
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/ai/test', handleAiTest);
@@ -900,7 +905,7 @@ const handleAiGenerate = async (req, res) => {
     const post = await aiGenerator.generateBlogArticle(req.body);
     res.json({ success: true, post });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/ai/generate', handleAiGenerate);
@@ -912,7 +917,7 @@ const handleAiSuggestTopics = async (req, res) => {
     const result = await aiGenerator.suggestTopics(req.body);
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/ai/suggest-topics', handleAiSuggestTopics);
@@ -924,7 +929,7 @@ const handleAiGenerateOutline = async (req, res) => {
     const result = await aiGenerator.generateOutline(req.body);
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/ai/generate-outline', handleAiGenerateOutline);
@@ -936,7 +941,7 @@ const handleAiDraftPost = async (req, res) => {
     const post = await aiGenerator.generateBlogArticle({ ...req.body, createDraftInDb: false });
     res.json({ success: true, post });
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/ai/draft-post', handleAiDraftPost);
@@ -948,7 +953,7 @@ const handleAiSchedulerRunNow = async (req, res) => {
     const result = await aiScheduler.executeAutoGeneration({ force: true });
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 };
 router.post('/ai/auto-gen/run-now', handleAiSchedulerRunNow);
@@ -1207,7 +1212,7 @@ router.post('/ai/project-draft', async (req, res) => {
     const result = await aiGenerator.generateProjectCaseStudy(req.body);
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 });
 
@@ -1217,7 +1222,7 @@ router.post('/ai/optimize-seo', async (req, res) => {
     const result = await aiGenerator.optimizeSeo(req.body);
     res.json(result);
   } catch (err) {
-    res.json({ success: false, error: err.message });
+    res.json({ success: false, error: err.message, message: err.message });
   }
 });
 
