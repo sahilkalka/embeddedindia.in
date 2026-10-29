@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const directOptBtn = document.getElementById('rfq-direct-opt-btn');
   if (directOptBtn) {
     directOptBtn.addEventListener('click', (e) => {
-      // If user clicks the "Fill Form Directly" text/arrow specifically, jump straight
       if (e.target.closest('.group-hover\\:underline') || e.target.closest('span:last-child')) {
         goToDirectForm();
       }
@@ -120,11 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (generalBtn) generalBtn.click();
       } else {
         typeButtons.forEach(btn => {
-          const v = btn.getAttribute('data-value').toLowerCase();
-          if (serviceParam.includes('hardware') && v.includes('hardware') ||
-              serviceParam.includes('firmware') && v.includes('firmware') ||
-              serviceParam.includes('iot') && v.includes('iot') ||
-              serviceParam.includes('auto') && v.includes('auto')) {
+          const v = (btn.getAttribute('data-value') || '').toLowerCase();
+          if ((serviceParam.includes('hardware') && v.includes('hardware')) ||
+              (serviceParam.includes('firmware') && v.includes('firmware')) ||
+              ((serviceParam.includes('hmi') || serviceParam.includes('ui') || serviceParam.includes('touchgfx') || serviceParam.includes('qt')) && v.includes('hmi')) ||
+              (serviceParam.includes('iot') && v.includes('iot')) ||
+              (serviceParam.includes('auto') && v.includes('auto'))) {
             btn.click();
           }
         });

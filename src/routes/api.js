@@ -104,7 +104,7 @@ router.post('/newsletter/subscribe', newsletterLimiter, async (req, res) => {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cleanEmail)) {
+    if (!emailRegex.test(email)) {
       return res.status(400).json({ success: false, message: 'Please enter a valid email address format.' });
     }
 
@@ -269,6 +269,7 @@ router.post('/estimator/calculate', (req, res) => {
     let baseWeeks = 3;
     let complexityLabel = 'Standard MCU Architecture';
     let deliverables = [];
+    let recommendedTeam = '1 Principal Hardware Architect, 1 Senior Firmware Engineer, 1 DFM Specialist';
 
     // 1. Phase calculation
     if (phase === 'prototype') {
@@ -280,6 +281,11 @@ router.post('/estimator/calculate', (req, res) => {
     } else if (phase === 'firmware') {
       baseWeeks = 2;
       deliverables.push('HAL & Peripheral Drivers', 'RTOS Task Architecture', 'Secure Bootloader & FOTA', 'Automated Regression Suite');
+    } else if (phase === 'hmi') {
+      baseWeeks = 3;
+      complexityLabel = 'TouchGFX on STM32 MCU (Chrom-ART / NeoChrom GPU)';
+      deliverables.push('TouchGFX C++ MVP Architecture / Qt QML UI', 'MIPI-DSI / RGB Display & PCAP Touch Driver Bring-Up', '60 FPS Hardware-Accelerated Framebuffer Pipeline', 'Industrial / Medical IEC 62304 UI Verification');
+      recommendedTeam = '1 Embedded HMI Architect (TouchGFX / Qt), 1 Display BSP Engineer, 1 UI/UX Asset Specialist';
     } else {
       deliverables.push('Architecture Feasibility Study', 'BOM Cost Optimization', 'Thermal & Power Simulation');
     }
@@ -287,12 +293,16 @@ router.post('/estimator/calculate', (req, res) => {
     // 2. Silicon Complexity
     if (complexity === 'high') {
       baseWeeks += 3;
-      complexityLabel = 'High-Speed MPU / Linux SoM (DDR4 / PCIe / MIPI)';
+      complexityLabel = phase === 'hmi'
+        ? 'Qt 6 / QML on Embedded Linux MPU (i.MX8 / STM32MP1)'
+        : 'High-Speed MPU / Linux SoM (DDR4 / PCIe / MIPI)';
       deliverables.push('Impedance Matching & Length Tuning', 'Custom U-Boot & Yocto Linux BSP');
     } else if (complexity === 'medium') {
       baseWeeks += 1.5;
-      complexityLabel = 'Dual-Core RTOS / Wireless RF (BLE / Wi-Fi / LoRa)';
-      deliverables.push('RF Matching Network & Antenna Tuning');
+      complexityLabel = phase === 'hmi'
+        ? 'TouchGFX on STM32U5 / STM32H7 + NeoChrom GPU'
+        : 'Dual-Core RTOS / Wireless RF (BLE / Wi-Fi / LoRa)';
+      deliverables.push('RF Matching Network / Octo-SPI XIP Asset Tuning');
     }
 
     // 3. Protocol count
@@ -309,8 +319,8 @@ router.post('/estimator/calculate', (req, res) => {
       deliverables.push('Worst-Case Circuit Analysis (WCCA)', 'ISO 7637-2 Surge Bench Verification');
     } else if (compliance === 'medical') {
       baseWeeks += 2.5;
-      complianceLabel = 'Medical IEC 60601 / ISO 13485';
-      deliverables.push('Galvanic Isolation Testing', 'Risk Management File (ISO 14971)');
+      complianceLabel = 'Medical IEC 60601 / IEC 62304 / ISO 13485';
+      deliverables.push('Galvanic Isolation & IEC 62304 Software File', 'Risk Management File (ISO 14971)');
     } else if (compliance === 'ce_fcc') {
       baseWeeks += 1;
       complianceLabel = 'CE / FCC Class B Radiated & Conducted EMC';
@@ -325,7 +335,7 @@ router.post('/estimator/calculate', (req, res) => {
       complexityLabel,
       complianceLabel,
       deliverables,
-      recommendedTeam: '1 Principal Hardware Architect, 1 Senior Firmware Engineer, 1 DFM Specialist'
+      recommendedTeam
     });
   } catch (err) {
     console.error('[ESTIMATOR ERROR]', err);

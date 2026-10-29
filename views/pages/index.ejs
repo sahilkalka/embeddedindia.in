@@ -56,6 +56,9 @@
             <button type="button" data-type="edgeai" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
               🧠 TinyML Edge AI
             </button>
+            <button type="button" data-type="hmi" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
+              🖥️ TouchGFX / Qt HMI
+            </button>
             <button type="button" data-type="highspeed" class="min-h-[44px] px-3.5 py-2.5 inline-flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 hover:border-brand-500 transition archetype-btn font-bold">
               🔌 High-Speed PCB
             </button>
@@ -159,7 +162,7 @@
 
           <!-- Tab Content 1: Code View -->
           <div id="tabContentCode" class="mt-4 font-mono text-xs text-slate-300 leading-relaxed min-h-[220px]">
-            <pre><code id="liveCodeSnippet" class="text-emerald-400 dark:text-accent font-semibold">// Embedded India Turnkey Hardware Core
+            <pre class="whitespace-pre-wrap break-words overflow-x-hidden"><code id="liveCodeSnippet" class="text-emerald-400 dark:text-accent font-semibold">// Embedded India Turnkey Hardware Core
 void init_embedded_system(void) {
     power_rail_config(RAIL_3V3, ULTRA_LOW_NOISE);
     uart_baud_init(115200, OVERSAMPLE_16);
@@ -567,6 +570,35 @@ void init_embedded_system(void) {
         </div>
       </div>
 
+      <!-- 7. Embedded UI for Industrial & Medical HMI (TouchGFX MCU & Qt MPU) -->
+      <div class="spotlight-card bg-white dark:bg-brand-surface rounded-3xl p-8 border-2 border-brand-500/40 dark:border-accent/40 shadow-md flex flex-col justify-between hover:border-brand-500 transition duration-300 md:col-span-2 lg:col-span-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-2.5 max-w-3xl">
+            <div class="inline-flex flex-wrap items-center gap-2">
+              <div class="w-11 h-11 rounded-2xl bg-brand-50 dark:bg-brand-900/60 text-brand-600 dark:text-accent flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <span class="px-2.5 py-1 rounded-full bg-brand-500 text-white text-[11px] font-black uppercase tracking-wider">Flagship Specialty: TouchGFX on STM32 MCU</span>
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-[11px] font-bold uppercase tracking-wider border border-slate-300 dark:border-slate-700">Rich MPU UI: Qt 6 / QML</span>
+            </div>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">Embedded UI for Industrial &amp; Medical HMI</h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
+              Smartphone-grade 60 FPS graphical interfaces for mission-critical Industrial &amp; Medical (IEC 62304) equipment. <strong>TouchGFX by STMicroelectronics on STM32 MCUs</strong> (Chrom-ART™ DMA2D &amp; NeoChrom™ GPU, sub-300ms instant boot, low BOM cost) is our core specialty, while rich multi-screen 2D/3D HMIs are engineered with <strong>Qt / QML on Microprocessors (MPUs)</strong> (i.MX8/93, STM32MP1/2, Embedded Linux).
+            </p>
+          </div>
+          <div class="flex flex-wrap sm:flex-nowrap gap-3 shrink-0">
+            <a href="/services/embedded-ui-hmi-development" class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-brand-500 transition">
+              <svg class="w-4 h-4 text-brand-500 dark:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <span>Explore HMI Architecture &rarr;</span>
+            </a>
+            <a href="/contact?service=Embedded%20UI%20%2F%20HMI" class="btn-shimmer inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-black shadow-md transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span>Request HMI Quote</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -675,7 +707,7 @@ void init_embedded_system(void) {
         <!-- Step 1: Project Phase -->
         <div class="space-y-2">
           <label class="block text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">1. Target Engineering Phase</label>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-bold" id="estimatorPhasePills">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-bold" id="estimatorPhasePills">
             <button type="button" data-val="prototype" class="est-phase-btn px-4 py-3 rounded-2xl bg-brand-500 text-white font-black border border-brand-500 shadow-md text-left transition transform active:scale-95">
               <span class="block text-sm">Prototype MVP</span>
               <span class="text-[10px] text-white font-medium block">Schematic, Layout &amp; 5 SMT boards</span>
@@ -687,6 +719,10 @@ void init_embedded_system(void) {
             <button type="button" data-val="firmware" class="est-phase-btn px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-left transition hover:border-brand-500 active:scale-95">
               <span class="block text-sm">Firmware Only</span>
               <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-normal">BSP, RTOS drivers &amp; FOTA</span>
+            </button>
+            <button type="button" data-val="hmi" class="est-phase-btn px-4 py-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-left transition hover:border-brand-500 active:scale-95">
+              <span class="block text-sm">TouchGFX / Qt HMI</span>
+              <span class="text-[10px] text-slate-500 dark:text-slate-400 block font-normal">STM32 MCU &amp; Linux MPU UI</span>
             </button>
           </div>
         </div>
@@ -1039,6 +1075,7 @@ void init_embedded_system(void) {
   // 1. Typewriter Animation
   const typewriterTarget = document.getElementById('typewriterTarget');
   const typewriterPhrases = [
+    'TouchGFX & Qt Embedded HMIs',
     'High-Speed PCB Layouts',
     'Automotive CAN-FD ECUs',
     'Ultra-Low Power Firmware',
@@ -1188,6 +1225,19 @@ void init_embedded_system(void) {
 
   // 5. Archetypes Configurator Data
   const ARCHETYPES = {
+    hmi: {
+      mcu: 'STM32U5/H7 (TouchGFX) • i.MX8 (Qt)',
+      pcb: '6-Layer MIPI-DSI / LVDS + PCAP',
+      power: '60 FPS Chrom-ART / NeoChrom GPU',
+      turn: '3 - 4 Weeks Turnkey',
+      code: `// TouchGFX C++ MVP (STM32U5 NeoChrom GPU)
+void MedicalHmiView::handleTickEvent() {
+    presenter->pollVitalsQueue(&patientData);
+    ecgWaveformGraph.addValue(patientData.ecgMv);
+    spo2Gauge.updateValue(patientData.spo2Pct, 12);
+    invalidate(); // 60 FPS DMA2D VSYNC transfer
+}`
+    },
     iot: {
       mcu: 'ESP32-S3 Dual 240MHz',
       pcb: '4-Layer FR-4 (1.6mm)',
@@ -1462,7 +1512,7 @@ int ddr3_phy_training(void) {
           ).join('');
         }
         if (ctaEl) {
-          ctaEl.href = `/contact?service=${encodeURIComponent(currentEstPhase === 'firmware' ? 'Firmware/BSP' : 'Hardware Design')}&subject=${encodeURIComponent('RFQ: ' + data.timeline + ' ' + data.complexityLabel)}`;
+          ctaEl.href = `/contact?service=${encodeURIComponent(currentEstPhase === 'firmware' ? 'Firmware/BSP' : (currentEstPhase === 'hmi' ? 'Embedded UI / HMI' : 'Hardware Design'))}&subject=${encodeURIComponent('RFQ: ' + data.timeline + ' ' + data.complexityLabel)}`;
         }
       }
     })

@@ -1,5 +1,5 @@
 // src/data/servicesData.js
-// Single source of truth for the 6 core embedded engineering services
+// Single source of truth for the core embedded engineering services
 
 const servicesData = {
   'full-cycle-embedded-product-engineering': {
@@ -214,6 +214,42 @@ const servicesData = {
       {
         title: 'Diagnostics & Telematics (UDS / OBD-II)',
         description: 'ISO 14229 Unified Diagnostic Services (UDS), DoIP (Diagnostics over IP), DTC logging, and secure diagnostic seed-key routines.'
+      }
+    ]
+  },
+
+  'embedded-ui-hmi-development': {
+    slug: 'embedded-ui-hmi-development',
+    title: 'Embedded UI for Industrial & Medical HMI',
+    discipline: 'Embedded GUI & HMI Engineering',
+    contactCategory: 'Embedded UI / HMI',
+    seoTitle: 'TouchGFX (STM32 MCU) & Qt (MPU) Embedded HMI Development - Embedded India',
+    seoDescription: 'Industrial and Medical Embedded UI / HMI engineering. Specializing in STMicroelectronics TouchGFX on STM32 MCUs and rich Qt / QML GUIs on Embedded Linux Microprocessors.',
+    description: 'High-frame-rate, deterministic graphical user interfaces for Industrial and Medical HMIs — specializing in TouchGFX by STMicroelectronics on STM32 MCUs, alongside rich multi-display Qt / QML UIs on Microprocessors (MPUs).',
+    features: [
+      {
+        title: 'TouchGFX on STM32 MCUs (Core Specialty)',
+        description: 'Smartphone-grade 60 FPS GUIs on STM32U5, STM32H7, STM32F4/F7/G0 using Chrom-ART™ (DMA2D) and NeoChrom™ GPU vector hardware acceleration with sub-500ms instant boot and minimal RAM/Flash footprint.'
+      },
+      {
+        title: 'Rich Qt / QML UI on Microprocessors (MPU)',
+        description: 'Fluid 2D/3D multi-screen HMIs built with Qt 6 / QML on Embedded Linux (Yocto / Buildroot) for STM32MP1/MP2, NXP i.MX8/i.MX93, and TI Sitara AM62x with OpenGL ES & Vulkan hardware acceleration.'
+      },
+      {
+        title: 'Medical HMI & IEC 62304 Compliance',
+        description: 'Clinical-grade displays for patient monitors, infusion pumps, and diagnostic analyzers with IEC 62304 software lifecycle documentation, IEC 60601-1-8 alarm visual hierarchy, and fail-safe UI watchdogs.'
+      },
+      {
+        title: 'Industrial Rugged PCAP & Display Bring-Up',
+        description: 'Custom MIPI-DSI, LVDS, RGB, and SPI TFT/OLED panel bring-up, optical bonding guidance, and I2C capacitive touch controller tuning (Goodix, FocalTech, Ilitek) for thick-glove and water-droplet immunity.'
+      },
+      {
+        title: 'C++ MVP Architecture & Real-Time Backend Binding',
+        description: 'Strict Model-View-Presenter (MVP) separation binding TouchGFX or Qt views deterministically to FreeRTOS, ThreadX, Zephyr, or Linux IPC queues over CAN-FD, Modbus, and OPC-UA.'
+      },
+      {
+        title: 'Asset Compression & External Flash Streaming',
+        description: 'Octo-SPI / Quad-SPI XIP asset mapping, L8/RGB565/ARGB8888 framebuffer optimization, partial framebuffer rendering for zero-external-RAM MCUs, and multilingual vector typography.'
       }
     ]
   }

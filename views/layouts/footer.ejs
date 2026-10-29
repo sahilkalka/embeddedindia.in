@@ -29,7 +29,7 @@
             </div>
           </a>
           <p class="text-sm leading-relaxed max-w-sm">
-            <%= settings.site_name || 'Embedded India' %> is India's premier engineering partner for full-cycle embedded system design, turnkey IoT hardware development, custom PCB layouts, and robust firmware solutions.
+            <%= settings.site_name || 'Embedded India' %> is India's premier engineering partner for full-cycle embedded system design, TouchGFX (STM32 MCU) &amp; Qt (MPU) industrial/medical HMIs, custom PCB layouts, and robust firmware solutions.
           </p>
           <div class="pt-2">
             <p class="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Engineering Headquarters &amp; Locations</p>
@@ -73,11 +73,11 @@
         <div>
           <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Services</h3>
           <ul class="mt-4 space-y-2.5 text-sm">
-            <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">Hardware Design &amp; Schematics</a></li>
-            <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">Firmware &amp; BSP Development</a></li>
-            <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">IoT Edge Computing Solutions</a></li>
-            <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">Automotive Embedded Systems</a></li>
-            <li><a href="/services" class="hover:text-brand-500 dark:hover:text-accent transition">HIL Testing &amp; Verification</a></li>
+            <li><a href="/services/hardware-design-engineering" class="hover:text-brand-500 dark:hover:text-accent transition">Hardware Design &amp; Schematics</a></li>
+            <li><a href="/services/embedded-software-firmware-development" class="hover:text-brand-500 dark:hover:text-accent transition">Firmware &amp; BSP Development</a></li>
+            <li><a href="/services/embedded-ui-hmi-development" class="hover:text-brand-500 dark:hover:text-accent transition font-semibold text-brand-600 dark:text-accent">Embedded UI / HMI (TouchGFX &amp; Qt)</a></li>
+            <li><a href="/services/iot-edge-computing-solutions" class="hover:text-brand-500 dark:hover:text-accent transition">IoT Edge Computing Solutions</a></li>
+            <li><a href="/services/automotive-embedded-systems" class="hover:text-brand-500 dark:hover:text-accent transition">Automotive Embedded &amp; HIL</a></li>
           </ul>
         </div>
 
@@ -174,8 +174,9 @@
         <h3 class="text-xl font-black text-slate-900 dark:text-white mt-2">Have a New Embedded Design Project?</h3>
         <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Get an engineering proposal with turnaround times and BOM estimates within 24 hours.</p>
         <div class="mt-6 flex flex-col sm:flex-row gap-3">
-          <a href="/contact" class="btn-shimmer flex-1 text-center py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs shadow-md transition">
-            Request Quote Now &rarr;
+          <a href="/contact" class="btn-shimmer flex-1 inline-flex items-center justify-center gap-2 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-xs shadow-md transition">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <span>Request Quote Now &rarr;</span>
           </a>
           <button type="button" id="rfq-modal-dismiss" class="px-4 py-3 bg-slate-100 dark:bg-brand-dark text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-200 transition">
             Maybe Later
@@ -259,6 +260,7 @@
     // 7. Header Quick Search Widget
     const SEARCH_INDEX = [
       { type: 'Service', title: 'Full-Cycle Product Realization', url: '/services/full-cycle-embedded-product-engineering', desc: 'Turnkey electronic hardware, RTOS firmware, DFM validation' },
+      { type: 'Service', title: 'Embedded UI for Industrial & Medical HMI', url: '/services/embedded-ui-hmi-development', desc: 'TouchGFX on STM32 MCUs (our core specialty) & Qt 6 / QML on Embedded Linux MPUs' },
       { type: 'Service', title: 'Embedded Software & Firmware Development', url: '/services/embedded-software-firmware-development', desc: 'Deterministic bare-metal, FreeRTOS, Zephyr drivers' },
       { type: 'Service', title: 'Hardware Design & High-Speed PCB Layout', url: '/services/hardware-design-engineering', desc: 'Multi-layer PCB, HDI microvias, impedance matching' },
       { type: 'Service', title: 'Board Support Package (BSP) Development', url: '/services/bsp-development', desc: 'Custom U-Boot, Linux kernel device trees, drivers' },
@@ -274,7 +276,7 @@
       { type: 'Tool', title: 'Microcontroller Pinout & Peripheral Reference', url: '/tools/mcu-pinout', desc: 'STM32, ESP32, and RP2040 pin multiplexing' },
       { type: 'Blog', title: 'Hardware & Firmware Co-Design', url: '/blogs/bridging-the-divide', desc: 'Aligning hardware and firmware engineering workflows' },
       { type: 'Blog', title: 'Hardware-in-the-Loop (HIL) Testing', url: '/blogs/hardware-in-the-loop-hil', desc: 'Automated test rigs for mission-critical validation' },
-      { type: 'Page', title: 'Engineering Services Portfolio', url: '/services', desc: 'All hardware and firmware engineering disciplines' },
+      { type: 'Page', title: 'Engineering Services Portfolio', url: '/services', desc: 'All hardware, firmware, and TouchGFX/Qt HMI disciplines' },
       { type: 'Page', title: 'Client Projects & Case Studies', url: '/projects', desc: 'Bus AC controllers, water dispensers, IoT gateways' },
       { type: 'Page', title: 'About Embedded India', url: '/about', desc: 'Company vision, precision standards, and engineering presence' },
       { type: 'Page', title: 'Contact Us & Request Quote', url: '/contact', desc: 'Initiate custom embedded project inquiry' }
