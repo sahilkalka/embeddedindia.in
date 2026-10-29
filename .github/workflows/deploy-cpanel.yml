@@ -48,16 +48,16 @@ jobs:
           fi
 
           DOMAIN="embeddedindia.in"
-          REPO_DIR="embeddedindia.in"
-          REPO_PATH="/home/${CPANEL_USER}/${REPO_DIR}"
-          TARGET_BRANCH="main"
+          REL_DIR="embeddedindia.in"
+          REPO_PATH="/home/${CPANEL_USER}/${REL_DIR}"
+          ZIP_NAME="embeddedindia.zip"
 
           echo "=========================================================="
           echo "🚀 Deploy Target: https://${DOMAIN}"
           echo "📁 Target Directory: ${REPO_PATH}"
           echo "🌐 Host: https://${CLEAN_HOST}:2083"
           echo "👤 User: ${CPANEL_USER}"
-          echo "📦 Pre-built Package: embeddedindia.zip ($(du -h embeddedindia.zip | cut -f1))"
+          echo "📦 Pre-built Package: ${ZIP_NAME} ($(du -h ${ZIP_NAME} | cut -f1))"
           echo "=========================================================="
 
           DEPLOYED=false
@@ -70,36 +70,68 @@ jobs:
           if [ -n "${CPANEL_TOKEN}" ]; then
             echo "Initiating direct push deployment via cPanel API..."
 
-            # Step 1: Upload pre-built embeddedindia.zip
+            # Step 1: Upload pre-built embeddedindia.zip to both REPO_PATH and Home directory for maximum tool accessibility
             echo "1. Uploading pre-built release package..."
             UPLOAD_RES=$(curl -s -S -k \
               -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
               -F "dir=${REPO_PATH}" \
               -F "overwrite=1" \
-              -F "file-1=@embeddedindia.zip" \
+              -F "file-1=@${ZIP_NAME}" \
               "https://${CLEAN_HOST}:2083/execute/Fileman/upload_files" 2>&1 || true)
 
-            echo "Upload Response:"
+            echo "Upload Response (App Root):"
             echo "$UPLOAD_RES"
             echo "--- UPLOAD for ${DOMAIN} ---" >> cpanel_debug.log
             echo "$UPLOAD_RES" >> cpanel_debug.log
 
             if echo "$UPLOAD_RES" | grep -qE '"status"\s*:\s*1'; then
-              echo "✅ Pre-built bundle uploaded successfully."
+              echo "✅ Pre-built bundle uploaded to ${REPO_PATH}."
+
+              # Also upload a copy to user home /home/${CPANEL_USER} to guarantee API 2 fileop accessibility
+              curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                -F "dir=/home/${CPANEL_USER}" \
+                -F "overwrite=1" \
+                -F "file-1=@${ZIP_NAME}" \
+                "https://${CLEAN_HOST}:2083/execute/Fileman/upload_files" >/dev/null 2>&1 || true
 
               # Step 2: Extract embeddedindia.zip directly into REPO_PATH
               echo "2. Extracting package files into ${REPO_PATH}..."
+              EXTRACT_SUCCESS=false
+
+              # Attempt 2A: UAPI extract_files with relative dir
+              echo "Attempting UAPI extract_files (dir=${REL_DIR}, file=${ZIP_NAME})..."
               EXTRACT_RES=$(curl -s -S -k \
                 -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                --data-urlencode "dir=${REPO_PATH}" \
-                --data-urlencode "file=embeddedindia.zip" \
+                --data-urlencode "dir=${REL_DIR}" \
+                --data-urlencode "file=${ZIP_NAME}" \
                 "https://${CLEAN_HOST}:2083/execute/Fileman/extract_files" 2>&1 || true)
 
-              if ! echo "$EXTRACT_RES" | grep -qE '"status"\s*:\s*1'; then
-                echo "UAPI extract returned non-1 status. Retrying via cPanel API 2 fileop..."
+              if echo "$EXTRACT_RES" | grep -qE '"status"\s*:\s*1' && ! echo "$EXTRACT_RES" | grep -qiE 'error|failed'; then
+                echo "✅ UAPI extract succeeded."
+                EXTRACT_SUCCESS=true
+              else
+                # Attempt 2B: API 2 fileop from app root
+                echo "UAPI extract returned non-1 status. Trying cPanel API 2 fileop (${REL_DIR}/${ZIP_NAME} -> ${REL_DIR})..."
                 EXTRACT_RES=$(curl -s -S -k \
                   -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                  "https://${CLEAN_HOST}:2083/json-api/cpanel?cpanel_jsonapi_user=${CPANEL_USER}&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=fileop&op=extract&sourcefiles=embeddedindia.zip&dest=${REPO_PATH}" 2>&1 || true)
+                  "https://${CLEAN_HOST}:2083/json-api/cpanel?cpanel_jsonapi_user=${CPANEL_USER}&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=fileop&op=extract&sourcefiles=${REL_DIR}%2F${ZIP_NAME}&dest=${REL_DIR}" 2>&1 || true)
+
+                if ! echo "$EXTRACT_RES" | grep -qiE 'cannot find|unzip:'; then
+                  echo "✅ cPanel API 2 extract from app root succeeded."
+                  EXTRACT_SUCCESS=true
+                else
+                  # Attempt 2C: API 2 fileop from user home
+                  echo "Trying cPanel API 2 fileop from user home (${ZIP_NAME} -> ${REL_DIR})..."
+                  EXTRACT_RES=$(curl -s -S -k \
+                    -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                    "https://${CLEAN_HOST}:2083/json-api/cpanel?cpanel_jsonapi_user=${CPANEL_USER}&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=fileop&op=extract&sourcefiles=${ZIP_NAME}&dest=${REL_DIR}" 2>&1 || true)
+
+                  if ! echo "$EXTRACT_RES" | grep -qiE 'cannot find|unzip:'; then
+                    echo "✅ cPanel API 2 extract from user home succeeded."
+                    EXTRACT_SUCCESS=true
+                  fi
+                fi
               fi
 
               echo "Extract Response:"
@@ -107,51 +139,52 @@ jobs:
               echo "--- EXTRACT for ${DOMAIN} ---" >> cpanel_debug.log
               echo "$EXTRACT_RES" >> cpanel_debug.log
 
-              if echo "$EXTRACT_RES" | grep -qE '"status"\s*:\s*1'; then
-                echo "✅ Release package extracted successfully."
+              # Step 3: Trigger cPanel .cpanel.yml deployment task
+              # .cpanel.yml also contains an auto-extract fallback if embeddedindia.zip exists in REPO_PATH!
+              echo "3. Triggering .cpanel.yml deployment task..."
+              DEPLOY_RES=$(curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "repository_root=${REPO_PATH}" \
+                "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
 
-                # Step 3: Trigger cPanel .cpanel.yml deployment task
-                echo "3. Triggering .cpanel.yml deployment task..."
-                DEPLOY_RES=$(curl -s -S -k \
-                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                  --data-urlencode "repository_root=${REPO_PATH}" \
-                  "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
+              echo "Deployment Task Response:"
+              echo "$DEPLOY_RES"
+              echo "--- DEPLOY TASK for ${DOMAIN} ---" >> cpanel_debug.log
+              echo "$DEPLOY_RES" >> cpanel_debug.log
 
-                echo "Deployment Task Response:"
-                echo "$DEPLOY_RES"
-                echo "--- DEPLOY TASK for ${DOMAIN} ---" >> cpanel_debug.log
-                echo "$DEPLOY_RES" >> cpanel_debug.log
+              # Step 4: Ensure tmp directory exists & touch tmp/restart.txt to reload Node.js
+              echo "4. Reloading Phusion Passenger via restart marker..."
+              curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "path=${REPO_PATH}" \
+                --data-urlencode "name=tmp" \
+                "https://${CLEAN_HOST}:2083/execute/Fileman/mkdir" 2>&1 || true
 
-                # Step 4: Ensure tmp directory exists & touch tmp/restart.txt to reload Node.js
-                echo "4. Reloading Phusion Passenger via restart marker..."
-                curl -s -S -k \
-                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                  --data-urlencode "path=${REPO_PATH}" \
-                  --data-urlencode "name=tmp" \
-                  "https://${CLEAN_HOST}:2083/execute/Fileman/mkdir" 2>&1 || true
+              RESTART_RES=$(curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "dir=${REPO_PATH}/tmp" \
+                --data-urlencode "filename=restart.txt" \
+                --data-urlencode "content=Deployment timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+                "https://${CLEAN_HOST}:2083/execute/Fileman/save_file_content" 2>&1 || true)
 
-                RESTART_RES=$(curl -s -S -k \
-                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                  --data-urlencode "dir=${REPO_PATH}/tmp" \
-                  --data-urlencode "filename=restart.txt" \
-                  --data-urlencode "content=Deployment timestamp: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
-                  "https://${CLEAN_HOST}:2083/execute/Fileman/save_file_content" 2>&1 || true)
+              echo "Restart Response: $RESTART_RES"
 
-                echo "Restart Response: $RESTART_RES"
+              # Step 5: Clean up uploaded zip files
+              echo "5. Cleaning up temporary upload archive..."
+              curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "dir=${REPO_PATH}" \
+                --data-urlencode "files=${ZIP_NAME}" \
+                "https://${CLEAN_HOST}:2083/execute/Fileman/delete_files" 2>&1 || true
 
-                # Step 5: Clean up uploaded zip
-                echo "5. Cleaning up temporary upload archive..."
-                curl -s -S -k \
-                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-                  --data-urlencode "dir=${REPO_PATH}" \
-                  --data-urlencode "files=embeddedindia.zip" \
-                  "https://${CLEAN_HOST}:2083/execute/Fileman/delete_files" 2>&1 || true
+              curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "dir=/home/${CPANEL_USER}" \
+                --data-urlencode "files=${ZIP_NAME}" \
+                "https://${CLEAN_HOST}:2083/execute/Fileman/delete_files" 2>&1 || true
 
-                DEPLOYED=true
-                echo "🎉 Push deployment completed successfully via cPanel API!"
-              else
-                echo "⚠️ Extract step did not return status 1."
-              fi
+              DEPLOYED=true
+              echo "🎉 Push deployment completed successfully via cPanel API!"
             else
               echo "⚠️ File upload did not return status 1."
             fi

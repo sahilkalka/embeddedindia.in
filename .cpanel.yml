@@ -5,6 +5,5 @@ deployment:
     - export TARGET="embeddedindia.in"
     - /bin/mkdir -p "$DEPLOYPATH/tmp" "$DEPLOYPATH/prisma" "$DEPLOYPATH/public/downloads" "$DEPLOYPATH/public/images" "$DEPLOYPATH/public/css"
     - /bin/chmod +x "$DEPLOYPATH/server-deploy.sh" "$DEPLOYPATH/scripts/cpanel-deploy.sh" 2>/dev/null || true
-    - /bin/bash "$DEPLOYPATH/server-deploy.sh" "$TARGET" update
+    - if [ -f "$DEPLOYPATH/embeddedindia.zip" ]; then /bin/bash "$DEPLOYPATH/server-deploy.sh" "$TARGET" update "$DEPLOYPATH/embeddedindia.zip"; else /bin/bash "$DEPLOYPATH/server-deploy.sh" "$TARGET" update; fi
     - /bin/touch "$DEPLOYPATH/tmp/restart.txt"
-
