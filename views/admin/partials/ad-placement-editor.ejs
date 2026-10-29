@@ -9,25 +9,15 @@ const placements = [
 ];
 %>
 <div id="ad-placement-editor" class="settings-panel p-5 rounded-2xl bg-slate-50 dark:bg-brand-dark border border-slate-200 dark:border-brand-border space-y-4">
-  <div class="ad-placement-heading">
-    <div>
-      <h3 class="settings-panel-title">Ad placements</h3>
-      <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Choose placements, then save your settings to publish.</p>
-    </div>
-    <span class="ad-preview-caption">Live layout preview</span>
-  </div>
-  <div class="ad-placement-grid">
-    <% placements.forEach(slot => { %>
-      <div class="ad-placement-card">
-        <div class="ad-placement-title"><span class="ad-slot-number"><%= slot.number %></span><h4><%= slot.title %></h4></div>
-        <p><%= slot.detail %></p>
-        <%- include('../../partials/theme-toggle', { name: slot.name, id: slot.toggle, checked: settings[slot.name] === 'true', onChange: 'updateAdWireframePreview', onLabel: 'Active', offLabel: 'Disabled', label: 'Slot ' + slot.number + ': ' + slot.title, showBadge: true }) %>
-      </div>
-    <% }) %>
-  </div>
+  <% placements.forEach(slot => { %>
+    <input type="hidden" name="<%= slot.name %>" id="<%= slot.toggle %>" value="<%= settings[slot.name] === 'true' ? 'true' : 'false' %>">
+  <% }) %>
   <div class="ad-placement-heading ad-preview-heading">
-    <h4 class="font-bold text-sm">Placement preview</h4>
-    <span class="ad-preview-caption">Schematic · not to scale</span>
+    <div>
+      <h3 class="settings-panel-title">Placement preview</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Click any ad slot in the preview below to toggle it Active or Disabled, then save your settings to publish.</p>
+    </div>
+    <span class="ad-preview-caption">Interactive · click slot to toggle</span>
   </div>
   <div class="ad-preview-pages">
     <% ['Blog article', 'Engineering tool'].forEach((pageTitle, pageIndex) => { %>
@@ -35,12 +25,12 @@ const placements = [
         <div class="ad-preview-browser"><span aria-hidden="true">● ● ●</span><strong><%= pageTitle %></strong></div>
         <div class="ad-preview-body">
           <div class="ad-preview-navigation">Embedded India <span>Navigation</span></div>
-          <% const previewSlot = slot => { %>
-            <div id="<%= slot.preview %>" class="ad-preview-slot" data-active="<%= settings[slot.name] === 'true' %>">
+          <% const previewSlot = slot => { const isActive = settings[slot.name] === 'true'; %>
+            <button type="button" id="<%= slot.preview %>" role="switch" aria-checked="<%= isActive ? 'true' : 'false' %>" aria-label="Slot <%= slot.number %>: <%= slot.title %>" onclick="toggleAdPlacementSlot('<%= slot.toggle %>', '<%= slot.preview %>')" class="ad-preview-slot" data-active="<%= isActive %>">
               <span class="ad-slot-number"><%= slot.number %></span>
               <strong><%= slot.title %></strong>
-              <span class="ad-preview-state"><%= settings[slot.name] === 'true' ? 'Active' : 'Disabled' %></span>
-            </div>
+              <span class="ad-preview-state"><%= isActive ? 'Active' : 'Disabled' %></span>
+            </button>
           <% }; %>
           <% previewSlot(placements[pageIndex === 0 ? 0 : 4]); %>
           <% if (pageIndex === 0) { %>

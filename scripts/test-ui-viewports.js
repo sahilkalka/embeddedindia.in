@@ -1,7 +1,8 @@
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+let BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+let ephemeralServer = null;
 
 const SCREEN_PROFILES = [
   { name: 'Desktop', width: 1440, height: 900, isMobileView: false },
@@ -47,10 +48,16 @@ async function run() {
 
   const serverReady = await isServerUp();
   if (!serverReady) {
-    console.error(`❌ Error: Application server at ${BASE_URL} is not reachable.`);
-    process.exit(1);
+    process.env.NODE_ENV = 'test';
+    const app = require('../src/server');
+    ephemeralServer = await new Promise((resolve) => {
+      const instance = app.listen(0, '127.0.0.1', () => resolve(instance));
+    });
+    BASE_URL = `http://127.0.0.1:${ephemeralServer.address().port}`;
+    console.log(`🔌 Started ephemeral test server at ${BASE_URL}\n`);
+  } else {
+    console.log(`🔌 Connected to running application server at ${BASE_URL}\n`);
   }
-  console.log(`🔌 Connected to running application server at ${BASE_URL}\n`);
 
   const browser = await chromium.launch({ headless: true });
   let totalTests = 0;
@@ -229,11 +236,61 @@ async function run() {
             `${screen.name} must NOT show mobile sub-nav row`);
         }
 
-        // Also check /admin/settings mobile nav grid has no horizontal overflow
+        // Also check /admin/settings defaults to ai-engine, has no #feature-flags, and mobile nav grid has no horizontal overflow
         await gotoWithRetry(page, `${BASE_URL}/admin/settings`);
         const settingsNav = page.locator('#settings-sidebar-nav');
         const settingsNavOverflow = await settingsNav.evaluate(el => el.scrollWidth > el.clientWidth + 2);
         assert.equal(settingsNavOverflow, false, '#settings-sidebar-nav must not overflow horizontally');
+        const defaultTab = await page.locator('#settings-sidebar-nav .settings-nav-btn[aria-current="page"]').getAttribute('data-settings-tab');
+        assert.equal(defaultTab, 'ai-engine', '/admin/settings must default to ai-engine');
+        assert.equal(await page.locator('#feature-flags').count(), 0, '#feature-flags must be removed');
+        assert.equal(await page.locator('#integrations').count(), 0, '#integrations must not exist');
+
+        // Verify #monetization-ads has no top ad-placement-card grid and clicking preview slots toggles active state
+        await gotoWithRetry(page, `${BASE_URL}/admin/settings#monetization-ads`);
+        assert.equal(await page.locator('#monetization-ads .ad-placement-card').count(), 0, 'Top .ad-placement-card grid must be removed');
+        const slot1Before = await page.locator('#ad_toggle_slot1').inputValue();
+        await page.locator('#ad_wf_slot1').click();
+        const slot1After = await page.locator('#ad_toggle_slot1').inputValue();
+        assert.notEqual(slot1Before, slot1After, 'Clicking #ad_wf_slot1 must toggle #ad_toggle_slot1');
+        await page.locator('#ad_wf_slot1').click(); // restore
+
+        // Verify /admin/inquiries, /admin/subscribers, /admin/posts, /admin/projects have ZERO horizontal scroll (page or inner containers on mobile)
+        for (const adminSubPage of ['/admin/inquiries', '/admin/subscribers', '/admin/posts', '/admin/projects']) {
+          await gotoWithRetry(page, `${BASE_URL}${adminSubPage}`);
+          const scrollCheck = await page.evaluate((isMobile) => {
+            const docOverflow = document.documentElement.scrollWidth > window.innerWidth + 2;
+            const h1 = document.querySelector('main h1');
+            const h1Width = h1 ? h1.getBoundingClientRect().width : 0;
+            const innerScrollingEls = [];
+            let postsActionWrap = false;
+            if (isMobile) {
+              document.querySelectorAll('main *').forEach(el => {
+                const style = window.getComputedStyle(el);
+                if (style.display === 'none' || style.visibility === 'hidden' || el.clientWidth === 0) return;
+                if (['auto', 'scroll'].includes(style.overflowX) && el.scrollWidth > el.clientWidth + 2) {
+                  innerScrollingEls.push({ tag: el.tagName, className: el.className, scrollWidth: el.scrollWidth, clientWidth: el.clientWidth });
+                }
+              });
+              if (window.location.pathname === '/admin/posts') {
+                document.querySelectorAll('.md\\:hidden > div').forEach(card => {
+                  const row = card.lastElementChild;
+                  if (row && row.children.length === 2) {
+                    const left = row.children[0].getBoundingClientRect();
+                    const right = row.children[1].getBoundingClientRect();
+                    if (Math.abs(left.top - right.top) > 20) postsActionWrap = true;
+                  }
+                });
+              }
+            }
+            return { docOverflow, h1Width, innerScrollingEls, postsActionWrap };
+          }, screen.isMobileView);
+          assert.equal(scrollCheck.docOverflow, false, `${adminSubPage} has page-level horizontal overflow on ${screen.name}`);
+          assert.ok(scrollCheck.h1Width >= 240, `${adminSubPage} h1 width (${scrollCheck.h1Width}px) is squeezed on ${screen.name}`);
+          assert.equal(scrollCheck.postsActionWrap, false, `${adminSubPage} mobile card actions wrapped onto a new line on ${screen.name}`);
+          assert.equal(scrollCheck.innerScrollingEls.length, 0,
+            `${adminSubPage} has inner horizontal scrollbar on ${screen.name}: ${JSON.stringify(scrollCheck.innerScrollingEls)}`);
+        }
       });
 
       // Test E: Search Dialog & Focus Restoration (Including New HMI Service in Search Index)
@@ -316,6 +373,9 @@ async function run() {
     process.exit(2);
   } finally {
     await browser.close();
+    if (ephemeralServer) {
+      await new Promise((resolve) => ephemeralServer.close(resolve));
+    }
   }
 }
 

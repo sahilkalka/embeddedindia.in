@@ -11,7 +11,7 @@ const schedulerView = locals.schedulerSettings || {
 };
 const totalPostCount = Number.isFinite(Number(locals.totalPosts)) ? Number(locals.totalPosts) : 0;
 %>
-<section id="ai-engine" aria-labelledby="ai-engine-title" class="settings-section hidden">
+<section id="ai-engine" aria-labelledby="ai-engine-title" class="settings-section">
 
   <%- include('../settings-module-header', {"sectionId":"ai-engine","title":"AI engine","icon":"lightbulb","description":"Configure model credentials, draft technical articles, and manage scheduled publishing.","saveLabel":"Save AI Configuration","formId":"aiConfigForm"}) %>
 

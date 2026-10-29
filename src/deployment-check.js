@@ -23,7 +23,7 @@ async function checkDeployment(options = {}) {
       throw new Error(`GET /admin/settings returned HTTP ${response.status}; inspect the Settings/template error printed above.`);
     }
     const html = await response.text();
-    for (const id of ['ai-engine', 'faq-manager', 'site-customizer', 'feature-flags', 'seo-scripts', 'monetization-ads', 'newsletter-config', 'smtp-settings', 'team-accounts']) {
+    for (const id of ['ai-engine', 'faq-manager', 'site-customizer', 'seo-scripts', 'monetization-ads', 'newsletter-config', 'smtp-settings', 'team-accounts']) {
       if (!html.includes(`id="${id}"`)) throw new Error(`Settings response is missing module ${id}.`);
     }
     return true;

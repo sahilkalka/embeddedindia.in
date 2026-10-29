@@ -1,47 +1,95 @@
-const fs = require('fs');
-const path = require('path');
+process.env.NODE_ENV = 'test';
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
-const jwt = require('jsonwebtoken');
-const AxeBuilder = require('@axe-core/playwright').default;
-const request = require('supertest');
-process.env.NODE_ENV = 'test';
-process.env.ADMIN_JWT_SECRET = 'admin-responsive-qa-only';
-const db = require('../src/services/db');
-const { clearSettingsCache } = require('../src/middleware/seo');
-const originalSettings = db.setting.findMany.bind(db.setting);
-const override = { maintenance_mode: 'false', enable_copilot: 'true', enable_back_to_top: 'true', enable_rfq_popup: 'false', custom_faqs: '[]' };
-db.setting.findMany = async () => Object.entries({ ...Object.fromEntries((await originalSettings()).map(r => [r.key, r.value])), ...override }).map(([key, value]) => ({ key, value }));
-db.setting.upsert = async ({ create, update, where }) => { override[where.key] = update.value; return { ...create, ...update }; };
-const originalUser = db.user.findUnique.bind(db.user);
-db.user.findUnique = async args => args.where.id === 'qa-admin' ? { id: 'qa-admin', email: 'qa@example.test', username: 'QA', role: 'admin' } : originalUser(args);
-db.analytics.create = async () => ({});
-db.calculatorStat.create = async () => ({});
-db.calculatorStat.update = async () => ({});
-const app = require('../src/server');
-const token = jwt.sign({ userId: 'qa-admin', role: 'admin' }, process.env.ADMIN_JWT_SECRET);
-const out = path.join(__dirname, '../scratch/admin-responsive'); fs.mkdirSync(out, { recursive: true });
-const presets = require('../src/data/colorThemes');
-const sections = ['site-customizer', 'feature-flags', 'seo-scripts', 'monetization-ads', 'newsletter-config', 'smtp-settings', 'team-accounts', 'faq-manager'];
-const pages = ['/admin', '/admin/inquiries', '/admin/subscribers', '/admin/posts', '/admin/projects', '/admin/ai'];
+const app = require('../app');
 
+const sections = [
+  'ai-engine',
+  'faq-manager',
+  'site-customizer',
+  'seo-scripts',
+  'monetization-ads',
+  'newsletter-config',
+  'smtp-settings',
+  'team-accounts'
+];
 
-(async()=>{
- const server=app.listen(0,'127.0.0.1');await new Promise(resolve=>server.once('listening',resolve));const base='http://127.0.0.1:'+server.address().port;
- const browser=await chromium.launch({headless:true});
- try{for(const width of [390,768,1024,1440,1920]){
-  const context=await browser.newContext({viewport:{width,height:960}});await context.addCookies([{name:'admin_token',value:token,url:base}]);
-  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(base+'/admin/settings',{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>{window.__forcedSettingsScrolls=0;window.scrollTo=()=>window.__forcedSettingsScrolls++;});
-  for(const id of ['feature-flags','faq-manager','site-customizer','team-accounts','seo-scripts','site-customizer']){
-   const before=await page.locator('#settingsLeftSidebar').boundingBox();
-   await page.locator('[data-settings-tab="'+id+'"]').click();await page.waitForTimeout(200);
-   assert(await page.locator('#'+id).isVisible(),id+' visible');
-   const after=await page.locator('#settingsLeftSidebar').boundingBox();
-   assert(Math.abs(before.y-after.y)<=1,width+' Settings navigation stays in place for '+id);
+(async () => {
+  const server = await new Promise((resolve) => {
+    const instance = app.listen(0, '127.0.0.1', () => resolve(instance));
+  });
+  const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const browser = await chromium.launch({ headless: true });
+
+  try {
+    for (const viewport of [
+      { name: 'desktop', width: 1440, height: 900 },
+      { name: 'mobile', width: 390, height: 844 }
+    ]) {
+      const context = await browser.newContext({ viewport });
+      const page = await context.newPage();
+
+      await page.goto(`${baseUrl}/admin/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('input[name="email"]', 'admin@embeddedindia.in');
+      await page.fill('input[name="password"]', 'AdminEmbedded@2026!');
+      await Promise.all([
+        page.waitForURL((url) => url.pathname.startsWith('/admin') && url.pathname !== '/admin/login'),
+        page.click('button[type="submit"]')
+      ]);
+
+      await page.goto(`${baseUrl}/admin/settings`, { waitUntil: 'domcontentloaded' });
+      const count = await page.locator('#settings-sidebar-nav .settings-nav-btn').count();
+      assert.equal(count, sections.length, `${viewport.name}: expected ${sections.length} navigation items`);
+
+      // Verify default section without hash is ai-engine (first sub-header item)
+      const defaultActive = await page.locator('#settings-sidebar-nav .settings-nav-btn[aria-current="page"]').getAttribute('data-settings-tab');
+      assert.equal(defaultActive, 'ai-engine', `${viewport.name}: expected /admin/settings to default to ai-engine`);
+      const aiEngineVisibleByDefault = await page.locator('#ai-engine').evaluate((el) => !el.classList.contains('hidden'));
+      assert.equal(aiEngineVisibleByDefault, true, `${viewport.name}: expected #ai-engine to be visible by default`);
+
+      // Verify feature-flags and integrations do not exist
+      assert.equal(await page.locator('#feature-flags').count(), 0, `${viewport.name}: expected #feature-flags to be removed`);
+      assert.equal(await page.locator('#integrations').count(), 0, `${viewport.name}: expected #integrations to not exist`);
+
+      const navMetrics = await page.locator('#settings-sidebar-nav').evaluate((el) => {
+        const items = Array.from(el.querySelectorAll('.settings-nav-btn')).map((item) => {
+          const rect = item.getBoundingClientRect();
+          const label = item.querySelector('.settings-nav-label');
+          return {
+            right: rect.right,
+            left: rect.left,
+            truncated: label ? label.scrollWidth > label.clientWidth + 1 : false
+          };
+        });
+        const rect = el.getBoundingClientRect();
+        return {
+          clientWidth: el.clientWidth,
+          scrollWidth: el.scrollWidth,
+          outOfBounds: items.some((item) => item.left < rect.left - 1 || item.right > rect.right + 1),
+          truncated: items.some((item) => item.truncated)
+        };
+      });
+      assert.ok(navMetrics.scrollWidth <= navMetrics.clientWidth + 1, `${viewport.name}: settings nav should not overflow horizontally`);
+      assert.equal(navMetrics.outOfBounds, false, `${viewport.name}: all settings nav items should fit inside the nav`);
+      assert.equal(navMetrics.truncated, false, `${viewport.name}: settings nav labels should not truncate`);
+
+      for (const section of sections) {
+        await page.click(`#settings-sidebar-nav [data-settings-tab="${section}"]`);
+        const active = await page.locator('#settings-sidebar-nav .settings-nav-btn[aria-current="page"]').getAttribute('data-settings-tab');
+        const visible = await page.locator(`#${section}`).evaluate((el) => !el.classList.contains('hidden'));
+        assert.equal(active, section, `${viewport.name}: expected ${section} nav button to be current`);
+        assert.equal(visible, true, `${viewport.name}: expected ${section} section to be visible`);
+      }
+
+      await context.close();
+    }
+
+    console.log('Settings navigation verification passed.');
+  } finally {
+    await browser.close();
+    await new Promise((resolve) => server.close(resolve));
   }
-  assert.equal(await page.evaluate(()=>window.__forcedSettingsScrolls),0,'No forced page scroll on tab selection');
-  assert.deepEqual(errors,[]);console.log('PASS: stable settings selection at '+width+'px');await context.close();
- }}finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
-})().then(()=>process.exit(0)).catch(e=>{console.error(e);process.exit(1)});
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

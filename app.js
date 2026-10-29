@@ -68,4 +68,4 @@ try {
 }
 
 // 4. Delegate to express server
-require('./src/server');
+module.exports = require('./src/server');

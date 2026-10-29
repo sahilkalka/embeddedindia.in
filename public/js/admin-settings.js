@@ -1,7 +1,6 @@
   window.switchSettingsSection = function(sectionId, updateUrl = true) {
     const HASH_ALIASES = {
       'theme-engine': 'site-customizer',
-      'theme-engine.': 'site-customizer',
       'seo': 'seo-scripts',
       'newsletter': 'newsletter-config',
       'smtp': 'smtp-settings',
@@ -49,7 +48,7 @@
 
   // Listen for hashchange to switch settings tabs
   window.addEventListener('hashchange', () => {
-    const hash = window.location.hash ? window.location.hash.substring(1) : 'site-customizer';
+    const hash = window.location.hash ? window.location.hash.substring(1) : 'ai-engine';
     switchSettingsSection(hash);
   });
 
@@ -68,109 +67,6 @@
         mockup.classList.remove('opacity-40', 'line-through');
       } else {
         mockup.classList.add('opacity-40', 'line-through');
-      }
-    }
-  }
-
-    // ====================================================================
-  // 5. FEATURE FLAGS TOGGLES & HOMEPAGE LIVE PREVIEW IFRAME CONTROLS
-  // ====================================================================
-  let currentViewportMode = '100%';
-  function setIframeViewport(mode) {
-    currentViewportMode = mode;
-    [['desktop', '100%'], ['tablet', '768px'], ['mobile', '390px']].forEach(([name, value]) => {
-      const button = document.getElementById('vp-btn-' + name);
-      if (button) { button.setAttribute('aria-pressed', String(mode === value)); button.classList.toggle('viewport-selected', mode === value); }
-    });
-    applyScaledViewport(mode === '100%' ? 1440 : parseInt(mode, 10));
-  }
-  function applyScaledViewport(targetWidth) {
-    const wrapper = document.getElementById('iframeViewportWrapper');
-    const stage = document.getElementById('iframeScaleContainer');
-    const iframe = document.getElementById('liveHomepageIframe');
-    if (!wrapper || !stage || !iframe || !stage.clientWidth) return;
-    const scale = Math.min(1, stage.clientWidth / (targetWidth + 4));
-    const frameHeight = targetWidth === 390 ? 844 : targetWidth === 768 ? 1024 : 900;
-    const totalHeight = frameHeight + 36;
-    Object.assign(wrapper.style, { position: 'absolute', left: '50%', top: '0', margin: '0', width: (targetWidth + 4) + 'px', maxWidth: 'none', height: totalHeight + 'px', transformOrigin: 'top center', transform: 'translateX(-50%) scale(' + scale + ')' });
-    Object.assign(iframe.style, { width: targetWidth + 'px', height: frameHeight + 'px', flex: 'none' });
-    Object.assign(stage.style, { height: Math.ceil(totalHeight * scale) + 'px', minHeight: '0' });
-  }
-  const previewStage = document.getElementById('iframeScaleContainer');
-  if (previewStage) new ResizeObserver(() => setIframeViewport(currentViewportMode)).observe(previewStage);
-  window.addEventListener('resize', () => setIframeViewport(currentViewportMode));
-
-  async function toggleSectionFlag(flagName, btn) {
-    const input = document.getElementById('input_' + flagName);
-    const badge = document.getElementById('badge_' + flagName);
-    const knob = btn.querySelector('span[aria-hidden="true"]');
-    if (!input || !knob) return;
-
-    const isCurrentlyOn = input.value !== 'false';
-    const nextState = !isCurrentlyOn;
-    input.value = nextState ? 'true' : 'false';
-
-    // Visual switch animation
-    if (nextState) {
-      btn.classList.remove('bg-slate-300', 'dark:bg-slate-700');
-      btn.classList.add('bg-emerald-500');
-      knob.classList.remove('translate-x-0');
-      knob.classList.add('translate-x-5');
-      btn.setAttribute('aria-checked', 'true');
-      if (badge) {
-        badge.className = 'text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300';
-        badge.innerText = 'Show';
-      }
-    } else {
-      btn.classList.remove('bg-emerald-500');
-      btn.classList.add('bg-slate-300', 'dark:bg-slate-700');
-      knob.classList.remove('translate-x-5');
-      knob.classList.add('translate-x-0');
-      btn.setAttribute('aria-checked', 'false');
-      if (badge) {
-        badge.className = 'text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-500';
-        badge.innerText = 'Hide';
-      }
-    }
-
-    // Auto-save via AJAX and auto-refresh preview iframe
-    const syncStatus = document.getElementById('previewSyncBadge');
-    if (syncStatus) {
-      syncStatus.innerText = '[Syncing...]';
-      syncStatus.className = 'text-amber-500 font-bold animate-pulse';
-    }
-
-    try {
-      const payload = {
-        _active_tab: 'feature-flags',
-        [flagName]: nextState ? 'true' : 'false'
-      };
-      await fetch('/admin/settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      // Reload iframe automatically with cache-busting timestamp
-      const iframe = document.getElementById('liveHomepageIframe');
-      if (iframe) {
-        iframe.src = '/?preview=1&t=' + Date.now();
-      }
-
-      if (syncStatus) {
-        syncStatus.innerText = '[Live Preview]';
-        syncStatus.className = 'text-brand-500 font-bold';
-      }
-      showToast('✅ ' + (nextState ? 'Enabled ' : 'Disabled ') + flagName.replace('section_', '').replace('_enabled', ''));
-    } catch (e) {
-      console.error('Auto-save flag error:', e);
-      if (syncStatus) {
-        syncStatus.innerText = '[Sync Error]';
-        syncStatus.className = 'text-red-500 font-bold';
       }
     }
   }
@@ -357,10 +253,19 @@
       if (!toggle || !el) return;
       const isActive = toggle.value === 'true';
       el.dataset.active = String(isActive);
+      el.setAttribute('aria-checked', String(isActive));
       const state = el.querySelector('.ad-preview-state');
       if (state) state.textContent = isActive ? 'Active' : 'Disabled';
     });
   }
+
+  window.toggleAdPlacementSlot = function(toggleId, previewId) {
+    const toggle = document.getElementById(toggleId);
+    if (!toggle) return;
+    const nextState = toggle.value !== 'true';
+    toggle.value = nextState ? 'true' : 'false';
+    updateAdWireframePreview();
+  };
 
   // ====================================================================
   // 8. NEWSLETTER DIGEST TRIGGER
@@ -521,9 +426,9 @@
     // 3. Initial SEO score calculation
     calculateSeoScore();
 
-    // 4. Determine initial active section based on URL hash or default to 'theme-engine'
-    const initialHash = window.location.hash ? window.location.hash.substring(1) : 'site-customizer';
-    switchSettingsSection(initialHash || 'site-customizer', false);
+    // 4. Determine initial active section based on URL hash or default to 'ai-engine' (first sub-header item)
+    const initialHash = window.location.hash ? window.location.hash.substring(1) : 'ai-engine';
+    switchSettingsSection(initialHash || 'ai-engine', false);
 
     // 5. AdSense pub validator
     const btnValidateAd = document.getElementById('btnValidateAd');

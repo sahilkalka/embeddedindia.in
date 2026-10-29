@@ -41,6 +41,12 @@ function normalizeRow(row) {
   if ('featured' in res) {
     res.featured = Boolean(res.featured);
   }
+  if ('isApproved' in res) {
+    res.isApproved = Boolean(res.isApproved);
+  }
+  if ('isPublic' in res) {
+    res.isPublic = Boolean(res.isPublic);
+  }
   if (res.createdAt && typeof res.createdAt === 'string') {
     res.createdAt = new Date(res.createdAt);
   }
@@ -119,7 +125,7 @@ function buildWhereClause(where) {
           parts.push(`\`${key}\` IS NOT NULL`);
         } else {
           parts.push(`\`${key}\` != ?`);
-          params.push(val.not);
+          params.push(typeof val.not === 'boolean' ? (val.not ? 1 : 0) : val.not);
         }
       } else if ('in' in val && Array.isArray(val.in)) {
         if (val.in.length === 0) {
@@ -127,12 +133,18 @@ function buildWhereClause(where) {
         } else {
           const placeholders = val.in.map(() => '?').join(', ');
           parts.push(`\`${key}\` IN (${placeholders})`);
-          params.push(...val.in);
+          params.push(...val.in.map(v => (typeof v === 'boolean' ? (v ? 1 : 0) : v)));
         }
       }
     } else {
       parts.push(`\`${key}\` = ?`);
-      params.push(val instanceof Date ? val.toISOString() : val);
+      params.push(
+        val instanceof Date
+          ? val.toISOString()
+          : typeof val === 'boolean'
+            ? (val ? 1 : 0)
+            : val
+      );
     }
   }
 
@@ -237,8 +249,10 @@ function createModelHandler(tableName) {
       if ('verifiedAt' in record && record.verifiedAt instanceof Date) {
         record.verifiedAt = record.verifiedAt.toISOString();
       }
-      if ('leadMagnetSent' in record) {
-        record.leadMagnetSent = record.leadMagnetSent ? 1 : 0;
+      for (const k of Object.keys(record)) {
+        if (typeof record[k] === 'boolean') {
+          record[k] = record[k] ? 1 : 0;
+        }
       }
 
       const cols = Object.keys(record);
@@ -397,6 +411,11 @@ if (hasNativeEngine()) {
       },
       log: ['error']
     });
+    for (const [key, handler] of Object.entries(sqlitePrisma)) {
+      if (!key.startsWith('$') && activeClient[key] === undefined) {
+        activeClient[key] = handler;
+      }
+    }
   } catch (e) {
     activeClient = sqlitePrisma;
   }
@@ -404,6 +423,21 @@ if (hasNativeEngine()) {
 
 // Install on startup as well, so restarting an existing installation protects it.
 const guardDb = getSqliteDb();
+guardDb.exec(`
+CREATE TABLE IF NOT EXISTS Testimonial (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  company TEXT,
+  quote TEXT NOT NULL,
+  rating INTEGER DEFAULT 5,
+  isApproved INTEGER DEFAULT 0,
+  isPublic INTEGER DEFAULT 1,
+  source TEXT DEFAULT 'admin',
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
 if (guardDb.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='Post'").get()) {
   require('./postDuplicates').installPostDuplicateGuards(guardDb);
 }

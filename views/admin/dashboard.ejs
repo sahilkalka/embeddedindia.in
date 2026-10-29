@@ -2,50 +2,26 @@
 
 <div class="w-full space-y-6 sm:space-y-8 mx-auto">
   
-  <!-- Command Center Header & Quick Action Icon Bar -->
-  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
-    <div>
-      <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-500/10 dark:bg-accent/15 border border-brand-500/20 text-brand-700 dark:text-accent text-[11px] font-extrabold uppercase tracking-wider mb-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Engineering Operations Console</span>
-      </div>
-      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Admin Command Center</h1>
-      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">Regrouped workspace for RFQ leads, portfolio publishing, calculator telemetry, and system configuration.</p>
+  <!-- Command Center Header -->
+  <div class="pb-5 border-b border-slate-200 dark:border-slate-800">
+    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-brand-500/10 dark:bg-accent/15 border border-brand-500/20 text-brand-700 dark:text-accent text-[11px] font-extrabold uppercase tracking-wider mb-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span>Engineering Operations Console</span>
     </div>
-
-    <!-- Grouped Primary Quick-Action Icon Buttons -->
-    <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2">
-      <a href="/admin/inquiries" class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-sm transition active:scale-95">
-        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        <span>RFQ Inbox (<%= newInquiries || 0 %>)</span>
-      </a>
-      <a href="/admin/posts/new" class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 text-xs font-bold shadow-2xs transition active:scale-95">
-        <svg class="w-4 h-4 shrink-0 text-brand-500 dark:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-        <span>New Article</span>
-      </a>
-      <a href="/admin/projects/new" class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 text-xs font-bold shadow-2xs transition active:scale-95">
-        <svg class="w-4 h-4 shrink-0 text-brand-500 dark:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-        <span>New Case Study</span>
-      </a>
-      <button type="button" id="cronBtn" onclick="triggerCron('auto-blog')" class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition active:scale-95 cursor-pointer">
-        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        <span>AI Auto-Blogger</span>
-      </button>
-    </div>
+    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Admin Command Center</h1>
+    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">Regrouped workspace for RFQ leads, portfolio publishing, calculator telemetry, and system configuration.</p>
   </div>
-
-  <div id="cron-toast" class="hidden p-4 rounded-xl text-xs font-bold"></div>
 
   <!-- ZONE 1: Compact KPI Pulse Ribbon (2-col on mobile, 3-col on tablet, 5-col on desktop) -->
   <section aria-label="Key Performance Indicators">
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-        <svg class="w-4 h-4 text-brand-500 dark:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        <span>Zone 1 &bull; Platform Telemetry Pulse</span>
+    <div class="flex items-center justify-between gap-2 mb-3">
+      <h2 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 min-w-0 truncate">
+        <svg class="w-4 h-4 shrink-0 text-brand-500 dark:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span class="truncate">Platform Telemetry</span>
       </h2>
-      <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-1">
+      <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-        Real-Time SQLite Sync
+        <span>Live Sync</span>
       </span>
     </div>
 
@@ -162,17 +138,17 @@
       
       <!-- Card A1: Lead & Audience Pipeline Hub -->
       <div class="bg-white dark:bg-brand-surface rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-brand-border shadow-xs">
-        <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100 dark:border-brand-border">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
+        <div class="flex items-center justify-between gap-3 pb-3.5 mb-4 border-b border-slate-100 dark:border-brand-border">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 shrink-0 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
-            <div>
-              <h2 class="text-sm font-black text-slate-900 dark:text-white">Lead &amp; Audience Pipeline</h2>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">RFQs, newsletter leads, and client reviews</p>
+            <div class="min-w-0">
+              <h2 class="text-sm font-black text-slate-900 dark:text-white truncate">Lead &amp; Audience Pipeline</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">RFQs, subscribers &amp; client reviews</p>
             </div>
           </div>
-          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">CRM Hub</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0 whitespace-nowrap">CRM Hub</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -212,19 +188,18 @@
 
       <!-- Card A2: Top Technical Guides (Editorial Performance) -->
       <div class="bg-white dark:bg-brand-surface rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-brand-border shadow-xs flex-1">
-        <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-brand-border mb-3">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
+        <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-slate-100 dark:border-brand-border mb-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 shrink-0 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
             </div>
-            <div>
-              <h2 class="text-sm font-black text-slate-900 dark:text-white">Top Technical Guides</h2>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">Most read engineering articles</p>
+            <div class="min-w-0">
+              <h2 class="text-sm font-black text-slate-900 dark:text-white truncate">Top Technical Guides</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Most read engineering articles</p>
             </div>
           </div>
-          <a href="/admin/posts" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-brand-700 dark:text-emerald-400 hover:underline font-bold">
-            <span>All Posts</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          <a href="/admin/posts" aria-label="All Posts" title="All Posts" class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition inline-flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </a>
         </div>
         <div class="divide-y divide-slate-100 dark:divide-brand-border">
@@ -254,19 +229,18 @@
       
       <!-- Card B1: Engineering Calculator Usage Telemetry (2-Column Compact Grid inside Card) -->
       <div class="bg-white dark:bg-brand-surface rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-brand-border shadow-xs">
-        <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-brand-border mb-4">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
+        <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-slate-100 dark:border-brand-border mb-4">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 shrink-0 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
             </div>
-            <div>
-              <h2 class="text-sm font-black text-slate-900 dark:text-white">Engineering Calculator Telemetry</h2>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">Interactive hardware &amp; firmware tool executions</p>
+            <div class="min-w-0">
+              <h2 class="text-sm font-black text-slate-900 dark:text-white truncate">Calculator Telemetry</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">Interactive hardware &amp; firmware tool runs</p>
             </div>
           </div>
-          <a href="/tools" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-brand-700 dark:text-emerald-400 hover:underline font-bold">
-            <span>Open Tools Hub</span>
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <a href="/tools" target="_blank" aria-label="Open Tools Hub" title="Open Tools Hub" class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition inline-flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
           </a>
         </div>
 
@@ -302,17 +276,19 @@
 
       <!-- ZONE 3: Regrouped System Configuration Quick-Jump Dock -->
       <div class="bg-white dark:bg-brand-surface rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-brand-border shadow-xs">
-        <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100 dark:border-brand-border">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
+        <div class="flex items-center justify-between gap-3 pb-3.5 mb-4 border-b border-slate-100 dark:border-brand-border">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 shrink-0 rounded-lg bg-brand-500/10 dark:bg-accent/15 text-brand-600 dark:text-accent flex items-center justify-center">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </div>
-            <div>
-              <h2 class="text-sm font-black text-slate-900 dark:text-white">Zone 3 &bull; System Configuration Dock</h2>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400">Direct jump to AI engine, theme customizer, SEO, and SMTP routing</p>
+            <div class="min-w-0">
+              <h2 class="text-sm font-black text-slate-900 dark:text-white truncate">System Configuration</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">AI, theme, SEO, monetization &amp; email</p>
             </div>
           </div>
-          <a href="/admin/settings" class="text-xs text-brand-700 dark:text-emerald-400 hover:underline font-bold">All Settings &rarr;</a>
+          <a href="/admin/settings" aria-label="All Settings" title="All Settings" class="w-9 h-9 shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-brand-700 dark:text-emerald-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition inline-flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -324,9 +300,9 @@
             <svg class="w-4 h-4 text-brand-500 dark:text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
             <span class="truncate">Theme &amp; Brand</span>
           </a>
-          <a href="/admin/settings#feature-flags" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-brand-dark hover:bg-brand-500/10 dark:hover:bg-accent/15 border border-slate-200/80 dark:border-slate-800 transition text-xs font-bold text-slate-800 dark:text-slate-200">
-            <svg class="w-4 h-4 text-brand-500 dark:text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>
-            <span class="truncate">Feature Flags</span>
+          <a href="/admin/settings#monetization-ads" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-brand-dark hover:bg-brand-500/10 dark:hover:bg-accent/15 border border-slate-200/80 dark:border-slate-800 transition text-xs font-bold text-slate-800 dark:text-slate-200">
+            <svg class="w-4 h-4 text-brand-500 dark:text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="truncate">Monetization</span>
           </a>
           <a href="/admin/settings#seo-scripts" class="flex items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-brand-dark hover:bg-brand-500/10 dark:hover:bg-accent/15 border border-slate-200/80 dark:border-slate-800 transition text-xs font-bold text-slate-800 dark:text-slate-200">
             <svg class="w-4 h-4 text-brand-500 dark:text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -348,28 +324,5 @@
   </section>
 
 </div>
-
-<script>
-  async function triggerCron(action) {
-    const toast = document.getElementById('cron-toast');
-    toast.className = 'p-4 rounded-xl text-xs font-bold bg-brand-50 text-brand-700 block';
-    toast.textContent = 'Triggering background cron task: ' + action + '...';
-
-    try {
-      const res = await fetch('/admin/trigger-cron', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action })
-      });
-      const data = await res.json();
-      toast.className = 'p-4 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 block';
-      toast.textContent = data.message;
-      setTimeout(() => toast.classList.add('hidden'), 5000);
-    } catch (e) {
-      toast.className = 'p-4 rounded-xl text-xs font-bold bg-red-50 text-red-800 border border-red-200 block';
-      toast.textContent = 'Failed to execute cron task.';
-    }
-  }
-</script>
 
 <%- include('layout_bottom') %>
