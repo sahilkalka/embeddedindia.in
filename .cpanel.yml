@@ -1,8 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH="$(pwd -P)"
-    - if [ "$DEPLOYPATH" = "/home/jiazxebj/new" ]; then export TARGET="new.embeddedindia.in"; else export TARGET="embeddedindia.in"; fi
+    - export DEPLOYPATH="/home/jiazxebj/embeddedindia.in"
+    - export TARGET="embeddedindia.in"
     - /bin/mkdir -p "$DEPLOYPATH/tmp" "$DEPLOYPATH/prisma" "$DEPLOYPATH/public/downloads" "$DEPLOYPATH/public/images" "$DEPLOYPATH/public/css"
     - /bin/chmod +x "$DEPLOYPATH/server-deploy.sh" "$DEPLOYPATH/scripts/cpanel-deploy.sh" 2>/dev/null || true
     - /bin/bash "$DEPLOYPATH/server-deploy.sh" "$TARGET" update

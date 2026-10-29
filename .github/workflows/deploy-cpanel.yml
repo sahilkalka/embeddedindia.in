@@ -1,23 +1,10 @@
-name: Deploy to cPanel
+name: Deploy to cPanel (embeddedindia.in)
 
 on:
   workflow_dispatch:
-    inputs:
-      target:
-        description: 'Select domain(s) to deploy:'
-        required: true
-        type: choice
-        default: 'embeddedindia.in'
-        options:
-          - 'both (embeddedindia.in & new.embeddedindia.in)'
-          - 'dev (new.embeddedindia.in -> cpanel dir new)'
-          - 'prod (embeddedindia.in -> cpanel dir embeddedindia.in)'
-
   push:
     branches:
       - main
-      - dev
-      - develop
 
 jobs:
   deploy:
@@ -43,8 +30,10 @@ jobs:
       - name: Trigger cPanel Git Pull & Deployment
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
-          CPANEL_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          CPANEL_TOKEN: ${{ secrets.CPANEL_API_TOKEN || secrets.CPANEL_TOKEN }}
           CPANEL_USER: "jiazxebj"
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          CPANEL_PORT: ${{ secrets.CPANEL_SSH_PORT || secrets.CPANEL_PORT || '22' }}
           NOTIFY_EMAIL: "sahil.kalka@gmail.com"
         run: |
           set -e
@@ -55,121 +44,151 @@ jobs:
             CLEAN_HOST="cpanel.embeddedindia.in"
           fi
 
-          echo "Target cPanel Host: https://${CLEAN_HOST}:2083"
-          echo "Target cPanel User: ${CPANEL_USER}"
+          DOMAIN="embeddedindia.in"
+          REPO_DIR="embeddedindia.in"
+          REPO_PATH="/home/${CPANEL_USER}/${REPO_DIR}"
+          TARGET_BRANCH="main"
 
-          TARGET_DOMAINS=()
+          echo "=========================================================="
+          echo "🚀 Deploy Target: https://${DOMAIN}"
+          echo "📁 cPanel Directory: ${REPO_PATH}"
+          echo "🌿 Target Branch: ${TARGET_BRANCH}"
+          echo "🌐 Host: https://${CLEAN_HOST}:2083"
+          echo "👤 User: ${CPANEL_USER}"
+          echo "=========================================================="
 
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            SELECTED="${{ inputs.target }}"
-            case "$SELECTED" in
-              *both*)
-                TARGET_DOMAINS=("new.embeddedindia.in" "embeddedindia.in")
-                ;;
-              *new*|*dev*)
-                TARGET_DOMAINS=("new.embeddedindia.in")
-                ;;
-              *embeddedindia.in*|*prod*)
-                TARGET_DOMAINS=("embeddedindia.in")
-                ;;
-              *)
-                TARGET_DOMAINS=("new.embeddedindia.in" "embeddedindia.in")
-                ;;
-            esac
-          else
-            COMMIT_MSG="${{ github.event.head_commit.message }}"
-            if echo "$COMMIT_MSG" | grep -qiE '\[both\]|\[deploy both\]'; then
-              TARGET_DOMAINS=("new.embeddedindia.in" "embeddedindia.in")
-            elif [ "${{ github.ref }}" = "refs/heads/dev" ] || [ "${{ github.ref }}" = "refs/heads/develop" ]; then
-              TARGET_DOMAINS=("new.embeddedindia.in")
-            elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
-              TARGET_DOMAINS=("embeddedindia.in")
-            else
-              TARGET_DOMAINS=("new.embeddedindia.in")
-            fi
-          fi
+          DEPLOYED=false
 
-          CURRENT_REF="${{ github.ref }}"
-          CURRENT_BRANCH="${{ github.ref_name }}"
-          if [ -z "$CURRENT_BRANCH" ]; then
-            CURRENT_BRANCH="main"
-          fi
-
-          echo "Triggered by: ${{ github.event_name }} on branch '${CURRENT_BRANCH}'"
-          echo "Target deployment list: ${TARGET_DOMAINS[*]}"
-
-          for DOMAIN in "${TARGET_DOMAINS[@]}"; do
-            if [ "$DOMAIN" = "new.embeddedindia.in" ]; then
-              REPO_DIR="new"
-              if [ "$CURRENT_BRANCH" = "dev" ] || [ "$CURRENT_BRANCH" = "develop" ]; then
-                TARGET_BRANCH="dev"
-              else
-                TARGET_BRANCH="${CURRENT_BRANCH}"
-              fi
-            else
-              REPO_DIR="embeddedindia.in"
-              TARGET_BRANCH="main"
-            fi
-
-            REPO_PATH="/home/${CPANEL_USER}/${REPO_DIR}"
-            echo "=========================================================="
-            echo "🚀 Target: https://${DOMAIN}"
-            echo "📁 cPanel Directory: ${REPO_PATH}"
-            echo "🌿 Target Branch: ${TARGET_BRANCH}"
-            echo "=========================================================="
+          # -----------------------------------------------------------
+          # Strategy 1: cPanel VersionControl UAPI (POST & GET fallback)
+          # -----------------------------------------------------------
+          if [ -n "${CPANEL_TOKEN}" ]; then
+            echo "Attempting Git pull via cPanel UAPI..."
 
             # Step 1: Git Pull / Update from Remote via cPanel UAPI
-            # Note: cPanel VersionControl::update requires 'branch' parameter to trigger a git pull from remote
-            echo "Triggering cPanel Git pull for ${REPO_PATH} (branch: ${TARGET_BRANCH})..."
             PULL_RES=$(curl -s -S -k \
               -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
               --data-urlencode "repository_root=${REPO_PATH}" \
               --data-urlencode "branch=${TARGET_BRANCH}" \
-              -G "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1)
+              "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1 || true)
+
+            if ! echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
+              echo "UAPI POST returned non-1 status. Retrying with GET query..."
+              PULL_RES=$(curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "repository_root=${REPO_PATH}" \
+                --data-urlencode "branch=${TARGET_BRANCH}" \
+                -G "https://${CLEAN_HOST}:2083/execute/VersionControl/update" 2>&1 || true)
+            fi
 
             echo "cPanel Pull Raw Response:"
             echo "$PULL_RES"
-
-            echo "--- PULL for ${DOMAIN} (branch: ${TARGET_BRANCH}) ---" >> cpanel_debug.log
+            echo "--- PULL for ${DOMAIN} ---" >> cpanel_debug.log
             echo "$PULL_RES" >> cpanel_debug.log
 
-            # Check if cPanel returned status 1
-            if ! echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
-              echo "❌ ERROR: cPanel Git pull failed for ${DOMAIN} (${REPO_PATH})!"
-              echo "Verify that CPANEL_HOST (${CLEAN_HOST}), CPANEL_API_TOKEN, and repository path exist."
-              exit 1
+            if echo "$PULL_RES" | grep -qE '"status"\s*:\s*1'; then
+              echo "✅ Git pull succeeded via cPanel UAPI."
+
+              # Step 2: Trigger .cpanel.yml deployment task
+              echo "Triggering .cpanel.yml deployment task for ${REPO_PATH}..."
+              DEPLOY_RES=$(curl -s -S -k \
+                -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                --data-urlencode "repository_root=${REPO_PATH}" \
+                "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
+
+              if ! echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
+                DEPLOY_RES=$(curl -s -S -k \
+                  -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+                  --data-urlencode "repository_root=${REPO_PATH}" \
+                  -G "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1 || true)
+              fi
+
+              echo "cPanel Deploy Raw Response:"
+              echo "$DEPLOY_RES"
+              echo "--- DEPLOY for ${DOMAIN} ---" >> cpanel_debug.log
+              echo "$DEPLOY_RES" >> cpanel_debug.log
+
+              if echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
+                echo "✅ cPanel deployment task successfully queued for ${DOMAIN}."
+                DEPLOYED=true
+              fi
+            else
+              echo "⚠️ cPanel UAPI git pull did not succeed."
             fi
-            echo "✅ Git pull succeeded for ${DOMAIN} (branch: ${TARGET_BRANCH})."
+          fi
 
-            # Step 2: Trigger .cpanel.yml deployment task
-            echo "Triggering .cpanel.yml deployment task for ${REPO_PATH}..."
-            DEPLOY_RES=$(curl -s -S -k \
-              -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
-              --data-urlencode "repository_root=${REPO_PATH}" \
-              -G "https://${CLEAN_HOST}:2083/execute/VersionControlDeployment/create" 2>&1)
+          # -----------------------------------------------------------
+          # Strategy 2: Direct SSH Clean Pull Fallback
+          # -----------------------------------------------------------
+          if [ "$DEPLOYED" = false ] && [ -n "${CPANEL_SSH_KEY}" ]; then
+            echo "=========================================================="
+            echo "Initiating direct SSH deployment fallback for ${REPO_PATH}..."
+            echo "=========================================================="
 
-            echo "cPanel Deploy Raw Response:"
-            echo "$DEPLOY_RES"
-            echo "--- DEPLOY for ${DOMAIN} ---" >> cpanel_debug.log
-            echo "$DEPLOY_RES" >> cpanel_debug.log
+            install -m 700 -d ~/.ssh
+            printf '%s\n' "${CPANEL_SSH_KEY}" > ~/.ssh/cpanel_key
+            chmod 600 ~/.ssh/cpanel_key
 
-            if ! echo "$DEPLOY_RES" | grep -qE '"status"\s*:\s*1'; then
-              echo "❌ ERROR: cPanel deployment task failed for ${DOMAIN} (${REPO_PATH})!"
-              exit 1
+            SSH_PORT="${CPANEL_PORT}"
+            if [[ "$SSH_PORT" == "2083" || "$SSH_PORT" == "2087" ]]; then
+              SSH_PORT="22"
             fi
-            echo "✅ cPanel deployment task successfully queued for ${DOMAIN} (${REPO_DIR})."
-          done
 
-          echo "Waiting 5s for cPanel git pull, zero-build deployment, and Passenger restart to finish..."
+            SSH_HOST="${CLEAN_HOST}"
+            ssh-keyscan -T 15 -p "${SSH_PORT}" -H "${SSH_HOST}" >> ~/.ssh/known_hosts 2>/dev/null || true
+            chmod 600 ~/.ssh/known_hosts
+
+            cat > ~/.ssh/config <<EOF
+          Host cpanel-direct
+            HostName ${SSH_HOST}
+            User ${CPANEL_USER}
+            Port ${SSH_PORT}
+            IdentityFile ~/.ssh/cpanel_key
+            IdentitiesOnly yes
+            StrictHostKeyChecking no
+            BatchMode yes
+          EOF
+
+            ssh cpanel-direct <<REMOTE_DEPLOY
+            set -e
+            cd "${REPO_PATH}"
+            echo "Connected to \$(pwd). Cleaning working tree..."
+            git checkout -- . || true
+            git clean -fd -e prisma/dev.db -e .env -e public/uploads || true
+            echo "Fetching and resetting to origin/${TARGET_BRANCH}..."
+            git fetch origin "${TARGET_BRANCH}"
+            git reset --hard "origin/${TARGET_BRANCH}"
+            echo "Ensuring runtime directories..."
+            mkdir -p tmp prisma public/downloads public/images public/css
+            echo "Running zero-build update..."
+            if [ -f server-deploy.sh ]; then
+              chmod +x server-deploy.sh
+              bash server-deploy.sh embeddedindia.in update
+            fi
+            echo "Touching restart marker..."
+            touch tmp/restart.txt
+            echo "✅ Direct SSH deployment and Passenger reload complete!"
+          REMOTE_DEPLOY
+
+            DEPLOYED=true
+          fi
+
+          if [ "$DEPLOYED" = false ]; then
+            echo "❌ ERROR: Deployment failed. Neither cPanel UAPI nor SSH could pull changes."
+            echo "Verify CPANEL_HOST, CPANEL_API_TOKEN, and CPANEL_SSH_KEY in repository secrets."
+            exit 1
+          fi
+
+          echo "Waiting 5s for Passenger restart to finish..."
           sleep 5
-          echo "🎉 Deployment tasks completed successfully. server-deploy.sh dispatches email logs to ${NOTIFY_EMAIL}."
+          echo "🎉 Deployment completed successfully for https://${DOMAIN}."
 
       - name: Workflow Run Summary & Status Notice
         if: always()
         run: |
           echo "=========================================================="
           echo "GitHub Workflow Job Status: ${{ job.status }}"
-          echo "Trigger: ${{ github.event_name }} (${{ github.ref_name }})"
+          echo "Target Domain: embeddedindia.in"
           echo "Target Notification Email: sahil.kalka@gmail.com"
           echo "=========================================================="
 

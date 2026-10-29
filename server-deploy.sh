@@ -30,23 +30,10 @@ for arg in "$@"; do
   esac
 done
 if [ -z "$SITE_CHOICE" ]; then
-  case "$(basename "$SOURCE_DIR")" in
-    new) SITE_CHOICE=new ;;
-    embeddedindia.in) SITE_CHOICE=default ;;
-    *)
-      if [ -t 0 ]; then
-        echo "1) embeddedindia.in   2) new.embeddedindia.in"
-        read -rp "Select target [1 or 2]: " SITE_CHOICE
-      else
-        echo "Cannot infer target. Pass default or new explicitly." >&2; exit 1
-      fi ;;
-  esac
+  SITE_CHOICE=embeddedindia.in
 fi
-case "$SITE_CHOICE" in
-  1|default|Default|embeddedindia.in|https://embeddedindia.in|https://embeddedindia.in/) APP_FOLDER=embeddedindia.in; DOMAIN=embeddedindia.in ;;
-  2|new|New|new.embeddedindia.in|https://new.embeddedindia.in|https://new.embeddedindia.in/) APP_FOLDER=new; DOMAIN=new.embeddedindia.in ;;
-  *) echo "Invalid target: $SITE_CHOICE" >&2; usage; exit 1 ;;
-esac
+APP_FOLDER=embeddedindia.in
+DOMAIN=embeddedindia.in
 case "$MODE" in update|clean|fresh|fresh-install|install) ;; *) echo "Invalid mode: $MODE" >&2; exit 1 ;; esac
 APP_ROOT="/home/jiazxebj/$APP_FOLDER"
 ACTIVATE="/home/jiazxebj/nodevenv/$APP_FOLDER/22/bin/activate"

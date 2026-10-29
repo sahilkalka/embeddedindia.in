@@ -1,8 +1,8 @@
 const path = require('path');
 
 async function notifyDeployment(env = process.env) {
-  const domain = env.DEPLOY_DOMAIN || 'new.embeddedindia.in';
-  if (!['embeddedindia.in', 'new.embeddedindia.in'].includes(domain)) throw new Error('Invalid deployment domain.');
+  const domain = env.DEPLOY_DOMAIN || 'embeddedindia.in';
+  if (domain !== 'embeddedindia.in') throw new Error('Invalid deployment domain: only embeddedindia.in is supported.');
   // This script is streamed over SSH and runs from the installed application root.
   require('dotenv').config({ path: path.join(process.cwd(), '.env') });
   const mailer = require(path.join(process.cwd(), 'src/services/mailer'));
